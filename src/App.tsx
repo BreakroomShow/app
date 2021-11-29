@@ -2,9 +2,12 @@ import '@solana/wallet-adapter-react-ui/styles.css'
 
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
+import { Game } from 'clic-trivia'
+import { useState } from 'react'
 
-import { useCreateGame } from './api/mutations'
-import { useGameQuery, useTriviaQuery } from './api/query'
+import { useCreateGame, useEditGame } from './api/mutations'
+import { useGamesQuery, useTriviaQuery } from './api/query'
+import { bnToDateString, dateStringToMs } from './utils/date'
 
 function ConnectedApp() {
     const wallet = useWallet()
@@ -35,6 +38,35 @@ function Connection() {
     return <DisconnectedApp />
 }
 
+function GameForm({ game, gameId }: { game: Game; gameId: number }) {
+    const [name, setName] = useState(game.name)
+    const [time, setTime] = useState(bnToDateString(game.startTime))
+
+    const editGameMutation = useEditGame(gameId)
+
+    function save() {
+        const validTime = time && dateStringToMs(time)
+        const validName = name.trim()
+
+        if (!validTime || !validName) {
+            alert('Invalid params')
+            return
+        }
+
+        return editGameMutation.mutate({ name: validName, startTime: validTime })
+    }
+
+    return (
+        <div>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            <br />
+            <input type="datetime-local" value={time} onChange={(e) => setTime(e.target.value)} />
+            <br />
+            <button onClick={save}>save</button>
+        </div>
+    )
+}
+
 function renderObject(object: object | null = null) {
     return <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{JSON.stringify(object, null, 4)}</div>
 }
@@ -44,32 +76,49 @@ export function App() {
 
     const { data: trivia, status: triviaStatus } = useTriviaQuery()
 
-    const gameIds = Array.from(Array(trivia?.gamesCounter).keys())
-    const lastGameId = gameIds[gameIds.length - 1]
-
-    const { data: lastGame, status: lastGameStatus } = useGameQuery(lastGameId)
+    const gameIds = trivia?.gamesCounter == null ? [] : Array.from(Array(trivia?.gamesCounter).keys())
+    const { data: allGames = [] } = useGamesQuery(gameIds)
 
     const createGameMutation = useCreateGame(trivia?.gamesCounter || 0)
 
     function createGame() {
         createGameMutation.mutate({
-            name: 'brand new game #2',
-            startTime: Math.floor(new Date().getTime() / 1000) + 60,
+            name: 'brand new game #3',
+            startTime: new Date().getTime() + 60 * 1000,
         })
     }
+
+    const [currentGame, setCurrentGame] = useState<number | null>(null)
+    const selectedGame = allGames[currentGame!] || null
 
     return (
         <div>
             <Connection />
             <br />
-            <div>all game ids: {gameIds.length ? gameIds.join(', ') : 'no games'}</div>
-            <br />
-            <div>
-                lastGame: {lastGameStatus} {renderObject(lastGame)}
-            </div>
-            <br />
             <div>
                 trivia: {triviaStatus} {renderObject(trivia)}
+            </div>
+            <br />
+            <select
+                value={currentGame == null ? 'select' : currentGame}
+                onChange={(e) => setCurrentGame(e.target.value === 'select' ? null : Number(e.target.value))}
+            >
+                <option value="select">Select the game</option>
+                {allGames.map((game, index) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <option key={index} value={index}>
+                        {game.name}
+                    </option>
+                ))}
+            </select>
+            <br />
+            <div>
+                current game:{' '}
+                {selectedGame && currentGame != null ? (
+                    <GameForm key={currentGame} game={selectedGame} gameId={currentGame} />
+                ) : (
+                    'N/A'
+                )}
             </div>
             <br />
             {wallet.connected ? (

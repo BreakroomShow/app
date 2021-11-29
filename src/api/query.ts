@@ -1,12 +1,12 @@
 import * as anchor from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import * as solana from '@solana/web3.js'
-import { GamePDA, PlayerPDA, TriviaIdl, TriviaPDA } from 'clic-trivia'
+import { Game, GamePDA, PlayerPDA, TriviaIdl, TriviaPDA } from 'clic-trivia'
 import { QueryClient, useQuery } from 'react-query'
 
 import { network, preflightCommitment, programID, triviaIdl } from '../config'
 
-const noopPda = [null, null] as const
+export const noopPda = [null, null] as const
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -52,16 +52,15 @@ export function useTriviaPda() {
     return useQuery(['triviaPda'], () => TriviaPDA(programID)).data || noopPda
 }
 
-export function useGamePda(gameIndex?: number) {
+export function useGamePda(gameIndices: number[]) {
     const [triviaPda] = useTriviaPda()
 
     return (
-        useQuery(['gamePda', gameIndex, triviaPda], () => {
+        useQuery(['gamePda', gameIndices, triviaPda], () => {
             if (!triviaPda) return
-            if (gameIndex == null) return
 
-            return GamePDA(programID, triviaPda, gameIndex)
-        }).data || noopPda
+            return Promise.all(gameIndices.map((gameIndex) => GamePDA(programID, triviaPda, gameIndex)))
+        }).data || []
     )
 }
 
@@ -79,17 +78,17 @@ export function usePlayerPda() {
     )
 }
 
-export function useGameQuery(gameIndex?: number) {
+export function useGamesQuery(gameIndices: number[]) {
     const [program, userPublicKey] = useProgram()
-    const [gamePda] = useGamePda(gameIndex)
+    const results = useGamePda(gameIndices)
+    const gamePDAs = results.map(([gamePda]) => gamePda)
 
     return useQuery(
-        ['game', gameIndex, gamePda, userPublicKey],
+        ['games', gameIndices, gamePDAs, userPublicKey],
         () => {
-            if (!gamePda) return
             if (!program) return
 
-            return program.account.game.fetch(gamePda)
+            return Promise.all(gamePDAs.map((gamePda) => program.account.game.fetch(gamePda) as Promise<Game>))
         },
         { enabled: !!program },
     )
