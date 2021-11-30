@@ -1,131 +1,61 @@
 import '@solana/wallet-adapter-react-ui/styles.css'
 
 import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
-import { Game } from 'clic-trivia'
 import { useState } from 'react'
 
-import { useCreateGame, useEditGame } from './api/mutations'
 import { useGamesQuery, useTriviaQuery } from './api/query'
-import { bnToDateString, dateStringToMs } from './utils/date'
+import { ConnectionStatus } from './components/ConnectionStatus'
+import { CreateGameForm } from './components/CreateGameForm'
+import { EditGameForm } from './components/EditGameForm'
 
-function ConnectedApp() {
-    const wallet = useWallet()
-
-    return (
-        <div>
-            <div>{String(wallet.publicKey)}</div>
-            <br />
-            <div>
-                <button onClick={() => wallet.disconnect()}>disconnect</button>
-            </div>
-        </div>
-    )
-}
-
-function DisconnectedApp() {
-    return (
-        <div>
-            <WalletMultiButton />
-        </div>
-    )
-}
-
-function Connection() {
-    const wallet = useWallet()
-    if (wallet.connected) return <ConnectedApp />
-    if (wallet.connecting) return null
-    return <DisconnectedApp />
-}
-
-function GameForm({ game, gameId }: { game: Game; gameId: number }) {
-    const [name, setName] = useState(game.name)
-    const [time, setTime] = useState(bnToDateString(game.startTime))
-
-    const editGameMutation = useEditGame(gameId)
-
-    function save() {
-        const validTime = time && dateStringToMs(time)
-        const validName = name.trim()
-
-        if (!validTime || !validName) {
-            alert('Invalid params')
-            return
-        }
-
-        return editGameMutation.mutate({ name: validName, startTime: validTime })
-    }
-
-    return (
-        <div>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-            <br />
-            <input type="datetime-local" value={time} onChange={(e) => setTime(e.target.value)} />
-            <br />
-            <button onClick={save}>save</button>
-        </div>
-    )
-}
-
-function renderObject(object: object | null = null) {
-    return <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{JSON.stringify(object, null, 4)}</div>
+function allGameIds(totalGames: number) {
+    return Array.from(Array(totalGames).keys())
 }
 
 export function App() {
     const wallet = useWallet()
 
-    const { data: trivia, status: triviaStatus } = useTriviaQuery()
+    const { data: trivia } = useTriviaQuery()
 
-    const gameIds = trivia?.gamesCounter == null ? [] : Array.from(Array(trivia?.gamesCounter).keys())
+    const totalGames = trivia?.gamesCounter
+    const gameIds = totalGames == null ? [] : allGameIds(totalGames)
     const { data: allGames = [] } = useGamesQuery(gameIds)
-
-    const createGameMutation = useCreateGame(trivia?.gamesCounter || 0)
-
-    function createGame() {
-        createGameMutation.mutate({
-            name: 'brand new game #3',
-            startTime: new Date().getTime() + 60 * 1000,
-        })
-    }
 
     const [currentGame, setCurrentGame] = useState<number | null>(null)
     const selectedGame = allGames[currentGame!] || null
 
     return (
-        <div>
-            <Connection />
-            <br />
-            <div>
-                trivia: {triviaStatus} {renderObject(trivia)}
-            </div>
-            <br />
-            <select
-                value={currentGame == null ? 'select' : currentGame}
-                onChange={(e) => setCurrentGame(e.target.value === 'select' ? null : Number(e.target.value))}
-            >
-                <option value="select">Select the game</option>
-                {allGames.map((game, index) => (
-                    // eslint-disable-next-line react/no-array-index-key
-                    <option key={index} value={index}>
-                        {game.name}
-                    </option>
-                ))}
-            </select>
-            <br />
-            <div>
-                current game:{' '}
-                {selectedGame && currentGame != null ? (
-                    <GameForm key={currentGame} game={selectedGame} gameId={currentGame} />
-                ) : (
-                    'N/A'
-                )}
-            </div>
-            <br />
-            {wallet.connected ? (
+        <main style={{ margin: 15 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div>
-                    <button onClick={createGame}>create game</button>
+                    <h1>Clic Trivia</h1>
+                    <p>Total games: {totalGames}</p>
                 </div>
-            ) : null}
-        </div>
+                <ConnectionStatus />
+            </div>
+
+            <div>
+                <h2>Create new game</h2>
+                {wallet.connected ? <CreateGameForm gameId={trivia?.gamesCounter || 0} /> : null}
+            </div>
+            <div>
+                <h2>Edit game</h2>
+
+                <select
+                    value={currentGame == null ? 'none' : currentGame}
+                    onChange={(e) => setCurrentGame(e.target.value === 'none' ? null : Number(e.target.value))}
+                    style={{ marginBottom: 20 }}
+                >
+                    <option value="none">none</option>
+                    {allGames.map((game, index) => (
+                        <option key={index} value={index}>
+                            {game.name}
+                        </option>
+                    ))}
+                </select>
+
+                {selectedGame ? <EditGameForm key={currentGame} game={selectedGame} gameId={currentGame!} /> : null}
+            </div>
+        </main>
     )
 }

@@ -40,6 +40,7 @@ module.exports = {
 
         'react/prop-types': 'off',
         'react/button-has-type': 'off',
+        'react/no-array-index-key': 'off',
         'react/no-unescaped-entities': 'warn',
         'react/require-default-props': 'off',
         'react/jsx-props-no-spreading': 'off',

@@ -1,7 +1,7 @@
 import * as anchor from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import * as solana from '@solana/web3.js'
-import { Game, GamePDA, PlayerPDA, TriviaIdl, TriviaPDA } from 'clic-trivia'
+import { Answer, Game, GamePDA, PlayerPDA, Question, TriviaIdl, TriviaPDA } from 'clic-trivia'
 import { QueryClient, useQuery } from 'react-query'
 
 import { network, preflightCommitment, programID, triviaIdl } from '../config'
@@ -89,6 +89,50 @@ export function useGamesQuery(gameIndices: number[]) {
             if (!program) return
 
             return Promise.all(gamePDAs.map((gamePda) => program.account.game.fetch(gamePda) as Promise<Game>))
+        },
+        { enabled: !!program },
+    )
+}
+
+export function useQuestionsQuery(
+    gameIndex: number /* is used to invalidate questions only for the exact game */,
+    questionKeys: anchor.web3.PublicKey[],
+) {
+    const [program] = useProgram()
+
+    return useQuery(
+        ['questions', gameIndex, questionKeys],
+        () => {
+            if (!program) return
+
+            return Promise.all(
+                questionKeys.map((questionKey) => program.account.question.fetch(questionKey) as Promise<Question>),
+            )
+        },
+        { enabled: !!program },
+    )
+}
+
+export function useAnswersQuery(
+    gameIndex: number /* is used to invalidate answers only for the exact game */,
+    questionAnswerKeys: anchor.web3.PublicKey[][],
+) {
+    const [program] = useProgram()
+
+    return useQuery(
+        ['answers', gameIndex, questionAnswerKeys],
+        () => {
+            if (!program) return
+
+            return Promise.all(
+                questionAnswerKeys.map((answerKeys) => {
+                    return Promise.all(
+                        answerKeys.map((answerKey) => {
+                            return program.account.answer.fetch(answerKey) as Promise<Answer>
+                        }),
+                    )
+                }),
+            )
         },
         { enabled: !!program },
     )

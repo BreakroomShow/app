@@ -4,7 +4,9 @@ import { EditGameEvent } from 'clic-trivia/types/index'
 import { useMutation } from 'react-query'
 
 import { msToBn } from '../utils/date'
+import { sha256 } from '../utils/sha256'
 import { noopPda, queryClient, useGamePda, useProgram, useTriviaPda } from './query'
+import * as storage from './storage'
 
 interface UseCreateGameOptions {
     name: string
@@ -48,14 +50,14 @@ export function useCreateGame(gameIndex: number) {
 
 export function useEditGame(gameIndex: number) {
     const [pdaResult] = useGamePda([gameIndex])
-    const [gamePda, gameBump] = pdaResult || noopPda
+    const [gamePda] = pdaResult || noopPda
     const [program, userPublicKey] = useProgram()
     const [triviaPda] = useTriviaPda()
 
     return useMutation(
         async ({ name, startTime }: UseCreateGameOptions) => {
             if (!triviaPda) return
-            if (!gamePda || !gameBump) return
+            if (!gamePda) return
             if (!program || !userPublicKey) return
 
             const options: CreateGameOptions = {
@@ -81,6 +83,49 @@ export function useEditGame(gameIndex: number) {
         {
             onSuccess: () => {
                 queryClient.invalidateQueries('games')
+            },
+        },
+    )
+}
+
+interface UseAddQuestion {
+    name: string
+    variants: string[]
+}
+
+export function useAddQuestion(gameIndex: number) {
+    const [pdaResult] = useGamePda([gameIndex])
+    const [gamePda] = pdaResult || noopPda
+    const [program, userPublicKey] = useProgram()
+
+    return useMutation(
+        async ({ name, variants }: UseAddQuestion) => {
+            if (!gamePda) return
+            if (!program || !userPublicKey) return
+
+            const encodedName = sha256(name)
+            const encodedVariants = variants.map((v) => sha256(name, v))
+            const time = 10 // 10 seconds
+            const questionKeypair = anchor.web3.Keypair.generate()
+            const publicKey = questionKeypair.publicKey
+
+            // save to local storage so we can reveal them later
+            storage.set(publicKey.toString(), { name, variants })
+
+            return program.rpc.addQuestion(encodedName, encodedVariants, new anchor.BN(time), {
+                accounts: {
+                    game: gamePda,
+                    question: publicKey,
+                    authority: userPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                },
+                signers: [questionKeypair],
+            })
+        },
+        {
+            onSuccess() {
+                queryClient.invalidateQueries(['games'])
+                queryClient.invalidateQueries(['questions', gameIndex])
             },
         },
     )
