@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 
+import { GameOptions } from '../api/types'
 import { addDays, dateStringToMs } from '../utils/date'
 
 interface GameFormProps {
     name?: string
     time?: string
-    onSuccess(game: { name: string; startTime: number }, reset: () => void): void
+    onSuccess(game: GameOptions, reset: () => void): void
+    disabled?: boolean
 }
 
-export function GameForm({ name: nameProp, time: timeProp, onSuccess }: GameFormProps) {
+export function GameForm({ name: nameProp, time: timeProp, onSuccess, disabled }: GameFormProps) {
     const [name, setName] = useState(nameProp || '')
     const [time, setTime] = useState(timeProp || '')
 
@@ -30,20 +32,27 @@ export function GameForm({ name: nameProp, time: timeProp, onSuccess }: GameForm
     }
 
     return (
-        <div>
-            <input
-                style={{ minWidth: 200 }}
-                type="text"
-                placeholder="game name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-            />
-            <br />
-            <input type="datetime-local" value={time} onChange={(e) => setTime(e.target.value)} />
-            <br />
-            <button disabled={!validTime || !validName} onClick={save}>
-                save
-            </button>
-        </div>
+        <form onSubmit={(e) => e.preventDefault()}>
+            <fieldset disabled={disabled}>
+                <label>
+                    name:{' '}
+                    <input
+                        style={{ minWidth: 200 }}
+                        type="text"
+                        placeholder="game name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </label>
+                <br />
+                <label>
+                    starts at: <input type="datetime-local" value={time} onChange={(e) => setTime(e.target.value)} />
+                </label>
+                <br />
+                <button type="button" disabled={!validTime || !validName} onClick={save}>
+                    save
+                </button>
+            </fieldset>
+        </form>
     )
 }

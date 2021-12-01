@@ -13,9 +13,7 @@ export function bnToDateString(bn: anchor.BN) {
 }
 
 export function msToDateString(ms: number) {
-    const date = new Date(ms)
-    date.setSeconds(0)
-    return date.toISOString().split('.')[0]
+    return new Date(ms).toISOString().split('.')[0]
 }
 
 export function dateStringToMs(date: string) {
@@ -24,6 +22,10 @@ export function dateStringToMs(date: string) {
 
 export function msToBn(ms: number) {
     return new anchor.BN(Math.floor(ms / 1000))
+}
+
+export function secToBn(sec: number) {
+    return new anchor.BN(sec)
 }
 
 export function addDays(ms: number, days: number) {
@@ -38,4 +40,8 @@ export function adjustTimezone(ms: number): number {
 
 export function bnToTimezoneDateString(bn: anchor.BN) {
     return msToDateString(adjustTimezone(bnToMs(bn)))
+}
+
+export function bnToLocaleString(bn: anchor.BN) {
+    return new Date(bnToMs(bn)).toLocaleString()
 }

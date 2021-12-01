@@ -17,8 +17,8 @@ export function App() {
 
     const { data: trivia } = useTriviaQuery()
 
-    const totalGames = trivia?.gamesCounter
-    const gameIds = totalGames == null ? [] : allGameIds(totalGames)
+    const totalGames = trivia?.gamesCounter || 0
+    const gameIds = allGameIds(totalGames)
     const { data: allGames = [] } = useGamesQuery(gameIds)
 
     const [currentGame, setCurrentGame] = useState<number | null>(null)
@@ -39,7 +39,7 @@ export function App() {
             <section>
                 <h2>Create new game</h2>
                 {wallet.connected ? (
-                    <CreateGameForm gameId={totalGames || 0} onSuccess={() => setCurrentGame(totalGames || 0)} />
+                    <CreateGameForm gameId={totalGames} onSuccess={() => setCurrentGame(totalGames)} />
                 ) : null}
             </section>
 
@@ -55,7 +55,7 @@ export function App() {
                         <option value="none">Select game to edit</option>
                         {allGames.map((game, index) => (
                             <option key={index} value={index}>
-                                {game.name}
+                                {index + 1}. {game.name}
                             </option>
                         ))}
                     </select>

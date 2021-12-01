@@ -1,17 +1,13 @@
 import * as anchor from '@project-serum/anchor'
 import { CreateGameOptions } from 'clic-trivia'
-import { EditGameEvent, RevealQuestionEvent } from 'clic-trivia/types/index'
+import { EditGameEvent, RevealAnswerEvent, RevealQuestionEvent } from 'clic-trivia/types/index'
 import { useMutation } from 'react-query'
 
-import { msToBn } from '../utils/date'
+import { msToBn, secToBn } from '../utils/date'
 import { sha256 } from '../utils/sha256'
 import { cacheKeys, queryClient, useGamePdaFor, useProgram, useTriviaPda } from './query'
 import * as storage from './storage'
-
-interface GameOptions {
-    name: string
-    startTime: number
-}
+import { GameOptions, StoredQuestionData } from './types'
 
 export function useCreateGame(gameIndex: number) {
     const [gamePda, gameBump] = useGamePdaFor(gameIndex)
@@ -85,9 +81,8 @@ export function useEditGame(gameIndex: number) {
     )
 }
 
-export interface StoredQuestionData {
-    name: string
-    variants: string[]
+interface AddQuestionOptions extends StoredQuestionData {
+    time: number // sec
 }
 
 export function useAddQuestion(gameIndex: number) {
@@ -95,11 +90,11 @@ export function useAddQuestion(gameIndex: number) {
     const [program, userPublicKey] = useProgram()
 
     return useMutation(
-        async ({ name, variants }: StoredQuestionData) => {
+        async ({ name, variants, time }: AddQuestionOptions) => {
             if (!gamePda) return
             if (!program || !userPublicKey) return
 
-            const time = 10 // 10 seconds
+            const timeBn = secToBn(time)
             const encodedName = sha256(name)
             const encodedVariants = variants.map((v) => sha256(name, v))
             const questionKeypair = anchor.web3.Keypair.generate()
@@ -108,7 +103,7 @@ export function useAddQuestion(gameIndex: number) {
             // save to local storage so we can reveal them later
             storage.set(publicKey.toString(), { name, variants })
 
-            return program.rpc.addQuestion(encodedName, encodedVariants, new anchor.BN(time), {
+            return program.rpc.addQuestion(encodedName, encodedVariants, timeBn, {
                 accounts: {
                     game: gamePda,
                     question: publicKey,
@@ -120,8 +115,10 @@ export function useAddQuestion(gameIndex: number) {
         },
         {
             onSuccess() {
-                queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
-                queryClient.invalidateQueries([cacheKeys.questions, gameIndex])
+                return Promise.all([
+                    queryClient.invalidateQueries(cacheKeys.games), // TODO query games separately
+                    queryClient.invalidateQueries([cacheKeys.questions, gameIndex]),
+                ])
             },
         },
     )
@@ -145,8 +142,41 @@ export function useRemoveQuestion(gameIndex: number) {
         },
         {
             onSuccess() {
-                queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
-                queryClient.invalidateQueries([cacheKeys.questions, gameIndex])
+                return Promise.all([
+                    queryClient.invalidateQueries(cacheKeys.games), // TODO query games separately
+                    queryClient.invalidateQueries([cacheKeys.questions, gameIndex]),
+                ])
+            },
+        },
+    )
+}
+
+export function useStartGame(gameIndex: number) {
+    const [gamePda] = useGamePdaFor(gameIndex)
+    const [program, userPublicKey] = useProgram()
+
+    return useMutation(
+        async () => {
+            if (!gamePda) return
+            if (!program || !userPublicKey) return
+
+            return new Promise<EditGameEvent>((resolve) => {
+                const listener = program.addEventListener('EditGameEvent', async (event: EditGameEvent) => {
+                    await program.removeEventListener(listener)
+                    resolve(event)
+                })
+
+                program.rpc.startGame({
+                    accounts: {
+                        game: gamePda,
+                        authority: userPublicKey,
+                    },
+                })
+            })
+        },
+        {
+            onSuccess() {
+                return queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
             },
         },
     )
@@ -182,30 +212,38 @@ export function useRevealQuestion(gameIndex: number) {
         },
         {
             onSuccess() {
-                queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
-                queryClient.invalidateQueries([cacheKeys.questions, gameIndex])
+                return Promise.all([
+                    queryClient.invalidateQueries(cacheKeys.games), // TODO query games separately
+                    queryClient.invalidateQueries([cacheKeys.questions, gameIndex]),
+                ])
             },
         },
     )
 }
 
-export function useStartGame(gameIndex: number) {
+interface RevealAnswerOptions {
+    questionKey: anchor.web3.PublicKey
+    variantId: number
+}
+
+export function useRevealAnswer(gameIndex: number) {
     const [gamePda] = useGamePdaFor(gameIndex)
     const [program, userPublicKey] = useProgram()
 
     return useMutation(
-        async () => {
+        async ({ questionKey, variantId }: RevealAnswerOptions) => {
             if (!gamePda) return
             if (!program || !userPublicKey) return
 
-            return new Promise<EditGameEvent>((resolve) => {
-                const listener = program.addEventListener('EditGameEvent', async (event: EditGameEvent) => {
+            return new Promise<RevealAnswerEvent>((resolve) => {
+                const listener = program.addEventListener('RevealAnswerEvent', async (event: RevealAnswerEvent) => {
                     await program.removeEventListener(listener)
                     resolve(event)
                 })
 
-                program.rpc.startGame({
+                program.rpc.revealAnswer(variantId, {
                     accounts: {
+                        question: questionKey,
                         game: gamePda,
                         authority: userPublicKey,
                     },
@@ -214,7 +252,11 @@ export function useStartGame(gameIndex: number) {
         },
         {
             onSuccess() {
-                return queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
+                return Promise.all([
+                    queryClient.invalidateQueries(cacheKeys.games), // TODO query games separately
+                    queryClient.invalidateQueries([cacheKeys.questions, gameIndex]),
+                    queryClient.invalidateQueries([cacheKeys.answers, gameIndex]),
+                ])
             },
         },
     )
