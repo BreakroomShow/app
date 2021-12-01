@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { GameOptions } from '../api/types'
-import { addDays, dateStringToMs } from '../utils/date'
+import { addMinutes, dateStringToMs, msToDateString } from '../utils/date'
 
 interface GameFormProps {
     name?: string
@@ -26,9 +26,17 @@ export function GameForm({ name: nameProp, time: timeProp, onSuccess, disabled }
     const validName = name.trim()
 
     function save() {
-        const startTime = validTime || addDays(Date.now(), 1)
+        const startTime = validTime || addMinutes(Date.now(), 1)
 
         onSuccess({ name: validName, startTime }, reset)
+    }
+
+    function validateDate() {
+        if (!validTime) return
+
+        const moreThanNow = Math.max(validTime, addMinutes(Date.now(), 1))
+
+        setTime(msToDateString(moreThanNow, { clampSec: true, adjustTimezone: true }))
     }
 
     return (
@@ -46,7 +54,13 @@ export function GameForm({ name: nameProp, time: timeProp, onSuccess, disabled }
                 </label>
                 <br />
                 <label>
-                    starts at: <input type="datetime-local" value={time} onChange={(e) => setTime(e.target.value)} />
+                    starts at:{' '}
+                    <input
+                        type="datetime-local"
+                        onBlur={validateDate}
+                        value={time}
+                        onChange={(e) => setTime(e.target.value)}
+                    />
                 </label>
                 <br />
                 <button type="button" disabled={!validTime || !validName} onClick={save}>

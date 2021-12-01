@@ -9,11 +9,30 @@ export function bnToSec(bn: anchor.BN) {
 }
 
 export function bnToDateString(bn: anchor.BN) {
-    return new Date(bnToMs(bn)).toISOString().split('.')[0]
+    return new Date(bnToMs(bn)).toISOString().split('.')[0] as string
 }
 
-export function msToDateString(ms: number) {
-    return new Date(ms).toISOString().split('.')[0]
+export function adjustTimezoneOffset(ms: number): number {
+    const timeOffset = new Date().getTimezoneOffset() * 60 * 1000
+
+    return ms - timeOffset
+}
+
+export function msToDateString(
+    ms: number,
+    { clampSec, adjustTimezone }: { adjustTimezone?: boolean; clampSec?: boolean } = {},
+) {
+    if (adjustTimezone) {
+        ms = adjustTimezoneOffset(ms)
+    }
+
+    const date = new Date(ms)
+
+    if (clampSec) {
+        date.setSeconds(0)
+    }
+
+    return date.toISOString().split('.')[0] as string
 }
 
 export function dateStringToMs(date: string) {
@@ -32,14 +51,12 @@ export function addDays(ms: number, days: number) {
     return ms + days * 24 * 60 * 60 * 1000
 }
 
-export function adjustTimezone(ms: number): number {
-    const timeOffset = new Date().getTimezoneOffset() * 60 * 1000
-
-    return ms - timeOffset
+export function addMinutes(ms: number, minutes: number) {
+    return ms + minutes * 60 * 1000
 }
 
 export function bnToTimezoneDateString(bn: anchor.BN) {
-    return msToDateString(adjustTimezone(bnToMs(bn)))
+    return msToDateString(bnToMs(bn), { adjustTimezone: true })
 }
 
 export function bnToLocaleString(bn: anchor.BN) {

@@ -36,12 +36,12 @@ export function App() {
                 <ConnectionStatus />
             </div>
 
-            <section>
-                <h2>Create new game</h2>
-                {wallet.connected ? (
+            {wallet.connected ? (
+                <section>
+                    <h2>Create new game</h2>
                     <CreateGameForm gameId={totalGames} onSuccess={() => setCurrentGame(totalGames)} />
-                ) : null}
-            </section>
+                </section>
+            ) : null}
 
             <section>
                 <h2>Edit game</h2>
