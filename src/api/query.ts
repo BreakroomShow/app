@@ -11,16 +11,27 @@ export const noopPda = [null, null] as const
 export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            // TODO consider inlining it
-            staleTime: Infinity,
+            staleTime: Infinity, // TODO consider inlining it
         },
     },
 })
 
+export const cacheKeys = {
+    provider: 'provider',
+    program: 'program',
+    triviaPda: 'triviaPda',
+    gamePda: 'gamePda',
+    playerPda: 'playerPda',
+    trivia: 'trivia',
+    games: 'games',
+    questions: 'questions',
+    answers: 'answers',
+} as const
+
 export function useProvider() {
     const wallet = useWallet()
 
-    const provider = useQuery(['provider', wallet.publicKey], () => {
+    const provider = useQuery([cacheKeys.provider, wallet.publicKey], () => {
         return new anchor.Provider(
             new solana.Connection(network, preflightCommitment),
             wallet as unknown as anchor.Wallet,
@@ -36,7 +47,7 @@ export function useProgram() {
 
     return [
         useQuery(
-            ['program', userPublicKey],
+            [cacheKeys.program, userPublicKey],
             () => {
                 if (!provider) return
 
@@ -49,14 +60,14 @@ export function useProgram() {
 }
 
 export function useTriviaPda() {
-    return useQuery(['triviaPda'], () => TriviaPDA(programID)).data || noopPda
+    return useQuery([cacheKeys.triviaPda], () => TriviaPDA(programID)).data || noopPda
 }
 
 export function useGamePda(gameIndices: number[]) {
     const [triviaPda] = useTriviaPda()
 
     return (
-        useQuery(['gamePda', gameIndices, triviaPda], () => {
+        useQuery([cacheKeys.gamePda, gameIndices, triviaPda], () => {
             if (!triviaPda) return
 
             return Promise.all(gameIndices.map((gameIndex) => GamePDA(programID, triviaPda, gameIndex)))
@@ -69,12 +80,28 @@ export function usePlayerPda() {
     const [, userPublicKey] = useProvider()
 
     return (
-        useQuery(['playerPda', userPublicKey, triviaPda], () => {
+        useQuery([cacheKeys.playerPda, userPublicKey, triviaPda], () => {
             if (!triviaPda) return
             if (!userPublicKey) return
 
             return PlayerPDA(programID, triviaPda, userPublicKey)
         }).data || noopPda
+    )
+}
+
+export function useTriviaQuery() {
+    const [triviaPda] = useTriviaPda()
+    const [program, userPublicKey] = useProgram()
+
+    return useQuery(
+        [cacheKeys.trivia, triviaPda, userPublicKey],
+        () => {
+            if (!triviaPda) return
+            if (!program) return
+
+            return program.account.trivia.fetch(triviaPda)
+        },
+        { enabled: !!program },
     )
 }
 
@@ -84,7 +111,7 @@ export function useGamesQuery(gameIndices: number[]) {
     const gamePDAs = results.map(([gamePda]) => gamePda)
 
     return useQuery(
-        ['games', gameIndices, gamePDAs, userPublicKey],
+        [cacheKeys.games, gameIndices, gamePDAs, userPublicKey],
         () => {
             if (!program) return
 
@@ -101,7 +128,7 @@ export function useQuestionsQuery(
     const [program] = useProgram()
 
     return useQuery(
-        ['questions', gameIndex, questionKeys],
+        [cacheKeys.questions, gameIndex, questionKeys],
         () => {
             if (!program) return
 
@@ -120,7 +147,7 @@ export function useAnswersQuery(
     const [program] = useProgram()
 
     return useQuery(
-        ['answers', gameIndex, questionAnswerKeys],
+        [cacheKeys.answers, gameIndex, questionAnswerKeys],
         () => {
             if (!program) return
 
@@ -133,22 +160,6 @@ export function useAnswersQuery(
                     )
                 }),
             )
-        },
-        { enabled: !!program },
-    )
-}
-
-export function useTriviaQuery() {
-    const [triviaPda] = useTriviaPda()
-    const [program, userPublicKey] = useProgram()
-
-    return useQuery(
-        ['trivia', triviaPda, userPublicKey],
-        () => {
-            if (!triviaPda) return
-            if (!program) return
-
-            return program.account.trivia.fetch(triviaPda)
         },
         { enabled: !!program },
     )

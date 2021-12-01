@@ -5,10 +5,10 @@ import { useMutation } from 'react-query'
 
 import { msToBn } from '../utils/date'
 import { sha256 } from '../utils/sha256'
-import { noopPda, queryClient, useGamePda, useProgram, useTriviaPda } from './query'
+import { cacheKeys, noopPda, queryClient, useGamePda, useProgram, useTriviaPda } from './query'
 import * as storage from './storage'
 
-interface UseCreateGameOptions {
+interface GameOptions {
     name: string
     startTime: number
 }
@@ -20,7 +20,7 @@ export function useCreateGame(gameIndex: number) {
     const [triviaPda] = useTriviaPda()
 
     return useMutation(
-        async ({ name, startTime }: UseCreateGameOptions) => {
+        async ({ name, startTime }: GameOptions) => {
             if (!triviaPda) return
             if (!gamePda || !gameBump) return
             if (!program || !userPublicKey) return
@@ -41,8 +41,8 @@ export function useCreateGame(gameIndex: number) {
         },
         {
             onSuccess: () => {
-                queryClient.invalidateQueries('gamePda')
-                queryClient.invalidateQueries('trivia')
+                queryClient.invalidateQueries(cacheKeys.gamePda)
+                queryClient.invalidateQueries(cacheKeys.trivia)
             },
         },
     )
@@ -55,7 +55,7 @@ export function useEditGame(gameIndex: number) {
     const [triviaPda] = useTriviaPda()
 
     return useMutation(
-        async ({ name, startTime }: UseCreateGameOptions) => {
+        async ({ name, startTime }: GameOptions) => {
             if (!triviaPda) return
             if (!gamePda) return
             if (!program || !userPublicKey) return
@@ -82,13 +82,13 @@ export function useEditGame(gameIndex: number) {
         },
         {
             onSuccess: () => {
-                queryClient.invalidateQueries('games')
+                queryClient.invalidateQueries(cacheKeys.games)
             },
         },
     )
 }
 
-interface UseAddQuestion {
+export interface AddQuestionOptions {
     name: string
     variants: string[]
 }
@@ -99,7 +99,7 @@ export function useAddQuestion(gameIndex: number) {
     const [program, userPublicKey] = useProgram()
 
     return useMutation(
-        async ({ name, variants }: UseAddQuestion) => {
+        async ({ name, variants }: AddQuestionOptions) => {
             if (!gamePda) return
             if (!program || !userPublicKey) return
 
@@ -124,8 +124,34 @@ export function useAddQuestion(gameIndex: number) {
         },
         {
             onSuccess() {
-                queryClient.invalidateQueries(['games'])
-                queryClient.invalidateQueries(['questions', gameIndex])
+                queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
+                queryClient.invalidateQueries([cacheKeys.questions, gameIndex])
+            },
+        },
+    )
+}
+
+export function useRemoveQuestion(gameIndex: number) {
+    const [pdaResult] = useGamePda([gameIndex])
+    const [gamePda] = pdaResult || noopPda
+    const [program, userPublicKey] = useProgram()
+
+    return useMutation(
+        async (questionPublicKey: anchor.web3.PublicKey) => {
+            if (!gamePda) return
+            if (!program || !userPublicKey) return
+
+            return program.rpc.removeQuestion(questionPublicKey, {
+                accounts: {
+                    game: gamePda,
+                    authority: userPublicKey,
+                },
+            })
+        },
+        {
+            onSuccess() {
+                queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
+                queryClient.invalidateQueries([cacheKeys.questions, gameIndex])
             },
         },
     )

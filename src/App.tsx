@@ -27,35 +27,36 @@ export function App() {
     return (
         <main style={{ margin: 15 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                    <h1>Clic Trivia</h1>
-                    <p>Total games: {totalGames}</p>
-                </div>
+                <h1>Clic Trivia</h1>
                 <ConnectionStatus />
             </div>
 
-            <div>
+            <section>
                 <h2>Create new game</h2>
                 {wallet.connected ? <CreateGameForm gameId={trivia?.gamesCounter || 0} /> : null}
-            </div>
-            <div>
+            </section>
+
+            <section>
                 <h2>Edit game</h2>
 
-                <select
-                    value={currentGame == null ? 'none' : currentGame}
-                    onChange={(e) => setCurrentGame(e.target.value === 'none' ? null : Number(e.target.value))}
-                    style={{ marginBottom: 20 }}
-                >
-                    <option value="none">none</option>
-                    {allGames.map((game, index) => (
-                        <option key={index} value={index}>
-                            {game.name}
-                        </option>
-                    ))}
-                </select>
+                <div style={{ display: 'flex' }}>
+                    <select
+                        value={currentGame == null ? 'none' : currentGame}
+                        onChange={(e) => setCurrentGame(e.target.value === 'none' ? null : Number(e.target.value))}
+                        style={{ marginBottom: 20 }}
+                    >
+                        <option value="none">Select game to edit</option>
+                        {allGames.map((game, index) => (
+                            <option key={index} value={index}>
+                                {game.name}
+                            </option>
+                        ))}
+                    </select>
+                    <div style={{ padding: '0 20px' }}>total games: {totalGames}</div>
+                </div>
 
                 {selectedGame ? <EditGameForm key={currentGame} game={selectedGame} gameId={currentGame!} /> : null}
-            </div>
+            </section>
         </main>
     )
 }

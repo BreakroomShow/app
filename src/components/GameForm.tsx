@@ -26,7 +26,13 @@ export function GameForm({ name: nameProp, time: timeProp, onSuccess }: GameForm
 
     return (
         <div>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            <input
+                style={{ minWidth: 200 }}
+                type="text"
+                placeholder="game name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
             <br />
             <input type="datetime-local" value={time} onChange={(e) => setTime(e.target.value)} />
             <br />
