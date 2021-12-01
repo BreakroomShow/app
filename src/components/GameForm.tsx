@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { addDays, dateStringToMs } from '../utils/date'
 
@@ -12,6 +12,9 @@ export function GameForm({ name: nameProp, time: timeProp, onSuccess }: GameForm
     const [name, setName] = useState(nameProp || '')
     const [time, setTime] = useState(timeProp || '')
 
+    useEffect(() => (timeProp ? setTime(timeProp) : undefined), [timeProp])
+    useEffect(() => (nameProp ? setName(nameProp) : undefined), [nameProp])
+
     function reset() {
         setName('')
         setTime('')
@@ -21,7 +24,9 @@ export function GameForm({ name: nameProp, time: timeProp, onSuccess }: GameForm
     const validName = name.trim()
 
     function save() {
-        onSuccess({ name: validName, startTime: validTime || addDays(Date.now(), 1) }, reset)
+        const startTime = validTime || addDays(Date.now(), 1)
+
+        onSuccess({ name: validName, startTime }, reset)
     }
 
     return (

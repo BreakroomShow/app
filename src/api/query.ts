@@ -6,8 +6,6 @@ import { QueryClient, useQuery } from 'react-query'
 
 import { network, preflightCommitment, programID, triviaIdl } from '../config'
 
-export const noopPda = [null, null] as const
-
 export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -27,6 +25,8 @@ export const cacheKeys = {
     questions: 'questions',
     answers: 'answers',
 } as const
+
+const noopPda = [null, null] as const
 
 export function useProvider() {
     const wallet = useWallet()
@@ -73,6 +73,11 @@ export function useGamePda(gameIndices: number[]) {
             return Promise.all(gameIndices.map((gameIndex) => GamePDA(programID, triviaPda, gameIndex)))
         }).data || []
     )
+}
+
+export function useGamePdaFor(gameIndex: number) {
+    const [pdaResult] = useGamePda([gameIndex])
+    return pdaResult || noopPda
 }
 
 export function usePlayerPda() {

@@ -1,10 +1,17 @@
 import { Game } from 'clic-trivia'
 import { useMemo, useState } from 'react'
 
-import { AddQuestionOptions, useAddQuestion, useEditGame, useRemoveQuestion } from '../api/mutations'
+import {
+    StoredQuestionData,
+    useAddQuestion,
+    useEditGame,
+    useRemoveQuestion,
+    useRevealQuestion,
+    useStartGame,
+} from '../api/mutations'
 import { useQuestionsQuery } from '../api/query'
 import * as storage from '../api/storage'
-import { bnToDateString } from '../utils/date'
+import { bnToMs, bnToTimezoneDateString } from '../utils/date'
 import { GameForm } from './GameForm'
 
 interface EditGameFormProps {
@@ -13,17 +20,21 @@ interface EditGameFormProps {
 }
 
 export function EditGameForm({ gameId, game }: EditGameFormProps) {
+    const isGameStarted = bnToMs(game.startTime) < Date.now() // TODO make timer
+
     const { data: questions = [] } = useQuestionsQuery(gameId, game.questionKeys)
 
     const questionsData = useMemo(() => {
         return questions.map((_, index) => {
             const questionKey = game.questionKeys[index]
-            return questionKey ? storage.get<AddQuestionOptions>(questionKey.toString()) : null
+            return questionKey ? storage.get<StoredQuestionData>(questionKey.toString()) : null
         })
     }, [game.questionKeys, questions])
 
     const editGameMutation = useEditGame(gameId)
+    const startGameMutation = useStartGame(gameId)
     const addQuestionMutation = useAddQuestion(gameId)
+    const revealQuestionMutation = useRevealQuestion(gameId)
     const removeQuestionMutation = useRemoveQuestion(gameId)
 
     const [question, setQuestion] = useState('')
@@ -48,14 +59,26 @@ export function EditGameForm({ gameId, game }: EditGameFormProps) {
         <div>
             <GameForm
                 name={game.name}
-                time={bnToDateString(game.startTime)}
+                time={bnToTimezoneDateString(game.startTime)}
                 onSuccess={(data) => editGameMutation.mutate(data)}
             />
+            <p>
+                game started : {isGameStarted ? 'yes' : 'no'}{' '}
+                {isGameStarted ? null : <button onClick={() => startGameMutation.mutate()}>start now</button>}
+            </p>
             <section>
                 <h3>Questions</h3>
                 {questions.map((q, index) => {
                     const questionKey = game.questionKeys[index]
-                    const questionData = questionsData[index] || null
+
+                    const storedQuestion = questionsData[index]
+                    let questionData: StoredQuestionData | null = null
+
+                    if (q.revealedQuestion) {
+                        questionData = { name: q.revealedQuestion.question, variants: q.revealedQuestion.variants }
+                    } else if (storedQuestion) {
+                        questionData = { ...storedQuestion }
+                    }
 
                     return (
                         <div key={index} style={{ display: 'flex' }}>
@@ -76,10 +99,19 @@ export function EditGameForm({ gameId, game }: EditGameFormProps) {
                             ) : (
                                 <span>{index + 1}: question is corrupted</span>
                             )}
-                            <div style={{ padding: 20 }}>
-                                {questionKey ? (
+                            <div style={{ padding: 20, display: 'flex', flexDirection: 'column' }}>
+                                {isGameStarted && !q.revealedQuestion && questionKey && storedQuestion ? (
+                                    <button
+                                        onClick={() => {
+                                            revealQuestionMutation.mutate({ questionKey, ...storedQuestion })
+                                        }}
+                                    >
+                                        👀 reveal this question 🎬
+                                    </button>
+                                ) : null}
+                                {questionKey && !isGameStarted ? (
                                     <button onClick={() => removeQuestionMutation.mutate(questionKey)}>
-                                        [X] remove this question
+                                        🧹 remove this question 🗑
                                     </button>
                                 ) : null}
                             </div>

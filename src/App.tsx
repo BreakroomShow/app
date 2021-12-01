@@ -1,7 +1,7 @@
 import '@solana/wallet-adapter-react-ui/styles.css'
 
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useGamesQuery, useTriviaQuery } from './api/query'
 import { ConnectionStatus } from './components/ConnectionStatus'
@@ -22,6 +22,11 @@ export function App() {
     const { data: allGames = [] } = useGamesQuery(gameIds)
 
     const [currentGame, setCurrentGame] = useState<number | null>(null)
+    const lastGameId = totalGames ? totalGames - 1 : null
+    useEffect(() => {
+        setCurrentGame((prev) => (prev == null ? lastGameId : prev))
+    }, [lastGameId])
+
     const selectedGame = allGames[currentGame!] || null
 
     return (
@@ -33,7 +38,9 @@ export function App() {
 
             <section>
                 <h2>Create new game</h2>
-                {wallet.connected ? <CreateGameForm gameId={trivia?.gamesCounter || 0} /> : null}
+                {wallet.connected ? (
+                    <CreateGameForm gameId={totalGames || 0} onSuccess={() => setCurrentGame(totalGames || 0)} />
+                ) : null}
             </section>
 
             <section>

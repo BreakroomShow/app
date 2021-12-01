@@ -1,11 +1,11 @@
 import * as anchor from '@project-serum/anchor'
 import { CreateGameOptions } from 'clic-trivia'
-import { EditGameEvent } from 'clic-trivia/types/index'
+import { EditGameEvent, RevealQuestionEvent } from 'clic-trivia/types/index'
 import { useMutation } from 'react-query'
 
 import { msToBn } from '../utils/date'
 import { sha256 } from '../utils/sha256'
-import { cacheKeys, noopPda, queryClient, useGamePda, useProgram, useTriviaPda } from './query'
+import { cacheKeys, queryClient, useGamePdaFor, useProgram, useTriviaPda } from './query'
 import * as storage from './storage'
 
 interface GameOptions {
@@ -14,8 +14,7 @@ interface GameOptions {
 }
 
 export function useCreateGame(gameIndex: number) {
-    const [pdaResult] = useGamePda([gameIndex])
-    const [gamePda, gameBump] = pdaResult || noopPda
+    const [gamePda, gameBump] = useGamePdaFor(gameIndex)
     const [program, userPublicKey] = useProgram()
     const [triviaPda] = useTriviaPda()
 
@@ -49,8 +48,7 @@ export function useCreateGame(gameIndex: number) {
 }
 
 export function useEditGame(gameIndex: number) {
-    const [pdaResult] = useGamePda([gameIndex])
-    const [gamePda] = pdaResult || noopPda
+    const [gamePda] = useGamePdaFor(gameIndex)
     const [program, userPublicKey] = useProgram()
     const [triviaPda] = useTriviaPda()
 
@@ -66,10 +64,9 @@ export function useEditGame(gameIndex: number) {
             }
 
             return new Promise<EditGameEvent>((resolve) => {
-                const listener = program.addEventListener('EditGameEvent', (event: EditGameEvent) => {
-                    program.removeEventListener(listener).then(() => {
-                        resolve(event)
-                    })
+                const listener = program.addEventListener('EditGameEvent', async (event: EditGameEvent) => {
+                    await program.removeEventListener(listener)
+                    resolve(event)
                 })
 
                 program.rpc.editGame(options, {
@@ -88,24 +85,23 @@ export function useEditGame(gameIndex: number) {
     )
 }
 
-export interface AddQuestionOptions {
+export interface StoredQuestionData {
     name: string
     variants: string[]
 }
 
 export function useAddQuestion(gameIndex: number) {
-    const [pdaResult] = useGamePda([gameIndex])
-    const [gamePda] = pdaResult || noopPda
+    const [gamePda] = useGamePdaFor(gameIndex)
     const [program, userPublicKey] = useProgram()
 
     return useMutation(
-        async ({ name, variants }: AddQuestionOptions) => {
+        async ({ name, variants }: StoredQuestionData) => {
             if (!gamePda) return
             if (!program || !userPublicKey) return
 
+            const time = 10 // 10 seconds
             const encodedName = sha256(name)
             const encodedVariants = variants.map((v) => sha256(name, v))
-            const time = 10 // 10 seconds
             const questionKeypair = anchor.web3.Keypair.generate()
             const publicKey = questionKeypair.publicKey
 
@@ -132,16 +128,15 @@ export function useAddQuestion(gameIndex: number) {
 }
 
 export function useRemoveQuestion(gameIndex: number) {
-    const [pdaResult] = useGamePda([gameIndex])
-    const [gamePda] = pdaResult || noopPda
+    const [gamePda] = useGamePdaFor(gameIndex)
     const [program, userPublicKey] = useProgram()
 
     return useMutation(
-        async (questionPublicKey: anchor.web3.PublicKey) => {
+        async (questionKey: anchor.web3.PublicKey) => {
             if (!gamePda) return
             if (!program || !userPublicKey) return
 
-            return program.rpc.removeQuestion(questionPublicKey, {
+            return program.rpc.removeQuestion(questionKey, {
                 accounts: {
                     game: gamePda,
                     authority: userPublicKey,
@@ -152,6 +147,74 @@ export function useRemoveQuestion(gameIndex: number) {
             onSuccess() {
                 queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
                 queryClient.invalidateQueries([cacheKeys.questions, gameIndex])
+            },
+        },
+    )
+}
+
+interface RevealQuestionOptions extends StoredQuestionData {
+    questionKey: anchor.web3.PublicKey
+}
+
+export function useRevealQuestion(gameIndex: number) {
+    const [gamePda] = useGamePdaFor(gameIndex)
+    const [program, userPublicKey] = useProgram()
+
+    return useMutation(
+        async ({ questionKey, name, variants }: RevealQuestionOptions) => {
+            if (!gamePda) return
+            if (!program || !userPublicKey) return
+
+            return new Promise<RevealQuestionEvent>((resolve) => {
+                const listener = program.addEventListener('RevealQuestionEvent', async (event: RevealQuestionEvent) => {
+                    await program.removeEventListener(listener)
+                    resolve(event)
+                })
+
+                program.rpc.revealQuestion(name, variants, {
+                    accounts: {
+                        question: questionKey,
+                        game: gamePda,
+                        authority: userPublicKey,
+                    },
+                })
+            })
+        },
+        {
+            onSuccess() {
+                queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
+                queryClient.invalidateQueries([cacheKeys.questions, gameIndex])
+            },
+        },
+    )
+}
+
+export function useStartGame(gameIndex: number) {
+    const [gamePda] = useGamePdaFor(gameIndex)
+    const [program, userPublicKey] = useProgram()
+
+    return useMutation(
+        async () => {
+            if (!gamePda) return
+            if (!program || !userPublicKey) return
+
+            return new Promise<EditGameEvent>((resolve) => {
+                const listener = program.addEventListener('EditGameEvent', async (event: EditGameEvent) => {
+                    await program.removeEventListener(listener)
+                    resolve(event)
+                })
+
+                program.rpc.startGame({
+                    accounts: {
+                        game: gamePda,
+                        authority: userPublicKey,
+                    },
+                })
+            })
+        },
+        {
+            onSuccess() {
+                return queryClient.invalidateQueries(cacheKeys.games) // TODO query games separately
             },
         },
     )
