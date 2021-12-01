@@ -5,10 +5,12 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
+        "replace-trivia-source": "node scripts/replace-trivia-source.js",
         "prettify": "eslint --fix '**/*.{tsx,jsx,js,ts}'; prettier --write \"**/*.{tsx,jsx,js,ts,scss,css}\""
     },
     "dependencies": {
         "@project-serum/anchor": "0.18.2",
+        "@solana/wallet-adapter-base": "^0.7.0",
         "@solana/wallet-adapter-react": "^0.13.1",
         "@solana/wallet-adapter-react-ui": "^0.6.1",
         "@solana/wallet-adapter-wallets": "^0.11.3",
