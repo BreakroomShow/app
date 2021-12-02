@@ -2,6 +2,9 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { PublicKey } from '@solana/web3.js'
 
+import { config } from '../config'
+import { useCluster } from '../containers/ConnectProvider'
+
 function Wallet({ children }: { children: PublicKey | null }) {
     const value = String(children)
 
@@ -32,7 +35,27 @@ function DisconnectedApp() {
 
 export function ConnectionStatus() {
     const wallet = useWallet()
-    if (wallet.connected) return <ConnectedApp />
-    if (wallet.connecting) return null
-    return <DisconnectedApp />
+
+    const [cluster, setCluster] = useCluster()
+
+    const content = (() => {
+        if (wallet.connected) return <ConnectedApp />
+        if (wallet.connecting) return null
+        return <DisconnectedApp />
+    })()
+
+    return (
+        <div>
+            <div style={{ padding: '5px 0' }}>
+                <select value={cluster} onChange={(e) => setCluster(e.target.value as config.Cluster)}>
+                    {config.clusters.map((c) => (
+                        <option key={c} value={c}>
+                            {c}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            {content}
+        </div>
+    )
 }

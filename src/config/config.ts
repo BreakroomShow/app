@@ -7,6 +7,9 @@ export const preflightCommitment = 'processed'
 export const programID = new solana.PublicKey(idl.metadata.address)
 export const wallets = [getPhantomWallet()]
 
-const devnet = solana.clusterApiUrl('devnet')
+export type Cluster = solana.Cluster
 
-export const network = devnet
+export const clusters: solana.Cluster[] = ['mainnet-beta', 'testnet', 'devnet']
+export function clusterUrl(cluster: solana.Cluster) {
+    return solana.clusterApiUrl(cluster)
+}

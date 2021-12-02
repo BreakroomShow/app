@@ -3,13 +3,15 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { Answer, Game, GamePDA, PlayerPDA, Question, TriviaIdl, TriviaPDA } from 'clic-trivia'
 import { QueryClient, useQuery } from 'react-query'
 
-import { programID, triviaIdl } from '../config'
+import { programID, triviaIdl } from '../config/config'
+import { useCluster } from '../containers/ConnectProvider'
 import { ProgramError } from '../utils/error'
 
 export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             staleTime: Infinity, // TODO consider inlining it
+            retry: 0,
         },
     },
 })
@@ -41,8 +43,9 @@ const unauthorizedWallet: anchor.Provider['wallet'] = {
 export function useProvider() {
     const walletCtx = useWallet()
     const { connection } = useConnection()
+    const [cluster] = useCluster()
 
-    const provider = useQuery([cacheKeys.provider, walletCtx.publicKey], () => {
+    const provider = useQuery([cacheKeys.provider, walletCtx.publicKey, cluster], () => {
         let wallet = unauthorizedWallet
 
         if (walletCtx.publicKey && walletCtx.signTransaction && walletCtx.signAllTransactions) {
@@ -56,15 +59,17 @@ export function useProvider() {
         return new anchor.Provider(connection, wallet, { preflightCommitment: connection.commitment })
     }).data
 
-    return [provider, provider?.wallet.publicKey] as const
+    const sessionCacheKey = `${cluster}${provider?.wallet?.publicKey}${!!provider}`
+
+    return [provider, sessionCacheKey] as const
 }
 
 export function useProgram() {
-    const [provider, userPublicKey] = useProvider()
+    const [provider, sessionCacheKey] = useProvider()
 
     return [
         useQuery(
-            [cacheKeys.program, userPublicKey],
+            [cacheKeys.program, sessionCacheKey],
             () => {
                 if (!provider) return
 
@@ -72,7 +77,7 @@ export function useProgram() {
             },
             { enabled: !!provider },
         ).data,
-        userPublicKey,
+        sessionCacheKey,
     ] as const
 }
 
@@ -99,24 +104,24 @@ export function useGamePdaFor(gameIndex: number) {
 
 export function usePlayerPda() {
     const [triviaPda] = useTriviaPda()
-    const [, userPublicKey] = useProvider()
+    const wallet = useWallet()
 
     return (
-        useQuery([cacheKeys.playerPda, userPublicKey, triviaPda], () => {
+        useQuery([cacheKeys.playerPda, wallet.publicKey, triviaPda], () => {
             if (!triviaPda) return
-            if (!userPublicKey) return
+            if (!wallet.publicKey) return
 
-            return PlayerPDA(programID, triviaPda, userPublicKey)
+            return PlayerPDA(programID, triviaPda, wallet.publicKey)
         }).data || noopPda
     )
 }
 
 export function useTriviaQuery() {
     const [triviaPda] = useTriviaPda()
-    const [program, userPublicKey] = useProgram()
+    const [program, sessionCacheKey] = useProgram()
 
     return useQuery(
-        [cacheKeys.trivia, triviaPda, userPublicKey],
+        [cacheKeys.trivia, triviaPda, sessionCacheKey],
         () => {
             if (!triviaPda) return
             if (!program) return
@@ -131,12 +136,12 @@ export function useTriviaQuery() {
 }
 
 export function useGamesQuery(gameIndices: number[]) {
-    const [program, userPublicKey] = useProgram()
+    const [program, sessionCacheKey] = useProgram()
     const results = useGamePda(gameIndices)
     const gamePDAs = results.map(([gamePda]) => gamePda)
 
     return useQuery(
-        [cacheKeys.games, gameIndices, gamePDAs, userPublicKey],
+        [cacheKeys.games, gameIndices, gamePDAs, sessionCacheKey],
         () => {
             if (!program) return
 
@@ -153,10 +158,10 @@ export function useQuestionsQuery(
     gameIndex: number /* is used to invalidate questions only for the exact game */,
     questionKeys: anchor.web3.PublicKey[],
 ) {
-    const [program] = useProgram()
+    const [program, sessionCacheKey] = useProgram()
 
     return useQuery(
-        [cacheKeys.questions, gameIndex, questionKeys],
+        [cacheKeys.questions, gameIndex, questionKeys, sessionCacheKey],
         () => {
             if (!program) return
 
@@ -175,10 +180,10 @@ export function useAnswersQuery(
     gameIndex: number /* is used to invalidate answers only for the exact game */,
     questionAnswerKeys: anchor.web3.PublicKey[][],
 ) {
-    const [program] = useProgram()
+    const [program, sessionCacheKey] = useProgram()
 
     return useQuery(
-        [cacheKeys.answers, gameIndex, questionAnswerKeys],
+        [cacheKeys.answers, gameIndex, questionAnswerKeys, sessionCacheKey],
         () => {
             if (!program) return
 

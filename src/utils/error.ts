@@ -1,8 +1,8 @@
 import * as anchor from '@project-serum/anchor'
 
-import { triviaIdl } from '../config'
+import { config } from '../config'
 
-type ProgramErrorName = typeof triviaIdl['errors'] extends Array<infer Error>
+type ProgramErrorName = typeof config.triviaIdl['errors'] extends Array<infer Error>
     ? Error extends { name: string }
         ? Error['name']
         : never
@@ -10,7 +10,7 @@ type ProgramErrorName = typeof triviaIdl['errors'] extends Array<infer Error>
 
 export class ProgramError extends anchor.ProgramError {
     constructor(name: ProgramErrorName) {
-        const error = triviaIdl.errors.find((err) => err.name === name)
+        const error = config.triviaIdl.errors.find((err) => err.name === name)
 
         if (error) {
             super(error.code, error.msg)
