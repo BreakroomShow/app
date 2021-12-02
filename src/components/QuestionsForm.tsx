@@ -7,7 +7,6 @@ import * as storage from '../api/storage'
 import { StoredQuestionData } from '../api/types'
 import { useNonce } from '../hooks/useNonce'
 import { bnToLocaleString, bnToMs } from '../utils/date'
-import { logError } from '../utils/logError'
 
 interface QuestionsFormProps {
     gameId: number
@@ -40,13 +39,13 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
             {questions.map((question, index) => {
                 const questionKey = questionKeys[index]
 
-                const error = (
-                    <div key={index}>
-                        <span style={{ color: 'crimson' }}>Q{index + 1}: question is corrupted</span>
-                    </div>
-                )
-
-                if (!questionKey) return error
+                if (!questionKey) {
+                    return (
+                        <div key={index}>
+                            <span style={{ color: 'crimson' }}>Q{index + 1}: questionPublicKey not found</span>
+                        </div>
+                    )
+                }
 
                 const isQuestionRevealed = !!question.revealedQuestion
                 let isReadyToReveal = false
@@ -64,10 +63,13 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
                 } else if (storedQuestion) {
                     questionData = { ...storedQuestion }
                 } else {
-                    logError(
-                        `Question #${index + 1} of game #${gameId + 1} is not revealed and no stored data was found`,
+                    return (
+                        <div key={index}>
+                            <span style={{ color: 'crimson' }}>
+                                Q{index + 1}: not revealed and no stored data found
+                            </span>
+                        </div>
                     )
-                    return error
                 }
 
                 return (
@@ -85,11 +87,11 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
                             </p>
                             <ul>
                                 {questionData.variants.map((v, i) => {
-                                    const isAnswerRevealed = !!question.revealedQuestion?.answerVariantId
+                                    const isAnswerRevealed = question.revealedQuestion?.answerVariantId != null
                                     const isCorrect = question.revealedQuestion?.answerVariantId === i
 
                                     return (
-                                        <li key={v} style={isCorrect ? { color: 'limegreen', fontWeight: 'bold' } : {}}>
+                                        <li key={i} style={isCorrect ? { color: 'limegreen', fontWeight: 'bold' } : {}}>
                                             {v}{' '}
                                             {isQuestionRevealed && isReadyToReveal && !isAnswerRevealed ? (
                                                 <button

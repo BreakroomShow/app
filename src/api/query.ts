@@ -1,10 +1,10 @@
 import * as anchor from '@project-serum/anchor'
-import { useWallet } from '@solana/wallet-adapter-react'
-import * as solana from '@solana/web3.js'
+import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { Answer, Game, GamePDA, PlayerPDA, Question, TriviaIdl, TriviaPDA } from 'clic-trivia'
 import { QueryClient, useQuery } from 'react-query'
 
-import { network, preflightCommitment, programID, triviaIdl } from '../config'
+import { programID, triviaIdl } from '../config'
+import { ProgramError } from '../utils/error'
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -28,15 +28,32 @@ export const cacheKeys = {
 
 const noopPda = [null, null] as const
 
-export function useProvider() {
-    const wallet = useWallet()
+const unauthorizedWallet: anchor.Provider['wallet'] = {
+    publicKey: undefined!,
+    signTransaction() {
+        throw new ProgramError('Unauthorized')
+    },
+    signAllTransactions() {
+        throw new ProgramError('Unauthorized')
+    },
+}
 
-    const provider = useQuery([cacheKeys.provider, wallet.publicKey], () => {
-        return new anchor.Provider(
-            new solana.Connection(network, preflightCommitment),
-            wallet as unknown as anchor.Wallet,
-            { preflightCommitment },
-        )
+export function useProvider() {
+    const walletCtx = useWallet()
+    const { connection } = useConnection()
+
+    const provider = useQuery([cacheKeys.provider, walletCtx.publicKey], () => {
+        let wallet = unauthorizedWallet
+
+        if (walletCtx.publicKey && walletCtx.signTransaction && walletCtx.signAllTransactions) {
+            wallet = {
+                publicKey: walletCtx.publicKey,
+                signTransaction: walletCtx.signTransaction,
+                signAllTransactions: walletCtx.signAllTransactions,
+            }
+        }
+
+        return new anchor.Provider(connection, wallet, { preflightCommitment: connection.commitment })
     }).data
 
     return [provider, provider?.wallet.publicKey] as const
@@ -106,7 +123,10 @@ export function useTriviaQuery() {
 
             return program.account.trivia.fetch(triviaPda)
         },
-        { enabled: !!program },
+        {
+            enabled: !!program,
+            keepPreviousData: true,
+        },
     )
 }
 
@@ -122,7 +142,10 @@ export function useGamesQuery(gameIndices: number[]) {
 
             return Promise.all(gamePDAs.map((gamePda) => program.account.game.fetch(gamePda) as Promise<Game>))
         },
-        { enabled: !!program },
+        {
+            enabled: !!program,
+            keepPreviousData: true,
+        },
     )
 }
 
@@ -141,7 +164,10 @@ export function useQuestionsQuery(
                 questionKeys.map((questionKey) => program.account.question.fetch(questionKey) as Promise<Question>),
             )
         },
-        { enabled: !!program },
+        {
+            enabled: !!program,
+            keepPreviousData: true,
+        },
     )
 }
 

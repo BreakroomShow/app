@@ -6,7 +6,7 @@ import * as config from '../config'
 
 export function ConnectProvider({ children }: { children: ReactNode }) {
     return (
-        <ConnectionProvider endpoint={config.network}>
+        <ConnectionProvider endpoint={config.network} config={{ commitment: config.preflightCommitment }}>
             <WalletProvider wallets={config.wallets} autoConnect>
                 <WalletModalProvider>{children}</WalletModalProvider>
             </WalletProvider>
