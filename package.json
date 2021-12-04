@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
+        "preinstall": "npm run replace-trivia-source",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "replace-trivia-source": "node scripts/replace-trivia-source.js",
