@@ -2,9 +2,11 @@ import * as anchor from '@project-serum/anchor'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { Answer, Game, GamePDA, PlayerPDA, Question, TriviaIdl, TriviaPDA } from 'clic-trivia'
 import { QueryClient, useQuery } from 'react-query'
+import axios from 'redaxios'
 
 import { programID, triviaIdl } from '../config/config'
 import { useCluster } from '../containers/ConnectProvider'
+import { UnrevealedQuestion } from '../types'
 import { ProgramError } from '../utils/error'
 
 export const queryClient = new QueryClient({
@@ -26,6 +28,7 @@ export const cacheKeys = {
     games: 'games',
     questions: 'questions',
     answers: 'answers',
+    unrevealedQuestions: 'unrevealedQuestions',
 } as const
 
 const noopPda = [null, null] as const
@@ -199,4 +202,22 @@ export function useAnswersQuery(
         },
         { enabled: !!program },
     )
+}
+
+export function useUnrevealedQuestionsQuery(questionKeys: string[]) {
+    return useQuery([cacheKeys.unrevealedQuestions, questionKeys], async () => {
+        const result: { [publicKey in UnrevealedQuestion['publicKey']]?: UnrevealedQuestion } = {}
+
+        if (!questionKeys.length) return result
+
+        const { data: questions } = await axios<UnrevealedQuestion[]>('/api/unrevealed-questions', {
+            params: { questionKeys },
+        })
+
+        questions.forEach((question) => {
+            result[question.publicKey] = question
+        })
+
+        return result
+    })
 }

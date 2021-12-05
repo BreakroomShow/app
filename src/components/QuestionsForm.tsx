@@ -1,11 +1,9 @@
 import { Game } from 'clic-trivia'
-import { useMemo } from 'react'
 
 import { useRemoveQuestion, useRevealAnswer, useRevealQuestion } from '../api/mutations'
-import { useQuestionsQuery } from '../api/query'
-import * as storage from '../api/storage'
-import { StoredQuestionData } from '../api/types'
+import { useQuestionsQuery, useUnrevealedQuestionsQuery } from '../api/query'
 import { useNonce } from '../hooks/useNonce'
+import { StoredQuestionData } from '../types'
 import { bnToLocaleString, bnToMs } from '../utils/date'
 
 interface QuestionsFormProps {
@@ -17,16 +15,13 @@ interface QuestionsFormProps {
 export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFormProps) {
     const { data: questions = [], isLoading } = useQuestionsQuery(gameId, questionKeys)
 
+    const { data: unrevealedQuestions = {} } = useUnrevealedQuestionsQuery(
+        questionKeys.map((questionKey) => questionKey.toString()),
+    )
+
     const revealQuestionMutation = useRevealQuestion(gameId)
     const removeQuestionMutation = useRemoveQuestion(gameId)
     const revealAnswerMutation = useRevealAnswer(gameId)
-
-    const questionsData = useMemo(() => {
-        return questions.map((_, index) => {
-            const questionKey = questionKeys[index]
-            return questionKey ? storage.get<StoredQuestionData>(questionKey.toString()) : null
-        })
-    }, [questionKeys, questions])
 
     const nonce = useNonce()
 
@@ -50,7 +45,8 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
                 const isQuestionRevealed = !!question.revealedQuestion
                 let isReadyToReveal = false
 
-                const storedQuestion = questionsData[index]
+                const unrevealedQuestion = unrevealedQuestions[questionKey.toString()]
+
                 let questionData: StoredQuestionData
 
                 if (question.revealedQuestion) {
@@ -60,8 +56,11 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
                         name: question.revealedQuestion.question,
                         variants: question.revealedQuestion.variants,
                     }
-                } else if (storedQuestion) {
-                    questionData = { ...storedQuestion }
+                } else if (unrevealedQuestion) {
+                    questionData = {
+                        name: unrevealedQuestion.name,
+                        variants: unrevealedQuestion.variants,
+                    }
                 } else {
                     return (
                         <div key={index}>

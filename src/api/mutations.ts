@@ -1,13 +1,13 @@
 import * as anchor from '@project-serum/anchor'
-import { CreateGameOptions } from 'clic-trivia'
-import { EditGameEvent, RevealAnswerEvent, RevealQuestionEvent } from 'clic-trivia/types/index'
+import { CreateGameOptions, EditGameEvent, RevealAnswerEvent, RevealQuestionEvent } from 'clic-trivia'
+import { useRef } from 'react'
 import { useMutation } from 'react-query'
+import axios from 'redaxios'
 
+import { GameOptions, StoredQuestionData } from '../types'
 import { msToBn, secToBn } from '../utils/date'
 import { sha256 } from '../utils/sha256'
 import { cacheKeys, queryClient, useGamePdaFor, useProgram, useTriviaPda } from './query'
-import * as storage from './storage'
-import { GameOptions, StoredQuestionData } from './types'
 
 export function useCreateGame(gameIndex: number) {
     const [gamePda, gameBump] = useGamePdaFor(gameIndex)
@@ -89,6 +89,8 @@ export function useAddQuestion(gameIndex: number) {
     const [gamePda] = useGamePdaFor(gameIndex)
     const [program, userPublicKey] = useProgram()
 
+    const questionPublicKeyRef = useRef<string | null>(null)
+
     return useMutation(
         async ({ name, variants, time }: AddQuestionOptions) => {
             if (!gamePda) return
@@ -99,9 +101,16 @@ export function useAddQuestion(gameIndex: number) {
             const encodedVariants = variants.map((v) => sha256(name, v))
             const questionKeypair = anchor.web3.Keypair.generate()
             const publicKey = questionKeypair.publicKey
+            const questionPublicKey = publicKey.toString()
 
-            // save to local storage so we can reveal them later
-            storage.set(publicKey.toString(), { name, variants })
+            // save to db so we can reveal them later
+            await axios.post('/api/unrevealed-questions', {
+                publicKey: questionPublicKey,
+                name,
+                variants,
+            })
+
+            questionPublicKeyRef.current = questionPublicKey
 
             return program.rpc.addQuestion(encodedName, encodedVariants, timeBn, {
                 accounts: {
@@ -118,7 +127,16 @@ export function useAddQuestion(gameIndex: number) {
                 return Promise.all([
                     queryClient.invalidateQueries(cacheKeys.games), // TODO query games separately
                     queryClient.invalidateQueries([cacheKeys.questions, gameIndex]),
+                    queryClient.invalidateQueries(cacheKeys.unrevealedQuestions),
                 ])
+            },
+            onError() {
+                if (!questionPublicKeyRef.current) return
+
+                // delete from db if can't add
+                return axios.delete('/api/unrevealed-questions', {
+                    params: { questionKey: questionPublicKeyRef.current },
+                })
             },
         },
     )

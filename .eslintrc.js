@@ -37,6 +37,7 @@ module.exports = {
 
         'import/extensions': 'off',
         'import/prefer-default-export': 'off',
+        'import/no-extraneous-dependencies': ['error', { optionalDependencies: true }],
 
         'react/prop-types': 'off',
         'react/button-has-type': 'off',
@@ -59,7 +60,7 @@ module.exports = {
 
         '@typescript-eslint/no-shadow': 'error',
         '@typescript-eslint/no-redeclare': 'error',
-        '@typescript-eslint/no-use-before-define': 'error',
+        '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
     },
     settings: {
         'import/resolver': { node: { extensions: ['.ts', '.js', '.tsx', '.jsx'] } },

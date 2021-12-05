@@ -3,10 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "preinstall": "npm run replace-trivia-source",
-        "start": "react-scripts start",
+        "vercel:install": "node scripts/replace-trivia-source.js && npm i",
+        "start": "vercel dev",
         "build": "react-scripts build",
-        "replace-trivia-source": "node scripts/replace-trivia-source.js",
         "prettify": "eslint --fix '**/*.{tsx,jsx,js,ts}'; prettier --write \"**/*.{tsx,jsx,js,ts,scss,css}\""
     },
     "dependencies": {
@@ -16,6 +15,7 @@
         "@solana/wallet-adapter-react-ui": "^0.6.1",
         "@solana/wallet-adapter-wallets": "^0.11.3",
         "@solana/web3.js": "^1.31.0",
+        "@supabase/supabase-js": "^1.28.5",
         "@types/eslint": "^8.2.0",
         "@types/eslint-plugin-prettier": "^3.1.0",
         "@types/node": "^12.20.37",
@@ -23,7 +23,7 @@
         "@types/react-dom": "^17.0.11",
         "@typescript-eslint/eslint-plugin": "^5.4.0",
         "@typescript-eslint/parser": "^5.4.0",
-        "clic-trivia": "github:Solana-Game/clic-trivia#c9f4b7fa10f5d430220aa2c3bedd1515cec89770",
+        "@vercel/node": "^1.12.1",
         "eslint": "^7.32.0",
         "eslint-config-airbnb": "^19.0.1",
         "eslint-config-prettier": "^8.3.0",
@@ -33,17 +33,22 @@
         "eslint-plugin-prettier": "^4.0.0",
         "eslint-plugin-react": "^7.27.1",
         "eslint-plugin-react-hooks": "^4.3.0",
+        "joi": "^17.5.0",
         "js-sha256": "^0.9.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-query": "^3.33.7",
         "react-scripts": "4.0.3",
+        "redaxios": "^0.4.1",
         "typescript": "^4.5.2"
     },
     "devDependencies": {
         "import-sort-style-module": "6.0.0",
         "prettier": "^2.5.0",
         "prettier-plugin-import-sort": "0.0.7"
+    },
+    "optionalDependencies": {
+        "clic-trivia": "github:Solana-Game/clic-trivia#c9f4b7fa10f5d430220aa2c3bedd1515cec89770"
     },
     "eslintConfig": {
         "extends": [
