@@ -1,7 +1,6 @@
-import { Game } from 'clic-trivia'
-
 import { useEditGame, useStartGame } from '../api/mutations'
 import { useNonce } from '../hooks/useNonce'
+import { Game } from '../types'
 import { bnToMs, bnToTimezoneDateString } from '../utils/date'
 import { AddQuestionForm } from './AddQuestionForm'
 import { GameForm } from './GameForm'

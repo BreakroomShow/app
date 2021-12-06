@@ -1,12 +1,12 @@
 import * as anchor from '@project-serum/anchor'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
-import { Answer, Game, GamePDA, PlayerPDA, Question, TriviaIdl, TriviaPDA } from 'clic-trivia'
+import * as trivia from 'clic-trivia'
 import { QueryClient, useQuery } from 'react-query'
 import axios from 'redaxios'
 
-import { programID, triviaIdl } from '../config/config'
+import { config } from '../config'
 import { useCluster } from '../containers/ConnectProvider'
-import { UnrevealedQuestion } from '../types'
+import { Game, Question, UnrevealedQuestion } from '../types'
 import { ProgramError } from '../utils/error'
 
 export const queryClient = new QueryClient({
@@ -14,6 +14,13 @@ export const queryClient = new QueryClient({
         queries: {
             staleTime: Infinity, // TODO consider inlining it
             retry: 0,
+        },
+        mutations: {
+            onSettled: (_, err) => {
+                // TODO graceful errors
+                // eslint-disable-next-line no-alert
+                if (err) alert(JSON.stringify(err, null, 2))
+            },
         },
     },
 })
@@ -41,6 +48,10 @@ const unauthorizedWallet: anchor.Provider['wallet'] = {
     signAllTransactions() {
         throw new ProgramError('Unauthorized')
     },
+}
+
+export function useWalletPublicKey() {
+    return useWallet().publicKey
 }
 
 export function useProvider() {
@@ -76,7 +87,7 @@ export function useProgram() {
             () => {
                 if (!provider) return
 
-                return new anchor.Program<TriviaIdl>(triviaIdl, programID, provider)
+                return new anchor.Program(config.triviaIdl, config.programID, provider)
             },
             { enabled: !!provider },
         ).data,
@@ -85,7 +96,7 @@ export function useProgram() {
 }
 
 export function useTriviaPda() {
-    return useQuery([cacheKeys.triviaPda], () => TriviaPDA(programID)).data || noopPda
+    return useQuery([cacheKeys.triviaPda], () => trivia.TriviaPDA(config.programID)).data || noopPda
 }
 
 export function useGamePda(gameIndices: number[]) {
@@ -95,7 +106,7 @@ export function useGamePda(gameIndices: number[]) {
         useQuery([cacheKeys.gamePda, gameIndices, triviaPda], () => {
             if (!triviaPda) return
 
-            return Promise.all(gameIndices.map((gameIndex) => GamePDA(programID, triviaPda, gameIndex)))
+            return Promise.all(gameIndices.map((gameIndex) => trivia.GamePDA(config.programID, triviaPda, gameIndex)))
         }).data || []
     )
 }
@@ -107,29 +118,50 @@ export function useGamePdaFor(gameIndex: number) {
 
 export function usePlayerPda() {
     const [triviaPda] = useTriviaPda()
-    const wallet = useWallet()
+    const walletPublicKey = useWalletPublicKey()
 
     return (
-        useQuery([cacheKeys.playerPda, wallet.publicKey, triviaPda], () => {
+        useQuery([cacheKeys.playerPda, walletPublicKey, triviaPda], () => {
             if (!triviaPda) return
-            if (!wallet.publicKey) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            return PlayerPDA(programID, triviaPda, wallet.publicKey)
+            return trivia.PlayerPDA(config.programID, triviaPda, walletPublicKey)
         }).data || noopPda
     )
 }
 
 export function useTriviaQuery() {
-    const [triviaPda] = useTriviaPda()
+    const [triviaPda, triviaBump] = useTriviaPda()
     const [program, sessionCacheKey] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
 
     return useQuery(
         [cacheKeys.trivia, triviaPda, sessionCacheKey],
         () => {
-            if (!triviaPda) return
+            if (!triviaPda || !triviaBump) return
             if (!program) return
 
-            return program.account.trivia.fetch(triviaPda)
+            const initializeTrivia = () => {
+                if (!walletPublicKey) throw new ProgramError('Unauthorized')
+
+                return program.rpc.initialize(triviaBump, {
+                    accounts: {
+                        trivia: triviaPda,
+                        authority: walletPublicKey,
+                        systemProgram: anchor.web3.SystemProgram.programId,
+                    },
+                })
+            }
+
+            const fetchTrivia = () => program.account.trivia.fetch(triviaPda)
+
+            return fetchTrivia().catch((err) => {
+                if (err?.message.includes('Account does not exist')) {
+                    return initializeTrivia().then(fetchTrivia)
+                }
+
+                throw err
+            })
         },
         {
             enabled: !!program,
@@ -176,31 +208,6 @@ export function useQuestionsQuery(
             enabled: !!program,
             keepPreviousData: true,
         },
-    )
-}
-
-export function useAnswersQuery(
-    gameIndex: number /* is used to invalidate answers only for the exact game */,
-    questionAnswerKeys: anchor.web3.PublicKey[][],
-) {
-    const [program, sessionCacheKey] = useProgram()
-
-    return useQuery(
-        [cacheKeys.answers, gameIndex, questionAnswerKeys, sessionCacheKey],
-        () => {
-            if (!program) return
-
-            return Promise.all(
-                questionAnswerKeys.map((answerKeys) => {
-                    return Promise.all(
-                        answerKeys.map((answerKey) => {
-                            return program.account.answer.fetch(answerKey) as Promise<Answer>
-                        }),
-                    )
-                }),
-            )
-        },
-        { enabled: !!program },
     )
 }
 

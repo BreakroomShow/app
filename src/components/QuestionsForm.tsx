@@ -1,9 +1,7 @@
-import { Game } from 'clic-trivia'
-
 import { useRemoveQuestion, useRevealAnswer, useRevealQuestion } from '../api/mutations'
 import { useQuestionsQuery, useUnrevealedQuestionsQuery } from '../api/query'
 import { useNonce } from '../hooks/useNonce'
-import { StoredQuestionData } from '../types'
+import { Game, StoredQuestionData } from '../types'
 import { bnToLocaleString, bnToMs } from '../utils/date'
 
 interface QuestionsFormProps {
@@ -13,10 +11,12 @@ interface QuestionsFormProps {
 }
 
 export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFormProps) {
-    const { data: questions = [], isLoading } = useQuestionsQuery(gameId, questionKeys)
+    const nonNullableQuestionKeys = questionKeys.filter((key): key is NonNullable<typeof key> => !!key)
 
-    const { data: unrevealedQuestions = {} } = useUnrevealedQuestionsQuery(
-        questionKeys.map((questionKey) => questionKey.toString()),
+    const { data: questions = [], isLoading } = useQuestionsQuery(gameId, nonNullableQuestionKeys)
+
+    const { data: unrevealedQuestions = {}, isLoading: isUnrevealedQuestionLoading } = useUnrevealedQuestionsQuery(
+        nonNullableQuestionKeys.map((questionKey) => questionKey.toString()),
     )
 
     const revealQuestionMutation = useRevealQuestion(gameId)
@@ -61,6 +61,12 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
                         name: unrevealedQuestion.name,
                         variants: unrevealedQuestion.variants,
                     }
+                } else if (isUnrevealedQuestionLoading) {
+                    return (
+                        <div key={index} style={{ height: 120 }}>
+                            <span>Q{index + 1}: Loading ...</span>
+                        </div>
+                    )
                 } else {
                     return (
                         <div key={index}>

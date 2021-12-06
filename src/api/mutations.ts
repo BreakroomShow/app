@@ -1,26 +1,29 @@
 import * as anchor from '@project-serum/anchor'
-import { CreateGameOptions, EditGameEvent, RevealAnswerEvent, RevealQuestionEvent } from 'clic-trivia'
+import * as trivia from 'clic-trivia'
 import { useRef } from 'react'
 import { useMutation } from 'react-query'
 import axios from 'redaxios'
 
 import { GameOptions, StoredQuestionData } from '../types'
 import { msToBn, secToBn } from '../utils/date'
+import { ProgramError } from '../utils/error'
 import { sha256 } from '../utils/sha256'
-import { cacheKeys, queryClient, useGamePdaFor, useProgram, useTriviaPda } from './query'
+import { cacheKeys, queryClient, useGamePdaFor, useProgram, useTriviaPda, useWalletPublicKey } from './query'
 
 export function useCreateGame(gameIndex: number) {
     const [gamePda, gameBump] = useGamePdaFor(gameIndex)
-    const [program, userPublicKey] = useProgram()
+    const [program] = useProgram()
     const [triviaPda] = useTriviaPda()
+    const walletPublicKey = useWalletPublicKey()
 
     return useMutation(
         async ({ name, startTime }: GameOptions) => {
             if (!triviaPda) return
             if (!gamePda || !gameBump) return
-            if (!program || !userPublicKey) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            const options: CreateGameOptions = {
+            const options: trivia.CreateGameOptions = {
                 name,
                 startTime: msToBn(startTime),
             }
@@ -29,7 +32,7 @@ export function useCreateGame(gameIndex: number) {
                 accounts: {
                     trivia: triviaPda,
                     game: gamePda,
-                    authority: userPublicKey,
+                    authority: walletPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 },
             })
@@ -45,22 +48,24 @@ export function useCreateGame(gameIndex: number) {
 
 export function useEditGame(gameIndex: number) {
     const [gamePda] = useGamePdaFor(gameIndex)
-    const [program, userPublicKey] = useProgram()
+    const [program] = useProgram()
     const [triviaPda] = useTriviaPda()
+    const walletPublicKey = useWalletPublicKey()
 
     return useMutation(
         async ({ name, startTime }: GameOptions) => {
             if (!triviaPda) return
             if (!gamePda) return
-            if (!program || !userPublicKey) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            const options: CreateGameOptions = {
+            const options: trivia.CreateGameOptions = {
                 name,
                 startTime: msToBn(startTime),
             }
 
-            return new Promise<EditGameEvent>((resolve) => {
-                const listener = program.addEventListener('EditGameEvent', async (event: EditGameEvent) => {
+            return new Promise<trivia.EditGameEvent>((resolve) => {
+                const listener = program.addEventListener('EditGameEvent', async (event: trivia.EditGameEvent) => {
                     await program.removeEventListener(listener)
                     resolve(event)
                 })
@@ -68,7 +73,7 @@ export function useEditGame(gameIndex: number) {
                 program.rpc.editGame(options, {
                     accounts: {
                         game: gamePda,
-                        authority: userPublicKey,
+                        authority: walletPublicKey,
                     },
                 })
             })
@@ -87,14 +92,16 @@ interface AddQuestionOptions extends StoredQuestionData {
 
 export function useAddQuestion(gameIndex: number) {
     const [gamePda] = useGamePdaFor(gameIndex)
-    const [program, userPublicKey] = useProgram()
+    const [program] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
 
     const questionPublicKeyRef = useRef<string | null>(null)
 
     return useMutation(
         async ({ name, variants, time }: AddQuestionOptions) => {
             if (!gamePda) return
-            if (!program || !userPublicKey) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
             const timeBn = secToBn(time)
             const encodedName = sha256(name)
@@ -116,7 +123,7 @@ export function useAddQuestion(gameIndex: number) {
                 accounts: {
                     game: gamePda,
                     question: publicKey,
-                    authority: userPublicKey,
+                    authority: walletPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 },
                 signers: [questionKeypair],
@@ -144,17 +151,19 @@ export function useAddQuestion(gameIndex: number) {
 
 export function useRemoveQuestion(gameIndex: number) {
     const [gamePda] = useGamePdaFor(gameIndex)
-    const [program, userPublicKey] = useProgram()
+    const [program] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
 
     return useMutation(
         async (questionKey: anchor.web3.PublicKey) => {
             if (!gamePda) return
-            if (!program || !userPublicKey) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
             return program.rpc.removeQuestion(questionKey, {
                 accounts: {
                     game: gamePda,
-                    authority: userPublicKey,
+                    authority: walletPublicKey,
                 },
             })
         },
@@ -171,15 +180,17 @@ export function useRemoveQuestion(gameIndex: number) {
 
 export function useStartGame(gameIndex: number) {
     const [gamePda] = useGamePdaFor(gameIndex)
-    const [program, userPublicKey] = useProgram()
+    const [program] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
 
     return useMutation(
         async () => {
             if (!gamePda) return
-            if (!program || !userPublicKey) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            return new Promise<EditGameEvent>((resolve) => {
-                const listener = program.addEventListener('EditGameEvent', async (event: EditGameEvent) => {
+            return new Promise<trivia.EditGameEvent>((resolve) => {
+                const listener = program.addEventListener('EditGameEvent', async (event: trivia.EditGameEvent) => {
                     await program.removeEventListener(listener)
                     resolve(event)
                 })
@@ -187,7 +198,7 @@ export function useStartGame(gameIndex: number) {
                 program.rpc.startGame({
                     accounts: {
                         game: gamePda,
-                        authority: userPublicKey,
+                        authority: walletPublicKey,
                     },
                 })
             })
@@ -206,24 +217,29 @@ interface RevealQuestionOptions extends StoredQuestionData {
 
 export function useRevealQuestion(gameIndex: number) {
     const [gamePda] = useGamePdaFor(gameIndex)
-    const [program, userPublicKey] = useProgram()
+    const [program] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
 
     return useMutation(
         async ({ questionKey, name, variants }: RevealQuestionOptions) => {
             if (!gamePda) return
-            if (!program || !userPublicKey) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            return new Promise<RevealQuestionEvent>((resolve) => {
-                const listener = program.addEventListener('RevealQuestionEvent', async (event: RevealQuestionEvent) => {
-                    await program.removeEventListener(listener)
-                    resolve(event)
-                })
+            return new Promise<trivia.RevealQuestionEvent>((resolve) => {
+                const listener = program.addEventListener(
+                    'RevealQuestionEvent',
+                    async (event: trivia.RevealQuestionEvent) => {
+                        await program.removeEventListener(listener)
+                        resolve(event)
+                    },
+                )
 
                 program.rpc.revealQuestion(name, variants, {
                     accounts: {
                         question: questionKey,
                         game: gamePda,
-                        authority: userPublicKey,
+                        authority: walletPublicKey,
                     },
                 })
             })
@@ -246,24 +262,29 @@ interface RevealAnswerOptions {
 
 export function useRevealAnswer(gameIndex: number) {
     const [gamePda] = useGamePdaFor(gameIndex)
-    const [program, userPublicKey] = useProgram()
+    const [program] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
 
     return useMutation(
         async ({ questionKey, variantId }: RevealAnswerOptions) => {
             if (!gamePda) return
-            if (!program || !userPublicKey) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            return new Promise<RevealAnswerEvent>((resolve) => {
-                const listener = program.addEventListener('RevealAnswerEvent', async (event: RevealAnswerEvent) => {
-                    await program.removeEventListener(listener)
-                    resolve(event)
-                })
+            return new Promise<trivia.RevealAnswerEvent>((resolve) => {
+                const listener = program.addEventListener(
+                    'RevealAnswerEvent',
+                    async (event: trivia.RevealAnswerEvent) => {
+                        await program.removeEventListener(listener)
+                        resolve(event)
+                    },
+                )
 
                 program.rpc.revealAnswer(variantId, {
                     accounts: {
                         question: questionKey,
                         game: gamePda,
-                        authority: userPublicKey,
+                        authority: walletPublicKey,
                     },
                 })
             })

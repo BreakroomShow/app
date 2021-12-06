@@ -48,7 +48,7 @@
         "prettier-plugin-import-sort": "0.0.7"
     },
     "optionalDependencies": {
-        "clic-trivia": "github:Solana-Game/clic-trivia#c9f4b7fa10f5d430220aa2c3bedd1515cec89770"
+        "clic-trivia": "github:Solana-Game/clic-trivia#fd233fb59795411da82042d38a61d0b7927fe2ba"
     },
     "eslintConfig": {
         "extends": [

@@ -4,6 +4,10 @@ import * as joi from 'joi'
 
 import { UnrevealedQuestion } from '../src/types'
 
+if (typeof process.env.SUPABASE_URL === 'undefined' || typeof process.env.SUPABASE_KEY === 'undefined') {
+    throw new Error('Provide SUPABASE_URL and SUPABASE_KEY')
+}
+
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
 
 const GetUnrevealedQuestionParamsSchema = joi.array().required().items(joi.string())
