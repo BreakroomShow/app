@@ -7,10 +7,7 @@ export interface UnrevealedQuestion {
     variants: string[]
 }
 
-export interface StoredQuestionData {
-    name: string
-    variants: string[]
-}
+export interface StoredQuestionData extends Pick<UnrevealedQuestion, 'name' | 'variants'> {}
 
 export interface GameOptions {
     name: string

@@ -1,8 +1,7 @@
 import * as anchor from '@project-serum/anchor'
+import * as trivia from 'clic-trivia'
 
-import { config } from '../config'
-
-type ProgramErrorName = typeof config.triviaIdl['errors'] extends Array<infer Error>
+type ProgramErrorName = trivia.Trivia['errors'] extends Array<infer Error>
     ? Error extends { name: string }
         ? Error['name']
         : never
@@ -10,7 +9,7 @@ type ProgramErrorName = typeof config.triviaIdl['errors'] extends Array<infer Er
 
 export class ProgramError extends anchor.ProgramError {
     constructor(name: ProgramErrorName) {
-        const error = config.triviaIdl.errors.find((err) => err.name === name)
+        const error = trivia.IDL.errors.find((err) => err.name === name)
 
         if (error) {
             super(error.code, error.msg)

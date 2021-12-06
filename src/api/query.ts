@@ -87,7 +87,7 @@ export function useProgram() {
             () => {
                 if (!provider) return
 
-                return new anchor.Program(config.triviaIdl, config.programID, provider)
+                return new anchor.Program(trivia.IDL, config.programID, provider)
             },
             { enabled: !!provider },
         ).data,
