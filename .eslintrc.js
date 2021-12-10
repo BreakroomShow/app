@@ -23,6 +23,7 @@ module.exports = {
     rules: {
         indent: 'off',
         radix: 'warn',
+        camelcase: 'off',
         'no-console': 'off',
         'no-plusplus': 'off',
         'no-redeclare': 'off',

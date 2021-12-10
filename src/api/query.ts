@@ -31,11 +31,13 @@ export const cacheKeys = {
     triviaPda: 'triviaPda',
     gamePda: 'gamePda',
     playerPda: 'playerPda',
+    user: 'user',
     trivia: 'trivia',
     games: 'games',
     questions: 'questions',
     answers: 'answers',
     unrevealedQuestions: 'unrevealedQuestions',
+    nextGame: 'nextGame',
 } as const
 
 const noopPda = [null, null] as const
@@ -127,6 +129,29 @@ export function usePlayerPda() {
 
             return trivia.PlayerPDA(config.programID, triviaPda, walletPublicKey)
         }).data || noopPda
+    )
+}
+
+export function useUserQuery() {
+    const [triviaPda] = useTriviaPda()
+    const [program, sessionCacheKey] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
+
+    return useQuery(
+        [cacheKeys.user, walletPublicKey, triviaPda, sessionCacheKey],
+        async () => {
+            if (!triviaPda) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized', 'Connect the wallet')
+
+            const [userPda] = await trivia.UserPDA(config.programID, triviaPda, walletPublicKey)
+
+            return program.account.user.fetch(userPda).catch(() => null)
+        },
+        {
+            enabled: Boolean(program && walletPublicKey),
+            keepPreviousData: true,
+        },
     )
 }
 
@@ -227,4 +252,20 @@ export function useUnrevealedQuestionsQuery(questionKeys: string[]) {
 
         return result
     })
+}
+
+export function useNextGameQuery() {
+    return useQuery(
+        [cacheKeys.nextGame],
+        async () => {
+            const {
+                data: { gameId },
+            } = await axios<{ gameId: number | null }>('/api/next-game')
+
+            return gameId
+        },
+        {
+            keepPreviousData: true,
+        },
+    )
 }

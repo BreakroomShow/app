@@ -1,24 +1,9 @@
-import { createClient } from '@supabase/supabase-js'
 import { VercelRequest, VercelResponse } from '@vercel/node'
 import * as joi from 'joi'
 
-import { UnrevealedQuestion } from '../src/types'
-
-if (typeof process.env.SUPABASE_URL === 'undefined' || typeof process.env.SUPABASE_KEY === 'undefined') {
-    throw new Error('Provide SUPABASE_URL and SUPABASE_KEY')
-}
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
+import * as db from './_db'
 
 const GetUnrevealedQuestionParamsSchema = joi.array().required().items(joi.string())
-
-function selectUnrevealedQuestions(questionKeys: string[]) {
-    return supabase
-        .from<UnrevealedQuestion>('questions')
-        .select('*')
-        .in('publicKey', questionKeys)
-        .then((res) => res.data || [])
-}
 
 async function get(req: VercelRequest, res: VercelResponse) {
     let questionKeys = req.query.questionKeys || []
@@ -33,7 +18,7 @@ async function get(req: VercelRequest, res: VercelResponse) {
         })
     }
 
-    const result = await selectUnrevealedQuestions(questionKeys)
+    const result = await db.selectUnrevealedQuestions(questionKeys)
 
     res.status(200).json(result)
 }
@@ -46,10 +31,6 @@ const PostUnrevealedQuestionParamsSchema = joi
     })
     .required()
 
-function insertUnrevealedQuestion(question: UnrevealedQuestion) {
-    return supabase.from<UnrevealedQuestion>('questions').insert(question).single()
-}
-
 async function post(req: VercelRequest, res: VercelResponse) {
     const { error } = PostUnrevealedQuestionParamsSchema.validate(req.body)
 
@@ -60,7 +41,7 @@ async function post(req: VercelRequest, res: VercelResponse) {
         })
     }
 
-    const { error: dbError, status, data } = await insertUnrevealedQuestion(req.body)
+    const { error: dbError, status, data } = await db.insertUnrevealedQuestion(req.body)
 
     if (dbError) {
         return res.status(status).json({
@@ -70,10 +51,6 @@ async function post(req: VercelRequest, res: VercelResponse) {
     }
 
     res.status(status).json(data)
-}
-
-function deleteUnrevealedQuestion(questionKey: string) {
-    return supabase.from<UnrevealedQuestion>('questions').delete().eq('publicKey', questionKey)
 }
 
 async function del(req: VercelRequest, res: VercelResponse) {
@@ -86,7 +63,7 @@ async function del(req: VercelRequest, res: VercelResponse) {
         })
     }
 
-    const { error: dbError, status, data } = await deleteUnrevealedQuestion(req.query.questionKey as string)
+    const { error: dbError, status, data } = await db.deleteUnrevealedQuestion(req.query.questionKey as string)
 
     if (dbError) {
         return res.status(status).json({

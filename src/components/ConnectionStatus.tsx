@@ -6,11 +6,9 @@ import { config } from '../config'
 import { useCluster } from '../containers/ConnectProvider'
 
 function Wallet({ children }: { children: PublicKey | null }) {
-    const value = String(children)
+    if (!children) return <span>not connected</span>
 
-    if (!value) {
-        return <span>not connected</span>
-    }
+    const value = String(children)
 
     return <span>{`${value.slice(0, 4)}...${value.slice(value.length - 4, value.length)}`}</span>
 }

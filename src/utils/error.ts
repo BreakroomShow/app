@@ -8,13 +8,13 @@ type ProgramErrorName = trivia.Trivia['errors'] extends Array<infer Error>
     : never
 
 export class ProgramError extends anchor.ProgramError {
-    constructor(name: ProgramErrorName) {
+    constructor(name: ProgramErrorName, message?: string) {
         const error = trivia.IDL.errors.find((err) => err.name === name)
 
         if (error) {
-            super(error.code, error.msg)
+            super(error.code, message || error.msg)
         } else {
-            super(500, 'Unknown error')
+            super(500, message || 'Unknown error')
         }
     }
 }

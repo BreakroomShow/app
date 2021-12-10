@@ -1,18 +1,14 @@
-import '@solana/wallet-adapter-react-ui/styles.css'
-
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEffect, useState } from 'react'
 
-import { useGamesQuery, useTriviaQuery } from './api/query'
-import { ConnectionStatus } from './components/ConnectionStatus'
-import { CreateGameForm } from './components/CreateGameForm'
-import { EditGameForm } from './components/EditGameForm'
+import { useWhitelistUser } from '../api/mutations'
+import { useGamesQuery, useTriviaQuery } from '../api/query'
+import { ConnectionStatus } from '../components/ConnectionStatus'
+import { CreateGameForm } from '../components/CreateGameForm'
+import { EditGameForm } from '../components/EditGameForm'
+import { allGameIds } from '../utils/gameIds'
 
-function allGameIds(totalGames: number) {
-    return Array.from(Array(totalGames).keys())
-}
-
-export function App() {
+export function AdminApp() {
     const wallet = useWallet()
 
     const { data: trivia, isIdle: isTriviaIdle, isLoading: isTriviaLoading } = useTriviaQuery()
@@ -32,6 +28,8 @@ export function App() {
 
     const selectedGame = allGames[currentGame!] || null
 
+    const whitelistUserMutation = useWhitelistUser()
+
     return (
         <main style={{ margin: 15 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -43,6 +41,25 @@ export function App() {
                 <section>
                     <h2>Create new game</h2>
                     <CreateGameForm gameId={totalGames} onSuccess={() => setCurrentGame(totalGames)} />
+                    <h2>Whitelist the user</h2>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault()
+
+                            const input = e.currentTarget.elements.namedItem('wallet') as HTMLInputElement
+
+                            whitelistUserMutation.mutate(input.value, {
+                                onSuccess() {
+                                    e.currentTarget.reset()
+                                },
+                            })
+                        }}
+                    >
+                        <label>
+                            wallet: <input name="wallet" placeholder="0x" type="text" />
+                        </label>
+                        <button>whitelist!</button>
+                    </form>
                 </section>
             ) : null}
 

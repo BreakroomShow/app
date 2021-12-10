@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { useMutation } from 'react-query'
 import axios from 'redaxios'
 
+import { config } from '../config'
 import { GameOptions, StoredQuestionData } from '../types'
 import { msToBn, secToBn } from '../utils/date'
 import { ProgramError } from '../utils/error'
@@ -64,18 +65,20 @@ export function useEditGame(gameIndex: number) {
                 startTime: msToBn(startTime),
             }
 
-            return new Promise<trivia.EditGameEvent>((resolve) => {
+            return new Promise<trivia.EditGameEvent>((resolve, reject) => {
                 const listener = program.addEventListener('EditGameEvent', async (event: trivia.EditGameEvent) => {
                     await program.removeEventListener(listener)
                     resolve(event)
                 })
 
-                program.rpc.editGame(options, {
-                    accounts: {
-                        game: gamePda,
-                        authority: walletPublicKey,
-                    },
-                })
+                program.rpc
+                    .editGame(options, {
+                        accounts: {
+                            game: gamePda,
+                            authority: walletPublicKey,
+                        },
+                    })
+                    .catch(reject)
             })
         },
         {
@@ -189,18 +192,20 @@ export function useStartGame(gameIndex: number) {
             if (!program) return
             if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            return new Promise<trivia.EditGameEvent>((resolve) => {
+            return new Promise<trivia.EditGameEvent>((resolve, reject) => {
                 const listener = program.addEventListener('EditGameEvent', async (event: trivia.EditGameEvent) => {
                     await program.removeEventListener(listener)
                     resolve(event)
                 })
 
-                program.rpc.startGame({
-                    accounts: {
-                        game: gamePda,
-                        authority: walletPublicKey,
-                    },
-                })
+                program.rpc
+                    .startGame({
+                        accounts: {
+                            game: gamePda,
+                            authority: walletPublicKey,
+                        },
+                    })
+                    .catch(reject)
             })
         },
         {
@@ -226,7 +231,7 @@ export function useRevealQuestion(gameIndex: number) {
             if (!program) return
             if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            return new Promise<trivia.RevealQuestionEvent>((resolve) => {
+            return new Promise<trivia.RevealQuestionEvent>((resolve, reject) => {
                 const listener = program.addEventListener(
                     'RevealQuestionEvent',
                     async (event: trivia.RevealQuestionEvent) => {
@@ -235,13 +240,15 @@ export function useRevealQuestion(gameIndex: number) {
                     },
                 )
 
-                program.rpc.revealQuestion(name, variants, {
-                    accounts: {
-                        question: questionKey,
-                        game: gamePda,
-                        authority: walletPublicKey,
-                    },
-                })
+                program.rpc
+                    .revealQuestion(name, variants, {
+                        accounts: {
+                            question: questionKey,
+                            game: gamePda,
+                            authority: walletPublicKey,
+                        },
+                    })
+                    .catch(reject)
             })
         },
         {
@@ -271,7 +278,7 @@ export function useRevealAnswer(gameIndex: number) {
             if (!program) return
             if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            return new Promise<trivia.RevealAnswerEvent>((resolve) => {
+            return new Promise<trivia.RevealAnswerEvent>((resolve, reject) => {
                 const listener = program.addEventListener(
                     'RevealAnswerEvent',
                     async (event: trivia.RevealAnswerEvent) => {
@@ -280,13 +287,15 @@ export function useRevealAnswer(gameIndex: number) {
                     },
                 )
 
-                program.rpc.revealAnswer(variantId, {
-                    accounts: {
-                        question: questionKey,
-                        game: gamePda,
-                        authority: walletPublicKey,
-                    },
-                })
+                program.rpc
+                    .revealAnswer(variantId, {
+                        accounts: {
+                            question: questionKey,
+                            game: gamePda,
+                            authority: walletPublicKey,
+                        },
+                    })
+                    .catch(reject)
             })
         },
         {
@@ -296,6 +305,50 @@ export function useRevealAnswer(gameIndex: number) {
                     queryClient.invalidateQueries([cacheKeys.questions, gameIndex]),
                     queryClient.invalidateQueries([cacheKeys.answers, gameIndex]),
                 ])
+            },
+        },
+    )
+}
+
+export function useWhitelistUser() {
+    const [triviaPda] = useTriviaPda()
+    const [program] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
+
+    return useMutation(
+        async (wallet: string) => {
+            if (!triviaPda) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized')
+
+            const userPublicKey = new anchor.web3.PublicKey(wallet)
+            const [userPda, userBump] = await trivia.UserPDA(config.programID, triviaPda, userPublicKey)
+
+            return program.rpc.whitelistUser(userPublicKey, userBump, {
+                accounts: {
+                    trivia: triviaPda,
+                    whitelistedUser: userPda,
+                    authority: walletPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                },
+            })
+        },
+        {
+            onSuccess() {
+                return queryClient.invalidateQueries(cacheKeys.user)
+            },
+        },
+    )
+}
+
+export function useUpdateNextGame() {
+    return useMutation(
+        (gameId: number | null) => {
+            return axios.post('/api/next-game', { gameId })
+        },
+        {
+            onSuccess() {
+                return queryClient.invalidateQueries(cacheKeys.nextGame)
             },
         },
     )
