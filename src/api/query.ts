@@ -18,8 +18,14 @@ export const queryClient = new QueryClient({
         mutations: {
             onSettled: (_, err) => {
                 // TODO graceful errors
-                // eslint-disable-next-line no-alert
-                if (err) alert(JSON.stringify(err, null, 2))
+                if (err) {
+                    if (err instanceof Error) {
+                        err = { ...err, _name: err.name, _message: err.message }
+                    }
+
+                    // eslint-disable-next-line no-alert
+                    alert(JSON.stringify(err, null, 2))
+                }
             },
         },
     },
@@ -242,8 +248,11 @@ export function useUnrevealedQuestionsQuery(questionKeys: string[]) {
 
         if (!questionKeys.length) return result
 
-        const { data: questions } = await axios<UnrevealedQuestion[]>('/api/unrevealed-questions', {
-            params: { questionKeys },
+        const { data: questions } = await axios.get<UnrevealedQuestion[]>('/api/unrevealed-questions', {
+            params: questionKeys.reduce((params, key) => {
+                params.append('questionKeys', key)
+                return params
+            }, new URLSearchParams()),
         })
 
         questions.forEach((question) => {

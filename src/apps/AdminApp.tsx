@@ -46,12 +46,11 @@ export function AdminApp() {
                         onSubmit={(e) => {
                             e.preventDefault()
 
-                            const input = e.currentTarget.elements.namedItem('wallet') as HTMLInputElement
+                            const form = e.currentTarget
+                            const input = form.elements.namedItem('wallet') as HTMLInputElement
 
                             whitelistUserMutation.mutate(input.value, {
-                                onSuccess() {
-                                    e.currentTarget.reset()
-                                },
+                                onSuccess: () => form.reset(),
                             })
                         }}
                     >
@@ -68,9 +67,6 @@ export function AdminApp() {
             ) : (
                 <section>
                     <h2>Edit game</h2>
-
-                    {}
-
                     <div style={{ display: 'flex' }}>
                         <select
                             value={currentGame == null ? 'none' : currentGame}
