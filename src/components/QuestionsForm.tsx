@@ -43,14 +43,14 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
                 }
 
                 const isQuestionRevealed = !!question.revealedQuestion
-                let isReadyToReveal = false
+                let isAnswerReadyToReveal = false
 
                 const unrevealedQuestion = unrevealedQuestions[questionKey.toString()]
 
                 let questionData: StoredQuestionData
 
                 if (question.revealedQuestion) {
-                    isReadyToReveal = bnToMs(question.revealedQuestion.deadline) <= nonce
+                    isAnswerReadyToReveal = bnToMs(question.revealedQuestion.deadline) <= nonce
 
                     questionData = {
                         name: question.revealedQuestion.question,
@@ -98,7 +98,7 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
                                     return (
                                         <li key={i} style={isCorrect ? { color: 'limegreen', fontWeight: 'bold' } : {}}>
                                             {v}{' '}
-                                            {isQuestionRevealed && isReadyToReveal && !isAnswerRevealed ? (
+                                            {isQuestionRevealed && isAnswerReadyToReveal && !isAnswerRevealed ? (
                                                 <button
                                                     onClick={() => {
                                                         revealAnswerMutation.mutate({ questionKey, variantId: i })

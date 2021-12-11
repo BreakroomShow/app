@@ -41,7 +41,6 @@ export const cacheKeys = {
     trivia: 'trivia',
     games: 'games',
     questions: 'questions',
-    answers: 'answers',
     unrevealedQuestions: 'unrevealedQuestions',
     nextGame: 'nextGame',
 } as const
@@ -124,20 +123,6 @@ export function useGamePdaFor(gameIndex: number) {
     return pdaResult || noopPda
 }
 
-export function usePlayerPda() {
-    const [triviaPda] = useTriviaPda()
-    const walletPublicKey = useWalletPublicKey()
-
-    return (
-        useQuery([cacheKeys.playerPda, walletPublicKey, triviaPda], () => {
-            if (!triviaPda) return
-            if (!walletPublicKey) throw new ProgramError('Unauthorized')
-
-            return trivia.PlayerPDA(config.programID, triviaPda, walletPublicKey)
-        }).data || noopPda
-    )
-}
-
 export function useUserQuery() {
     const [triviaPda] = useTriviaPda()
     const [program, sessionCacheKey] = useProgram()
@@ -153,6 +138,29 @@ export function useUserQuery() {
             const [userPda] = await trivia.UserPDA(config.programID, triviaPda, walletPublicKey)
 
             return program.account.user.fetch(userPda).catch(() => null)
+        },
+        {
+            enabled: Boolean(program && walletPublicKey),
+            keepPreviousData: true,
+        },
+    )
+}
+
+export function usePlayerQuery() {
+    const [triviaPda] = useTriviaPda()
+    const [program, sessionCacheKey] = useProgram()
+    const walletPublicKey = useWalletPublicKey()
+
+    return useQuery(
+        [cacheKeys.user, walletPublicKey, triviaPda, sessionCacheKey],
+        async () => {
+            if (!triviaPda) return
+            if (!program) return
+            if (!walletPublicKey) throw new ProgramError('Unauthorized', 'Connect the wallet')
+
+            const [playerPda] = await trivia.PlayerPDA(config.programID, triviaPda, walletPublicKey)
+
+            return program.account.player.fetch(playerPda).catch(() => null)
         },
         {
             enabled: Boolean(program && walletPublicKey),

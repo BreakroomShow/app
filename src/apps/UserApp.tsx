@@ -1,41 +1,82 @@
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useMemo } from 'react'
 
-import { useGamesQuery, useNextGameQuery, useTriviaQuery, useUserQuery } from '../api/query'
+import { useEventListener } from '../api/events'
+import { cacheKeys, queryClient, useGamesQuery, useNextGameQuery, useTriviaQuery, useUserQuery } from '../api/query'
 import { ConnectionStatus } from '../components/ConnectionStatus'
+import { QuestionScreen } from '../components/QuestionScreen'
+import { bnToLocaleString, bnToMs } from '../utils/date'
 import { allGameIds } from '../utils/gameIds'
 
 export function UserApp() {
     const wallet = useWallet()
+
     const { data: user, isLoading: isUserLoading, isIdle: isUserIdle } = useUserQuery()
     const { data: trivia } = useTriviaQuery()
+    const { data: allGames = [] } = useGamesQuery(allGameIds(trivia?.gamesCounter || 0))
+    const { data: nextGameId = null, isLoading: isNextGameIdLoading, isIdle: isNextGameIdIdle } = useNextGameQuery()
 
-    const totalGames = trivia?.gamesCounter || 0
-    const gameIds = allGameIds(totalGames)
+    useEventListener('EditGameEvent', () => queryClient.invalidateQueries(cacheKeys.games))
+    useEventListener('RevealQuestionEvent', () => queryClient.invalidateQueries(cacheKeys.questions))
+    useEventListener('RevealAnswerEvent', () => queryClient.invalidateQueries(cacheKeys.questions))
 
-    const { data: allGames = [] } = useGamesQuery(gameIds)
+    const [prevGame, nextGame] = useMemo(() => {
+        if (nextGameId == null) {
+            const lastStartedGame = [...allGames].reverse().find((game) => bnToMs(game.startTime) <= Date.now())
 
-    const { data: nextGameId = null } = useNextGameQuery()
+            return [lastStartedGame || null, null] as const
+        }
+
+        return [allGames[nextGameId - 1] || null, allGames[nextGameId] || null] as const
+    }, [allGames, nextGameId])
+
+    console.log({ nextGame })
 
     return (
-        <div>
+        <main style={{ padding: 20 }}>
             <ConnectionStatus />
-            <p style={{ whiteSpace: 'pre-wrap' }}>
+            <p>
                 {(() => {
-                    if (!wallet.connected) return 'Connect the wallet'
-                    if (isUserIdle || isUserLoading) return 'Loading...'
-                    if (!user) return 'You are not invited yet'
-                    return JSON.stringify(
-                        {
-                            nextGameId,
-                            user,
-                            trivia,
-                            game: allGames[0],
-                        },
-                        null,
-                        4,
+                    if (isNextGameIdIdle || isNextGameIdLoading) return <span>Game info loading...</span>
+
+                    const isInProgress = !!nextGame && bnToMs(nextGame.startTime) <= Date.now()
+
+                    if (isInProgress) {
+                        return (
+                            <span>
+                                Game <q>{nextGame.name}</q> just started
+                            </span>
+                        )
+                    }
+
+                    return (
+                        <>
+                            {prevGame ? (
+                                <span>
+                                    The last game <q>{prevGame.name}</q> was conducted on{' '}
+                                    {bnToLocaleString(prevGame.startTime)}
+                                </span>
+                            ) : null}
+                            {nextGame || prevGame ? <br /> : null}
+                            {nextGame ? (
+                                <span>
+                                    Next game <q>{nextGame.name}</q> starts at {bnToLocaleString(nextGame.startTime)}
+                                </span>
+                            ) : null}
+                        </>
                     )
                 })()}
             </p>
-        </div>
+            <p style={{ whiteSpace: 'pre-wrap' }}>
+                {(() => {
+                    if (!wallet.connected) return 'Connect the wallet'
+                    if (wallet.connecting) return 'Connecting the wallet...'
+                    if (isUserIdle || isUserLoading) return 'User loading...'
+                    if (!user) return 'You are not invited yet'
+                    return JSON.stringify({ user, trivia }, null, 4)
+                })()}
+            </p>
+            {nextGame && nextGameId != null ? <QuestionScreen gameId={nextGameId} game={nextGame} /> : null}
+        </main>
     )
 }

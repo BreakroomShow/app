@@ -4,8 +4,10 @@
     "private": true,
     "scripts": {
         "vercel:install": "node scripts/replace-trivia-source.js && npm i",
-        "start": "vercel dev",
-        "build": "react-scripts build",
+        "start:admin": "export REACT_APP_ADMIN=true; vercel dev",
+        "start:user": "vercel dev",
+        "build:admin": "export REACT_APP_ADMIN=true; react-scripts build",
+        "build:user": "react-scripts build",
         "prettify": "eslint --fix '**/*.{tsx,jsx,js,ts}'; prettier --write \"**/*.{tsx,jsx,js,ts,scss,css}\""
     },
     "dependencies": {
