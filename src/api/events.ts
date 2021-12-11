@@ -21,7 +21,11 @@ export function useEventListener<Event extends keyof EventMap>(
     useEffect(() => {
         if (!program) return
 
-        const listenerId = program.addEventListener(event, callback)
+        const listenerId = program.addEventListener(event, (message) => {
+            console.log({ [event]: message })
+
+            return callback(message)
+        })
 
         return () => {
             program

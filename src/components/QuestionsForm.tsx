@@ -1,6 +1,6 @@
 import { useRemoveQuestion, useRevealAnswer, useRevealQuestion } from '../api/mutations'
 import { useQuestionsQuery, useUnrevealedQuestionsQuery } from '../api/query'
-import { useNonce } from '../hooks/useNonce'
+import { useTime } from '../hooks/useTime'
 import { Game, StoredQuestionData } from '../types'
 import { bnToLocaleString, bnToMs } from '../utils/date'
 
@@ -23,7 +23,7 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
     const removeQuestionMutation = useRemoveQuestion(gameId)
     const revealAnswerMutation = useRevealAnswer(gameId)
 
-    const nonce = useNonce()
+    const time = useTime()
 
     return (
         <div>
@@ -50,7 +50,7 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
                 let questionData: StoredQuestionData
 
                 if (question.revealedQuestion) {
-                    isAnswerReadyToReveal = bnToMs(question.revealedQuestion.deadline) <= nonce
+                    isAnswerReadyToReveal = time.moreThan(bnToMs(question.revealedQuestion.deadline))
 
                     questionData = {
                         name: question.revealedQuestion.question,

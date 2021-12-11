@@ -281,7 +281,7 @@ export function useSubmitAnswer(gameIndex: number) {
             if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
             const [userPda] = await trivia.UserPDA(config.programID, triviaPda, walletPublicKey)
-            const [playerPda, playerBump] = await trivia.PlayerPDA(config.programID, triviaPda, walletPublicKey)
+            const [playerPda, playerBump] = await trivia.PlayerPDA(config.programID, gamePda, userPda)
 
             return program.rpc.submitAnswer(variantId, playerBump, {
                 accounts: {

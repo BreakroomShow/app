@@ -1,6 +1,6 @@
 import { useEditGame, useStartGame, useUpdateNextGame } from '../api/mutations'
 import { useNextGameQuery } from '../api/query'
-import { useNonce } from '../hooks/useNonce'
+import { useTime } from '../hooks/useTime'
 import { Game } from '../types'
 import { bnToMs, bnToTimezoneDateString } from '../utils/date'
 import { AddQuestionForm } from './AddQuestionForm'
@@ -13,8 +13,8 @@ interface EditGameFormProps {
 }
 
 export function EditGameForm({ gameId, game }: EditGameFormProps) {
-    const nonce = useNonce()
-    const gameStarted = bnToMs(game.startTime) <= nonce
+    const time = useTime()
+    const gameStarted = time.moreThan(bnToMs(game.startTime))
 
     const { mutate: editGame, isLoading: isEditInProgress } = useEditGame(gameId)
     const { mutate: startGame, isLoading: isStartInProgress } = useStartGame(gameId)

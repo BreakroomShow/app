@@ -146,19 +146,22 @@ export function useUserQuery() {
     )
 }
 
-export function usePlayerQuery() {
+export function usePlayerQuery(gameIndex: number) {
     const [triviaPda] = useTriviaPda()
+    const [gamePda] = useGamePdaFor(gameIndex)
     const [program, sessionCacheKey] = useProgram()
     const walletPublicKey = useWalletPublicKey()
 
     return useQuery(
-        [cacheKeys.user, walletPublicKey, triviaPda, sessionCacheKey],
+        [cacheKeys.user, walletPublicKey, triviaPda, gamePda, sessionCacheKey],
         async () => {
             if (!triviaPda) return
+            if (!gamePda) return
             if (!program) return
             if (!walletPublicKey) throw new ProgramError('Unauthorized', 'Connect the wallet')
 
-            const [playerPda] = await trivia.PlayerPDA(config.programID, triviaPda, walletPublicKey)
+            const [userPda] = await trivia.UserPDA(config.programID, triviaPda, walletPublicKey)
+            const [playerPda] = await trivia.PlayerPDA(config.programID, gamePda, userPda)
 
             return program.account.player.fetch(playerPda).catch(() => null)
         },

@@ -16,9 +16,15 @@ export function UserApp() {
     const { data: allGames = [] } = useGamesQuery(allGameIds(trivia?.gamesCounter || 0))
     const { data: nextGameId = null, isLoading: isNextGameIdLoading, isIdle: isNextGameIdIdle } = useNextGameQuery()
 
-    useEventListener('EditGameEvent', () => queryClient.invalidateQueries(cacheKeys.games))
-    useEventListener('RevealQuestionEvent', () => queryClient.invalidateQueries(cacheKeys.questions))
-    useEventListener('RevealAnswerEvent', () => queryClient.invalidateQueries(cacheKeys.questions))
+    function reloadGames() {
+        queryClient.invalidateQueries(cacheKeys.nextGame)
+        queryClient.invalidateQueries(cacheKeys.games)
+        queryClient.invalidateQueries(cacheKeys.questions)
+    }
+
+    useEventListener('EditGameEvent', reloadGames)
+    useEventListener('RevealQuestionEvent', reloadGames)
+    useEventListener('RevealAnswerEvent', reloadGames)
 
     const [prevGame, nextGame] = useMemo(() => {
         if (nextGameId == null) {
@@ -29,8 +35,6 @@ export function UserApp() {
 
         return [allGames[nextGameId - 1] || null, allGames[nextGameId] || null] as const
     }, [allGames, nextGameId])
-
-    console.log({ nextGame })
 
     return (
         <main style={{ padding: 20 }}>
@@ -73,9 +77,10 @@ export function UserApp() {
                     if (wallet.connecting) return 'Connecting the wallet...'
                     if (isUserIdle || isUserLoading) return 'User loading...'
                     if (!user) return 'You are not invited yet'
-                    return JSON.stringify({ user, trivia }, null, 4)
+                    // return JSON.stringify({ user, trivia }, null, 4)
                 })()}
             </p>
+            <button onClick={reloadGames}>Reload Game</button>
             {nextGame && nextGameId != null ? <QuestionScreen gameId={nextGameId} game={nextGame} /> : null}
         </main>
     )
