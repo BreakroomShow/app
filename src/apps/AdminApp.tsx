@@ -6,6 +6,7 @@ import { useGamesQuery, useTriviaQuery } from '../api/query'
 import { ConnectionStatus } from '../components/ConnectionStatus'
 import { CreateGameForm } from '../components/CreateGameForm'
 import { EditGameForm } from '../components/EditGameForm'
+import { Typography } from '../design-system'
 import { allGameIds } from '../utils/gameIds'
 
 export function AdminApp() {
@@ -33,15 +34,15 @@ export function AdminApp() {
     return (
         <main style={{ margin: 15 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <h1>Clic Trivia</h1>
+                <Typography as="h1">Clic Trivia</Typography>
                 <ConnectionStatus />
             </div>
 
             {wallet.connected ? (
                 <section>
-                    <h2>Create new game</h2>
+                    <Typography as="h2">Create new game</Typography>
                     <CreateGameForm gameId={totalGames} onSuccess={() => setCurrentGame(totalGames)} />
-                    <h2>Whitelist the user</h2>
+                    <Typography as="h2">Whitelist the user</Typography>
                     <form
                         onSubmit={(e) => {
                             e.preventDefault()
@@ -66,7 +67,7 @@ export function AdminApp() {
                 <div style={{ padding: 20 }}>Loading...</div>
             ) : (
                 <section>
-                    <h2>Edit game</h2>
+                    <Typography as="h2">Edit game</Typography>
                     <div style={{ display: 'flex' }}>
                         <select
                             value={currentGame == null ? 'none' : currentGame}

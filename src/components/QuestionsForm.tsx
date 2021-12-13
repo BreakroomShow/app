@@ -1,5 +1,6 @@
 import { useRemoveQuestion, useRevealAnswer, useRevealQuestion } from '../api/mutations'
 import { useQuestionsQuery, useUnrevealedQuestionsQuery } from '../api/query'
+import { Typography } from '../design-system'
 import { useTime } from '../hooks/useTime'
 import { Game, StoredQuestionData } from '../types'
 import { bnToLocaleString, bnToMs } from '../utils/date'
@@ -27,7 +28,7 @@ export function QuestionsForm({ gameId, questionKeys, gameStarted }: QuestionsFo
 
     return (
         <div>
-            <h3>Questions</h3>
+            <Typography as="h3">Questions</Typography>
 
             {questions.length || isLoading ? null : <p>No questions yet</p>}
 

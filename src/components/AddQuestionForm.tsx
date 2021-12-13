@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { useAddQuestion } from '../api/mutations'
+import { Typography } from '../design-system'
 
 interface Props {
     gameId: number
@@ -31,7 +32,7 @@ export function AddQuestionForm({ gameId }: Props) {
     return (
         <div>
             <div>
-                <h3>Add a question</h3>
+                <Typography as="h3">Add a question</Typography>
                 <label>
                     Question: <input type="text" value={question} onChange={(e) => setQuestion(e.target.value)} />
                 </label>

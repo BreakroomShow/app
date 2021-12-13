@@ -1,5 +1,6 @@
 import { useSubmitAnswer } from '../api/mutations'
 import { usePlayerQuery, useQuestionsQuery } from '../api/query'
+import { Typography } from '../design-system'
 import { useTime } from '../hooks/useTime'
 import { Game } from '../types'
 import { bnToLocaleString, bnToMs } from '../utils/date'
@@ -45,7 +46,7 @@ export function QuestionScreen({ gameId, game }: QuestionsScreenProps) {
 
     return (
         <div>
-            <h1>{revealedQuestion.question}</h1>
+            <Typography as="h1">{revealedQuestion.question}</Typography>
             <p>[ends at {bnToLocaleString(revealedQuestion.deadline)}]</p>
             <div style={{ border: '1px solid grey', borderRadius: 6, padding: 15 }}>
                 <b>your record:</b>
