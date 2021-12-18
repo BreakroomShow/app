@@ -46,6 +46,7 @@ module.exports = {
         'react/no-unescaped-entities': 'warn',
         'react/require-default-props': 'off',
         'react/jsx-props-no-spreading': 'off',
+        'react/jsx-no-useless-fragment': 'off',
         'react/jsx-filename-extension': ['warn', { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
         'react/destructuring-assignment': 'off',
         'react/static-property-placement': 'off',

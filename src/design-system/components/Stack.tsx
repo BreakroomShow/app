@@ -44,7 +44,7 @@ export function Stack({ children, as = 'div', align = 'left', space, dividers }:
     const stackItemComponent = isList ? 'li' : 'div'
 
     if (stackItems.length <= 1 && align === 'left' && !isList) {
-        return stackItems
+        return <>{stackItems}</>
     }
 
     return (

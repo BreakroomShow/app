@@ -1,12 +1,13 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useMemo } from 'react'
 
-import { useEventListener } from '../api/events'
-import { cacheKeys, queryClient, useGamesQuery, useNextGameQuery, useTriviaQuery, useUserQuery } from '../api/query'
-import { ConnectionStatus } from '../components/ConnectionStatus'
-import { QuestionScreen } from '../components/QuestionScreen'
-import { bnToLocaleString, bnToMs } from '../utils/date'
-import { allGameIds } from '../utils/gameIds'
+import { useEventListener } from './api/events'
+import { cacheKeys, queryClient, useGamesQuery, useNextGameQuery, useTriviaQuery, useUserQuery } from './api/query'
+import { ConnectionStatus } from './components/ConnectionStatus'
+import { View } from './components/View'
+import { bnToLocaleString, bnToMs } from './utils/date'
+import { allGameIds } from './utils/gameIds'
+import { QuestionScreen } from './views/QuestionScreen'
 
 export function UserApp() {
     const wallet = useWallet()
@@ -81,7 +82,11 @@ export function UserApp() {
                 })()}
             </p>
             <button onClick={reloadGames}>Reload Game</button>
-            {nextGame && nextGameId != null ? <QuestionScreen gameId={nextGameId} game={nextGame} /> : null}
+            {nextGame && nextGameId != null ? (
+                <View>
+                    <QuestionScreen gameId={nextGameId} game={nextGame} />
+                </View>
+            ) : null}
         </main>
     )
 }

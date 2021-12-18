@@ -1,6 +1,6 @@
 import { Text, TextProps } from './Text'
 
-interface TypographyProps extends Omit<TextProps, 'as' | 'font' | 'size' | 'lineHeight' | 'weight' | 'fontStyle'> {
+interface TypographyProps extends Omit<TextProps, 'as' | 'font' | 'size' | 'weight' | 'fontStyle'> {
     as?: 'h1' | 'h2' | 'h3' | 'text1' | 'text2' | 'body1' | 'body2'
     component?: TextProps['as']
 }

@@ -1,13 +1,13 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEffect, useState } from 'react'
 
-import { useWhitelistUser } from '../api/mutations'
-import { useGamesQuery, useTriviaQuery } from '../api/query'
-import { ConnectionStatus } from '../components/ConnectionStatus'
-import { CreateGameForm } from '../components/CreateGameForm'
-import { EditGameForm } from '../components/EditGameForm'
-import { Typography } from '../design-system'
-import { allGameIds } from '../utils/gameIds'
+import { useWhitelistUser } from './api/mutations'
+import { useGamesQuery, useTriviaQuery } from './api/query'
+import { ConnectionStatus } from './components/ConnectionStatus'
+import { Typography } from './design-system'
+import { allGameIds } from './utils/gameIds'
+import { CreateGameForm } from './views/CreateGameForm'
+import { EditGameForm } from './views/EditGameForm'
 
 export function AdminApp() {
     const wallet = useWallet()

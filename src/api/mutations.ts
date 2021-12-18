@@ -300,6 +300,7 @@ export function useSubmitAnswer(gameIndex: number) {
                 return Promise.all([
                     queryClient.invalidateQueries(cacheKeys.games), // TODO query games separately
                     queryClient.invalidateQueries([cacheKeys.questions, gameIndex]),
+                    queryClient.invalidateQueries([cacheKeys.user]),
                 ])
             },
         },

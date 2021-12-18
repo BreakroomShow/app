@@ -3,11 +3,11 @@ import '@solana/wallet-adapter-react-ui/styles.css'
 import { StrictMode } from 'react'
 import { render } from 'react-dom'
 
-import { AdminApp } from './apps/AdminApp'
-import { UserApp } from './apps/UserApp'
+import { AdminApp } from './AdminApp'
 import { ConnectProvider } from './containers/ConnectProvider'
 import { QueryProvider } from './containers/QueryProvider'
 import { StyleProvider } from './design-system'
+import { UserApp } from './UserApp'
 
 render(
     <StrictMode>
