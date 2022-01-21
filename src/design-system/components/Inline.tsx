@@ -19,15 +19,13 @@ const InlineContainer = styled(Box, {
         content: '""',
         display: 'block',
     },
-    variants: {
-        spaceY: mapVariantsToStyle(spaceTokens, (space) => (space === 'none' ? {} : { marginTop: `-$${space}` })),
-    },
 })
 
 const InlineContent = styled(Box, {
     display: 'flex',
     flexShrink: 0,
     variants: {
+        spaceY: mapVariantsToStyle(spaceTokens, (space) => (space === 'none' ? {} : { marginTop: `-$${space}` })),
         space: mapVariantsToStyle(spaceTokens, (space) => (space === 'none' ? {} : { marginLeft: `-$${space}` })),
         align: mapVariantsToStyle(alignTokens, (align) => ({
             justifyContent: mapPropToStyle(align, alignToFlexAlign),
@@ -46,14 +44,14 @@ const InlineItem = styled(Box, {
     minWidth: 0,
     variants: {
         space: mapVariantsToStyle(spaceTokens, (space) => (space === 'none' ? {} : { marginLeft: `$${space}` })),
-        spaceY: mapVariantsToStyle(spaceTokens, (space) => (space === 'none' ? {} : { paddingTop: `$${space}` })),
+        spaceY: mapVariantsToStyle(spaceTokens, (space) => (space === 'none' ? {} : { marginTop: `$${space}` })),
     },
 })
 
 export function Inline({ children, space, spaceY = space, align, alignY = 'center', wrap = 'wrap' }: InlineProps) {
     return (
-        <InlineContainer spaceY={spaceY}>
-            <InlineContent space={space} align={align} alignY={alignY} wrap={wrap}>
+        <InlineContainer>
+            <InlineContent space={space} spaceY={spaceY} align={align} alignY={alignY} wrap={wrap}>
                 {flattenChildren(children).map((child, index) =>
                     child == null ? null : (
                         <InlineItem key={resolveKey(child, index)} space={space} spaceY={spaceY}>

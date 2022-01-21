@@ -8,7 +8,7 @@ type Size = 1 | 2 | 3 | 4
 export const SEGMENT_WIDTH = 212
 export const SEGMENT_HEIGHT = 244
 
-const SegmentComponent = styled(Box, {
+export const SegmentComponent = styled(Box, {
     overflow: 'hidden',
     display: 'flex',
     flexGrow: 1,

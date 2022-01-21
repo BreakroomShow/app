@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 
+import { ChatSegment, SEGMENT_WIDTH, SegmentContainer } from '../components/Segment'
 import { Box, Inset, Typography, styled } from '../design-system'
-import { ChatSegment, SEGMENT_WIDTH, SegmentContainer } from './Segment'
 
 const Container = styled(Box, {
     marginX: 'auto',
@@ -9,7 +9,7 @@ const Container = styled(Box, {
     display: 'flex',
     maxWidth: SEGMENT_WIDTH * 6,
 
-    '@down-lg': {
+    '@down-xl': {
         flexDirection: 'column',
         maxWidth: SEGMENT_WIDTH * 4,
     },

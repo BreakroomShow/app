@@ -1,13 +1,13 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useMemo } from 'react'
 
-import { useEventListener } from './api/events'
-import { cacheKeys, queryClient, useGamesQuery, useNextGameQuery, useTriviaQuery, useUserQuery } from './api/query'
-import { ConnectionStatus } from './components/ConnectionStatus'
-import { View } from './components/View'
-import { bnToLocaleString, bnToMs } from './utils/date'
-import { allGameIds } from './utils/gameIds'
-import { QuestionScreen } from './views/QuestionScreen'
+import { useEventListener } from '../api/events'
+import { cacheKeys, queryClient, useGamesQuery, useNextGameQuery, useTriviaQuery, useUserQuery } from '../api/query'
+import { ConnectionStatus } from '../components/ConnectionStatus'
+import { View } from '../containers/View'
+import { bnToLocaleString, bnToMs } from '../utils/date'
+import { allGameIds } from '../utils/gameIds'
+import { QuestionScreen } from '../views/QuestionScreen'
 
 export function UserApp() {
     const wallet = useWallet()

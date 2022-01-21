@@ -17,7 +17,10 @@ export const cssFactory = stitches.createStitches({
             xxxl: '36px',
         },
         colors: {
+            background: '#F4F4F4',
+
             black: '#171717',
+            blackA: '#17171780',
             white: '#FFFFFF',
             whiteA: '#FFFFFF80',
             darkGrey: '#232323',
@@ -36,8 +39,9 @@ export const cssFactory = stitches.createStitches({
             sm: '16px',
             md: '18px',
             lg: '24px',
-            xl: '36px',
-            xxl: '56px',
+            xl: '28px',
+            xxl: '36px',
+            xxxl: '56px',
         },
         fonts: {
             heading: 'Blacker Sans Text, serif',
@@ -50,7 +54,8 @@ export const cssFactory = stitches.createStitches({
         },
         letterSpacings: {},
         fontWeights: {
-            medium: '400',
+            regular: '400',
+            medium: '500',
             bold: '800',
         },
         sizes: {},
@@ -62,6 +67,7 @@ export const cssFactory = stitches.createStitches({
         transitions: {},
         radii: {
             md: '72px',
+            lg: '150px',
             round: '50%',
             pill: '9999px',
         },

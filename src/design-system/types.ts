@@ -21,3 +21,7 @@ export type AlignY = typeof alignYTokens[number]
 
 export type MediaMap<T> = { [media in Media]?: T }
 export type MediaProp<T> = T | MediaMap<T>
+
+export type Custom<T> = {
+    custom: T
+}

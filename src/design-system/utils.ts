@@ -1,5 +1,7 @@
 import { ReactNode } from 'react'
 
+import { Custom } from './types'
+
 export const alignToDisplay = {
     left: 'block',
     center: 'flex',
@@ -62,4 +64,8 @@ export function resolveToken<T extends string>(token?: T | 'inherit') {
     }
 
     return `$${token}` as const
+}
+
+export function isCustom<T>(value: unknown): value is Custom<T> {
+    return Boolean(value && typeof value === 'object' && 'custom' in value)
 }

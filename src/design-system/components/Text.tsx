@@ -18,7 +18,7 @@ import {
     weightTokens,
 } from '..'
 
-export interface TextProps extends TextStyleProps {
+export interface TextProps extends TextStyleProps, Pick<ComponentProps<typeof TextComponent>, 'css'> {
     children: ReactNode
     as?: keyof JSX.IntrinsicElements
     className?: string
@@ -75,7 +75,16 @@ const TextComponent = styled(Box, {
     },
 })
 
-export function Text({ as = 'span', children, className, align, preserveLinebreaks, truncate, ...props }: TextProps) {
+export function Text({
+    as = 'span',
+    children,
+    className,
+    align,
+    preserveLinebreaks,
+    truncate,
+    css,
+    ...props
+}: TextProps) {
     const ctx = useContext(TextContext)
 
     if (truncate && ctx.inText) {
@@ -111,6 +120,7 @@ export function Text({ as = 'span', children, className, align, preserveLinebrea
                     display: ctx.inText ? 'inline' : 'block',
                     color: resolveToken(color),
                     fontFamily: resolveToken(font),
+                    ...css,
                 }}
             >
                 {truncate ? <Truncate lines={truncate === true ? 1 : truncate}>{children}</Truncate> : children}

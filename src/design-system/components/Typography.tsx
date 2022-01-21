@@ -1,3 +1,5 @@
+import { ReactNode, createContext, useContext, useMemo } from 'react'
+
 import { Text, TextProps } from './Text'
 
 interface TypographyProps extends Omit<TextProps, 'as' | 'font' | 'size' | 'weight' | 'fontStyle'> {
@@ -45,6 +47,22 @@ const typography: Record<
     },
 }
 
-export function Typography({ as = 'text1', component, ...props }: TypographyProps) {
-    return <Text as={component} {...props} {...typography[as]} />
+interface TypographyContextValue extends Pick<TypographyProps, 'as' | 'color'> {}
+
+const TypeGroupContext = createContext<TypographyContextValue>({ as: 'text1' })
+
+interface TypeGroupProps extends TypographyContextValue {
+    children: ReactNode
+}
+
+export function TypeGroup({ children, as, color }: TypeGroupProps) {
+    const ctx = useMemo(() => ({ as, color }), [as, color])
+    return <TypeGroupContext.Provider value={ctx}>{children}</TypeGroupContext.Provider>
+}
+
+export function Typography({ as: asProp, component, ...props }: TypographyProps) {
+    const { as: asCtx, color } = useContext(TypeGroupContext)
+    const as = asProp || asCtx || 'text1'
+
+    return <Text as={component} color={color} {...props} {...typography[as]} />
 }

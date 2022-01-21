@@ -1,11 +1,11 @@
 import { useEditGame, useStartGame, useUpdateNextGame } from '../api/mutations'
 import { useNextGameQuery } from '../api/query'
-import { QuestionsForm } from '../components/QuestionsForm'
 import { useTime } from '../hooks/useTime'
 import { Game } from '../types'
 import { bnToMs, bnToTimezoneDateString } from '../utils/date'
 import { AddQuestionForm } from './AddQuestionForm'
 import { GameForm } from './GameForm'
+import { QuestionsForm } from './QuestionsForm'
 
 interface EditGameFormProps {
     gameId: number

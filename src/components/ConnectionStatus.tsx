@@ -1,17 +1,9 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
-import { PublicKey } from '@solana/web3.js'
 
 import { config } from '../config'
 import { useCluster } from '../containers/ConnectProvider'
-
-function Wallet({ children }: { children: PublicKey | null }) {
-    if (!children) return <span>not connected</span>
-
-    const value = String(children)
-
-    return <span>{`${value.slice(0, 4)}...${value.slice(value.length - 4, value.length)}`}</span>
-}
+import { Wallet } from './Wallet'
 
 function ConnectedApp() {
     const wallet = useWallet()

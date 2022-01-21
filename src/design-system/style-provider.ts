@@ -8,6 +8,12 @@ const globalStyles = globalCss({
             fontFamily: 'Graphik LC Web',
             fontStyle: 'normal',
             fontWeight: 400,
+            src: 'url("/fonts/Graphik-LC-Web-Regular.ttf") format("truetype")',
+        },
+        {
+            fontFamily: 'Graphik LC Web',
+            fontStyle: 'normal',
+            fontWeight: 500,
             src: 'url("/fonts/Graphik-LC-Web.ttf") format("truetype")',
         },
         {
@@ -36,6 +42,10 @@ const globalStyles = globalCss({
 
         backgroundColor: 'black',
         fontFamily: '$body',
+    },
+
+    a: {
+        color: 'inherit',
     },
 
     '*': {

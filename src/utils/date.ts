@@ -62,3 +62,13 @@ export function bnToTimezoneDateString(bn: anchor.BN) {
 export function bnToLocaleString(bn: anchor.BN) {
     return new Date(bnToMs(bn)).toLocaleString()
 }
+
+export function msToTimeUntil(ms: number) {
+    const distance = ms - Date.now()
+
+    const hours = Math.floor(distance / (1000 * 60 * 60)).toString()
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString()
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString()
+
+    return [hours, minutes, seconds].map((v) => v.padStart(2, '0')).join(':')
+}
