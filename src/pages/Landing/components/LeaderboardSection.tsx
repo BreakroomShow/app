@@ -13,11 +13,10 @@ const Table = styled(Box, {
 
     '@down-xxl': {
         paddingX: 46,
-        paddingY: 25,
+        paddingY: 30,
     },
     '@down-md': {
         paddingX: 20,
-        paddingY: 20,
     },
 })
 
@@ -68,7 +67,7 @@ function LeaderboardTable() {
     const headerCells = [
         <TableCell>
             <Text font="body" size="md" color="greyA">
-                Solana wallet
+                Wallet
             </Text>
         </TableCell>,
         <TableCell>
@@ -86,7 +85,11 @@ function LeaderboardTable() {
     const headerHorizontal = (
         <TableRow css={{ [mobile]: { display: 'none' } }}>
             <Columns alignY="center" space="md" collapseBelow={mobile}>
-                <Column width={2 / 4}>{headerCells[0]}</Column>
+                <Column width={2 / 4}>
+                    <Text font="body" size="md" color="greyA">
+                        Solana wallet
+                    </Text>
+                </Column>
                 <Column width={1 / 4}>{headerCells[1]}</Column>
                 <Column width={1 / 4}>{headerCells[2]}</Column>
             </Columns>
@@ -94,8 +97,8 @@ function LeaderboardTable() {
     )
 
     const headerVertical = (
-        <Box css={{ width: '30%', flexShrink: 0, marginRight: '$lg', [desktop]: { display: 'none' } }}>
-            <Stack space="md">{headerCells}</Stack>
+        <Box css={{ width: '25%', flexShrink: 0, marginRight: '$md', [desktop]: { display: 'none' } }}>
+            <Stack space="xs">{headerCells}</Stack>
         </Box>
     )
 
@@ -106,16 +109,18 @@ function LeaderboardTable() {
                 <TableRow key={u.id}>
                     <Box css={{ [mobile]: { display: 'flex' } }}>
                         {headerVertical}
-                        <Columns alignY="center" space="md" collapseBelow={mobile}>
+                        <Columns alignY="center" space={{ '@all': 'md', [mobile]: 'xs' }} collapseBelow={mobile}>
                             <Column width={2 / 4}>
-                                <Inline space="xs" wrap="nowrap">
-                                    <Avatar src={u.avatarUrl} />
-                                    <TableCell title={u.wallet}>
-                                        <Text font="body" size="md" weight="regular">
-                                            <Wallet size={4}>{u.wallet}</Wallet>
-                                        </Text>
-                                    </TableCell>
-                                </Inline>
+                                <Box css={{ lineHeight: 0 }}>
+                                    <Inline space="xs" wrap="nowrap">
+                                        <Avatar src={u.avatarUrl} />
+                                        <TableCell title={u.wallet}>
+                                            <Text font="body" size="md" weight="regular">
+                                                <Wallet size={4}>{u.wallet}</Wallet>
+                                            </Text>
+                                        </TableCell>
+                                    </Inline>
+                                </Box>
                             </Column>
                             <Column width={1 / 4}>
                                 <TableCell>

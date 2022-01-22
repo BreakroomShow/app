@@ -20,13 +20,13 @@ const globalStyles = globalCss({
             fontFamily: 'Blacker Sans Text',
             fontStyle: 'normal',
             fontWeight: 800,
-            src: 'url("/fonts/BlackerSansText-Extrabold.woff2") format("woff2"), url("/fonts/BlackerSansText-Extrabold.woff") format("woff")',
+            src: 'url("/fonts/BlackerSansText-Heavy.ttf") format("truetype"), url("/fonts/BlackerSansText-Extrabold.woff") format("woff")',
         },
         {
             fontFamily: 'Blacker Sans Pro',
             fontStyle: 'italic',
             fontWeight: 400,
-            src: 'url("/fonts/BlackerSansPro-Italic.woff2") format("woff2"), url("/fonts/BlackerSansPro-Italic.woff") format("woff")',
+            src: 'url("/fonts/BlackerSansPro-Italic.ttf") format("truetype"), url("/fonts/BlackerSansPro-Italic.woff") format("woff")',
         },
     ],
 
