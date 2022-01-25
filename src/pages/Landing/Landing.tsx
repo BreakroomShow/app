@@ -1,3 +1,5 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+
 import { Box, Stack, globalCss, styled } from '../../design-system'
 import { GameReplaySection } from './components/GameReplaySection'
 import { GameRulesSection } from './components/GameRulesSection'
@@ -9,6 +11,7 @@ import { PageFooter } from './components/PageFooter'
 import { PageHeader } from './components/PageHeader'
 import { PageSpacer } from './components/PageSpacer'
 import { PageTitle } from './components/PageTitle'
+import { Replay } from './Replay'
 
 const styles = globalCss({
     html: { background: '$blue' },
@@ -26,26 +29,35 @@ export function Landing() {
     styles()
 
     return (
-        <>
-            <PageContent css={{ paddingTop: 70, '@down-lg': { paddingTop: 25 } }}>
-                <Stack dividers={<PageSpacer />}>
-                    <PageHeader />
-                    <PageTitle />
-                    <NextGameSection />
-                    <GameReplaySection />
-                    <GameRulesSection />
-                </Stack>
-            </PageContent>
-            <PageSpacer />
-            <HowToStartSection />
-            <FooterContainer>
-                <PageSpacer />
-                <PageContent>
-                    <LeaderboardSection />
-                    <PageSpacer />
-                    <PageFooter />
-                </PageContent>
-            </FooterContainer>
-        </>
+        <Routes>
+            <Route path="_replay" element={<Replay />} />
+            <Route
+                path="/"
+                element={
+                    <>
+                        <PageContent css={{ paddingTop: 70, '@down-lg': { paddingTop: 25 } }}>
+                            <Stack dividers={<PageSpacer />}>
+                                <PageHeader />
+                                <PageTitle />
+                                <NextGameSection />
+                                <GameReplaySection />
+                                <GameRulesSection />
+                            </Stack>
+                        </PageContent>
+                        <PageSpacer />
+                        <HowToStartSection />
+                        <FooterContainer>
+                            <PageSpacer />
+                            <PageContent>
+                                <LeaderboardSection />
+                                <PageSpacer />
+                                <PageFooter />
+                            </PageContent>
+                        </FooterContainer>
+                    </>
+                }
+            />
+            <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
     )
 }

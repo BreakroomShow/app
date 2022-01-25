@@ -1,3 +1,4 @@
+import { Replay } from '../types'
 import { api } from './api'
 
 interface MessageToSignParams {
@@ -34,5 +35,12 @@ export function createToken({ publicKey, nonce, issuedAt, signature }: TokenPara
             },
         })
         .then((res) => res.data.token)
+        .catch(() => null)
+}
+
+export function getReplay() {
+    return api
+        .get<Replay>('replays/last')
+        .then((res) => res.data)
         .catch(() => null)
 }

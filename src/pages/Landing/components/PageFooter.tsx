@@ -8,25 +8,25 @@ const Container = styled('footer', {
     display: 'flex',
     gap: '$xxxl',
     alignItems: 'center',
+    whiteSpace: 'nowrap',
     '@down-xl': { flexDirection: 'column' },
     '@down-sm': { alignItems: 'flex-start' },
 
     '& > *': {
-        flexBasis: '33%',
-        justifyContent: 'center',
-        '&:last-child': {
-            display: 'flex',
-            justifyContent: 'flex-end',
-        },
-    },
-
-    '& > *:nth-child(2)': {
         display: 'flex',
-        gap: '$xxxl',
-        whiteSpace: 'nowrap',
-        '@down-sm': {
-            flexDirection: 'column',
-            order: -1,
+        flexBasis: '33%',
+
+        '&:nth-child(2)': {
+            gap: '$xxxl',
+
+            '@down-sm': {
+                flexDirection: 'column',
+                order: -1,
+            },
+        },
+
+        '&:last-child': {
+            justifyContent: 'flex-end',
         },
     },
 })
@@ -35,9 +35,11 @@ export function PageFooter() {
     return (
         <TypeGroup as="body2" color="white">
             <Container>
-                <Link to={breakroomEmailUrl}>
-                    <Typography>{breakroomEmail}</Typography>
-                </Link>
+                <Box>
+                    <Link to={breakroomEmailUrl}>
+                        <Typography>{breakroomEmail}</Typography>
+                    </Link>
+                </Box>
                 <Box>
                     <Link to={howItWorksUrl}>
                         <Typography>How it works</Typography>

@@ -64,24 +64,6 @@ function LeaderboardTable() {
     const mobile = '@down-md'
     const desktop = '@md'
 
-    const headerCells = [
-        <TableCell>
-            <Text font="body" size="md" color="greyA">
-                Wallet
-            </Text>
-        </TableCell>,
-        <TableCell>
-            <Text font="body" size="md" color="greyA">
-                SOL
-            </Text>
-        </TableCell>,
-        <TableCell css={{ [desktop]: { justifyContent: 'flex-end' } }}>
-            <Text font="body" size="md" color="greyA">
-                USD
-            </Text>
-        </TableCell>,
-    ]
-
     const headerHorizontal = (
         <TableRow css={{ [mobile]: { display: 'none' } }}>
             <Columns alignY="center" space="md" collapseBelow={mobile}>
@@ -90,15 +72,43 @@ function LeaderboardTable() {
                         Solana wallet
                     </Text>
                 </Column>
-                <Column width={1 / 4}>{headerCells[1]}</Column>
-                <Column width={1 / 4}>{headerCells[2]}</Column>
+                <Column width={1 / 4}>
+                    <TableCell>
+                        <Text font="body" size="md" color="greyA">
+                            SOL
+                        </Text>
+                    </TableCell>
+                </Column>
+                <Column width={1 / 4}>
+                    <TableCell css={{ [desktop]: { justifyContent: 'flex-end' } }}>
+                        <Text font="body" size="md" color="greyA">
+                            USD
+                        </Text>
+                    </TableCell>
+                </Column>
             </Columns>
         </TableRow>
     )
 
     const headerVertical = (
         <Box css={{ width: '25%', flexShrink: 0, marginRight: '$md', [desktop]: { display: 'none' } }}>
-            <Stack space="xs">{headerCells}</Stack>
+            <Stack space="xs">
+                <TableCell>
+                    <Text font="body" size="md" color="greyA">
+                        Wallet
+                    </Text>
+                </TableCell>
+                <TableCell>
+                    <Text font="body" size="md" color="greyA">
+                        SOL
+                    </Text>
+                </TableCell>
+                <TableCell css={{ [desktop]: { justifyContent: 'flex-end' } }}>
+                    <Text font="body" size="md" color="greyA">
+                        USD
+                    </Text>
+                </TableCell>
+            </Stack>
         </Box>
     )
 

@@ -1,10 +1,11 @@
+import { AspectRatio } from '@radix-ui/react-aspect-ratio'
 import { useEffect, useReducer, useRef } from 'react'
 
 import { Box, Stack, Typography, styled } from '../../../design-system'
 import { ReactComponent as PlayIcon } from '../../../images/play.svg'
-import { videoUrl } from '../const'
+import { useReplayBridge } from '../useReplayBridge'
 
-const VideoContainer = styled(Box, {
+const Container = styled(Box, {
     position: 'relative',
     width: '100%',
     borderRadius: '$md',
@@ -16,7 +17,7 @@ const VideoContainer = styled(Box, {
     },
 })
 
-const VideoOverlay = styled(Box, {
+const Overlay = styled(Box, {
     borderRadius: 'inherit',
     background: '$blackA',
     position: 'absolute',
@@ -24,9 +25,17 @@ const VideoOverlay = styled(Box, {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+
+    variants: {
+        visible: {
+            false: {
+                opacity: 0,
+            },
+        },
+    },
 })
 
-const VideoBadge = styled(Box, {
+const Badge = styled(Box, {
     size: 160,
     padding: 25,
     '@down-md': {
@@ -45,6 +54,8 @@ const VideoBadge = styled(Box, {
     justifyContent: 'center',
 
     transform: 'rotate(20deg)',
+
+    pointerEvents: 'none',
 })
 
 const PlayIconSmall = styled(Box, {
@@ -59,35 +70,82 @@ const PlayIconSmall = styled(Box, {
     marginLeft: 'calc($$size - 5px)',
 })
 
+const GameReplayContainer = styled(Box, {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    size: '100%',
+    background: '$black',
+})
+
+const TARGET_WIDTH = 1280
+const RATIO = 16 / 10
+
+const Iframe = styled('iframe', {
+    border: 'none',
+    padding: 0,
+    margin: 0,
+
+    width: TARGET_WIDTH,
+    height: TARGET_WIDTH / RATIO,
+    position: 'absolute',
+})
+
 export function GameReplaySection() {
-    const [play, togglePlay] = useReducer((prev) => !prev, false)
-    const ref = useRef<HTMLVideoElement | null>(null)
+    const containerRef = useRef<HTMLDivElement | null>(null)
+    const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
     useEffect(() => {
-        if (play) {
-            ref.current?.play()
-        } else {
-            ref.current?.pause()
+        const onResize = () => {
+            if (!containerRef.current) return
+            if (!iframeRef.current) return
+
+            const { width } = containerRef.current.getBoundingClientRect()
+
+            iframeRef.current.style.transform = `scale(${width / TARGET_WIDTH})`
         }
-    }, [play])
+
+        onResize()
+
+        window.addEventListener('resize', onResize)
+
+        return () => {
+            window.removeEventListener('resize', onResize)
+        }
+    }, [])
+
+    const [play, togglePlay] = useReducer((prev) => !prev, false)
+    const [bridge, onLoad] = useReplayBridge()
+
+    useEffect(() => {
+        if (!bridge) return
+
+        bridge.postMessage('Play', play)
+    }, [bridge, play])
 
     return (
-        <VideoContainer tabIndex={0} onClick={togglePlay}>
-            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-            <video muted ref={ref} src={videoUrl} />
-            {play ? null : (
-                <VideoOverlay>
-                    <PlayIcon />
-                    <VideoBadge>
+        <Container
+            tabIndex={0}
+            onClick={bridge ? togglePlay : undefined}
+            onKeyPress={(e) => (e.key === 'Enter' && bridge ? togglePlay() : undefined)}
+        >
+            <AspectRatio ratio={RATIO}>
+                <GameReplayContainer ref={containerRef}>
+                    <Iframe title="game replay" src="/_replay" ref={iframeRef} onLoad={onLoad} />
+                </GameReplayContainer>
+
+                <Overlay visible={!play}>
+                    {bridge ? <PlayIcon /> : null}
+                    <Badge>
                         <Stack align="center" space="sm">
                             <PlayIconSmall />
                             <Typography as="body2" color="white" align="center">
                                 Last Game Replay
                             </Typography>
                         </Stack>
-                    </VideoBadge>
-                </VideoOverlay>
-            )}
-        </VideoContainer>
+                    </Badge>
+                </Overlay>
+            </AspectRatio>
+        </Container>
     )
 }

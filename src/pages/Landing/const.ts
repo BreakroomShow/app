@@ -15,5 +15,3 @@ export const guides = {
     connectWallet: '/',
     depositWallet: '/',
 }
-
-export const videoUrl = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
