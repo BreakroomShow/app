@@ -25,7 +25,7 @@ export interface AnswerRevealEvent extends BaseEvent {
     type: 'answer_reveal'
     question: QuestionEvent
     correct_answer_ind: number
-    answer_count: [number, number, number]
+    answer_count: Record<'0' | '1' | '2', number>
 }
 
 export interface QuestionFactEvent extends BaseEvent {
@@ -44,10 +44,10 @@ export type Replay = {
     game_id: string
     game_started_at_timestamp: number
     game_finished_at_timestamp: number
-    events: ReplayEvent[]
+    events: ReplayEvent<GameEvent>[]
 }
 
-export type ReplayEvent = {
+export type ReplayEvent<E extends GameEvent> = {
     timestamp: number
-    event: GameEvent
+    event: E
 }

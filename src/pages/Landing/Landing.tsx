@@ -25,38 +25,39 @@ const FooterContainer = styled(Box, {
     background: '$blue',
 })
 
-export function Landing() {
+function Index() {
     styles()
 
     return (
+        <>
+            <PageContent css={{ paddingTop: 70, '@down-lg': { paddingTop: 25 } }}>
+                <Stack dividers={<PageSpacer />}>
+                    <PageHeader />
+                    <PageTitle />
+                    <NextGameSection />
+                    <GameReplaySection />
+                    <GameRulesSection />
+                </Stack>
+            </PageContent>
+            <PageSpacer />
+            <HowToStartSection />
+            <FooterContainer>
+                <PageSpacer />
+                <PageContent>
+                    <LeaderboardSection />
+                    <PageSpacer />
+                    <PageFooter />
+                </PageContent>
+            </FooterContainer>
+        </>
+    )
+}
+
+export function Landing() {
+    return (
         <Routes>
             <Route path="_replay" element={<Replay />} />
-            <Route
-                path="/"
-                element={
-                    <>
-                        <PageContent css={{ paddingTop: 70, '@down-lg': { paddingTop: 25 } }}>
-                            <Stack dividers={<PageSpacer />}>
-                                <PageHeader />
-                                <PageTitle />
-                                <NextGameSection />
-                                <GameReplaySection />
-                                <GameRulesSection />
-                            </Stack>
-                        </PageContent>
-                        <PageSpacer />
-                        <HowToStartSection />
-                        <FooterContainer>
-                            <PageSpacer />
-                            <PageContent>
-                                <LeaderboardSection />
-                                <PageSpacer />
-                                <PageFooter />
-                            </PageContent>
-                        </FooterContainer>
-                    </>
-                }
-            />
+            <Route path="/" element={<Index />} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     )

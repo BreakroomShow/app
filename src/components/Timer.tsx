@@ -12,8 +12,8 @@ const TimeContainer = styled(Box, {
     justifyContent: 'center',
 })
 
-export function Timer({ deadline }: { deadline: number }) {
-    const [nonce, stopTimer] = useNonce({ delay: 333 })
+export function Timer({ deadline, active }: { deadline: number; active?: boolean }) {
+    const { nonce, stop } = useNonce({ delay: 333, active })
 
     const [startTime] = useState(() => Date.now())
     const remainTime = Math.max(deadline - nonce, 0)
@@ -33,7 +33,7 @@ export function Timer({ deadline }: { deadline: number }) {
     }
 
     if (remainTime <= 0) {
-        stopTimer()
+        stop()
     }
 
     return (

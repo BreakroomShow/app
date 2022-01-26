@@ -53,13 +53,3 @@ export function Segment({ w = 1, h = 1, variant = 'round', inset, color = 'black
         </SegmentComponent>
     )
 }
-
-export const ChatSegment = styled(SegmentComponent, {
-    background: `$white`,
-    minHeight: SEGMENT_HEIGHT * 1.5,
-    minWidth: SEGMENT_WIDTH * 1.5,
-
-    defaultVariants: {
-        variant: 'round',
-    },
-})

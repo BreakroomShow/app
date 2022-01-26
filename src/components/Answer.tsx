@@ -5,8 +5,8 @@ export type AnswerVariant = 'correct' | 'wrong' | 'neutral'
 
 interface AnswerProps {
     index: 0 | 1 | 2
-    count?: number
-    share?: number
+    count?: number | null
+    share?: number | null
     variant: AnswerVariant
     children: string
     disabled?: boolean

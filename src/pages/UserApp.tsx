@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { useEventListener } from '../api/events'
 import { cacheKeys, queryClient, useGamesQuery, useNextGameQuery, useTriviaQuery, useUserQuery } from '../api/query'
 import { ConnectionStatus } from '../components/ConnectionStatus'
+import { ChatView } from '../containers/Chat'
 import { View } from '../containers/View'
 import { bnToLocaleString, bnToMs } from '../utils/date'
 import { allGameIds } from '../utils/gameIds'
@@ -85,6 +86,7 @@ export function UserApp() {
             {nextGame && nextGameId != null ? (
                 <View>
                     <QuestionScreen gameId={nextGameId} game={nextGame} />
+                    <ChatView />
                 </View>
             ) : null}
         </main>

@@ -1,16 +1,15 @@
+import { ReactNode } from 'react'
+
 import { useSubmitAnswer } from '../api/mutations'
 import { usePlayerQuery, useQuestionsQuery } from '../api/query'
-import { Answer, AnswerVariant } from '../components/Answer'
-import { Label } from '../components/Label'
 import { ResultIcon } from '../components/ResultIcon'
 import { Segment } from '../components/Segment'
 import { Timer } from '../components/Timer'
-import { Box, Inline, Stack, Typography } from '../design-system'
+import { Typography } from '../design-system'
 import { useTime } from '../hooks/useTime'
-import { ReactComponent as Heart } from '../images/heart.svg'
 import { Game } from '../types'
 import { bnToMs } from '../utils/date'
-import { ordinal } from '../utils/ordinal'
+import { RevealedQuestionScreen } from './RevealedQuestionScreen'
 
 interface QuestionsScreenProps {
     gameId: number
@@ -81,77 +80,27 @@ export function QuestionScreen({ gameId, game }: QuestionsScreenProps) {
     const canAnswer =
         questionKey && correctAnswer == null && userAnswer == null && !deadlineExceed && !hasSkippedQuestion
 
+    let resultIcon: ReactNode = null
+    if (canAnswer) {
+        resultIcon = <Timer deadline={deadline} />
+    } else if (correctAnswer != null && !hasSkippedQuestion) {
+        resultIcon = <ResultIcon variant={userAnswer === correctAnswer ? 'correct' : 'wrong'} />
+    }
+
     return (
-        <Segment color="black" w={4} h={3} inset="lg">
-            <Box css={{ width: '100%' }}>
-                <Box css={{ display: 'flex', justifyContent: 'space-between', height: 84 }}>
-                    {(() => {
-                        if (canAnswer) {
-                            return <Timer deadline={deadline} />
-                        }
-
-                        if (correctAnswer != null && !hasSkippedQuestion) {
-                            return <ResultIcon variant={userAnswer === correctAnswer ? 'correct' : 'wrong'} />
-                        }
-
-                        return <div />
-                    })()}
-                    <Inline space="sm">
-                        <Label text={answered.toLocaleString('en')} description="answered" />
-                        <Label
-                            description="extra lives"
-                            text={
-                                <Inline space="xs" alignY="center" align="center">
-                                    <Heart />
-                                    <Typography as="h3" color="white">
-                                        {lives}
-                                    </Typography>
-                                </Inline>
-                            }
-                        />
-                        <Label text={`$${fund}`} description="general fund" />
-                    </Inline>
-                </Box>
-
-                <Box css={{ height: 56 }} />
-
-                <Stack space="xxxl">
-                    <Stack space="md">
-                        <Typography as="text2" color="whiteA">
-                            {ordinal(questionId + 1)} of {questions.length}
-                        </Typography>
-                        <Typography as="h2" color="white">
-                            {revealedQuestion.question}
-                        </Typography>
-                    </Stack>
-                    <Stack space="sm">
-                        {revealedQuestion.variants.map((variant, i) => {
-                            const index = i as 0 | 1 | 2
-
-                            let answerVariant: AnswerVariant = 'neutral'
-                            if (userAnswer === index) answerVariant = correctAnswer == null ? 'correct' : 'wrong'
-                            if (correctAnswer === index) answerVariant = 'correct'
-
-                            return (
-                                <Answer
-                                    key={index}
-                                    index={index}
-                                    variant={answerVariant}
-                                    disabled={!canAnswer}
-                                    onClick={() => {
-                                        if (canAnswer) submitAnswer({ questionKey, variantId: index })
-                                    }}
-                                    // TODO real stats
-                                    count={correctAnswer == null ? undefined : 6624 / (index + 1)}
-                                    share={correctAnswer == null ? undefined : 6624 / (index + 1) / 12144}
-                                >
-                                    {variant}
-                                </Answer>
-                            )
-                        })}
-                    </Stack>
-                </Stack>
-            </Box>
-        </Segment>
+        <RevealedQuestionScreen
+            questionId={questionId}
+            totalQuestions={questions.length}
+            questionText={revealedQuestion.question}
+            answers={revealedQuestion.variants}
+            userAnswer={userAnswer}
+            correctAnswer={correctAnswer}
+            answerCount={correctAnswer == null ? null : [2100, 5523, 4245]} // TODO real stats
+            answered={answered}
+            lives={lives}
+            fund={fund}
+            resultIcon={resultIcon}
+            onAnswer={canAnswer ? (variantId) => submitAnswer({ questionKey, variantId }) : null}
+        />
     )
 }

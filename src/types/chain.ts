@@ -20,7 +20,7 @@ export interface Game extends trivia.Game {
 
 export interface RevealedQuestion {
     question: string
-    variants: string[]
+    variants: [string, string, string]
     deadline: anchor.BN
     answerVariantId?: number
 }
