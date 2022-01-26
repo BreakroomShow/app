@@ -18,7 +18,7 @@ export function bridgeFactory<EventMap extends BaseEventMap>(target: Window) {
                 [Key in keyof EventMap]: { key: Key; data: EventMap[Key] }
             }[keyof EventMap]
 
-            if (typeof event.data !== 'string') return
+            if (!event.data || typeof event.data !== 'string') return
 
             const message: Message = JSON.parse(event.data)
 

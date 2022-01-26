@@ -82,7 +82,7 @@ export function RevealedQuestionScreen({
                             const index = i as 0 | 1 | 2
 
                             let answerVariant: AnswerVariant = 'neutral'
-                            if (userAnswer === index) answerVariant = correctAnswer == null ? 'correct' : 'wrong'
+                            if (userAnswer === index) answerVariant = correctAnswer == null ? 'pending' : 'wrong'
                             if (correctAnswer === index) answerVariant = 'correct'
 
                             const count = answerCount ? answerCount[index] : null

@@ -100,7 +100,9 @@ function useTextTyping(
             const word = getWords()[currentWord] || ''
             const letter = word[currentLetter] || ''
 
-            setText((prev) => `${prev}${letter}`)
+            requestAnimationFrame(() => {
+                setText((prev) => `${prev}${letter}`)
+            })
             currentLetter = Math.min(currentLetter + 1, word.length)
 
             if (!letter) {
@@ -120,7 +122,9 @@ function useTextTyping(
                 withPause(() => runLoop(enterLoop), typingDelay)
             }
 
-            setText((prev) => prev.slice(0, -1))
+            requestAnimationFrame(() => {
+                setText((prev) => prev.slice(0, -1))
+            })
         }
 
         runLoop(enterLoop)

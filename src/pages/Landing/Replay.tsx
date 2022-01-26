@@ -6,8 +6,6 @@ import { GameManager } from '../../containers/GameManager'
 import { View } from '../../containers/View'
 import { Box, styled } from '../../design-system'
 import { useGetLatest } from '../../hooks/useGetLatest'
-import { QuestionEvent, ReplayEvent } from '../../types'
-import { selectRandom } from '../../utils/selectRandom'
 import { useReplayState } from './useReplayBridge'
 
 const Container = styled(Box, {
@@ -29,10 +27,14 @@ const Container = styled(Box, {
 })
 
 const PREVIEW_EVENT = 'answer_reveal'
+const SPEED = 2.4
 
 export function Replay() {
     const { data: replay } = useQuery(['replay'], getReplay)
-    const allEvents = replay?.events || []
+    const allEvents = (replay?.events || []).map((e) => ({
+        ...e,
+        event: { ...e.event, duration: e.event.duration / SPEED },
+    }))
 
     const [currentIndex, setCurrentIndex] = useState<number | null>(null)
     const current = (currentIndex != null && allEvents[currentIndex]) || null
@@ -67,12 +69,7 @@ export function Replay() {
 
             setCurrentIndex(nextEventIndex)
 
-            const durationSec =
-                nextEvent.event.type === 'question'
-                    ? nextEvent.event.duration - selectRandom([1, 2, 3, 4, 5])
-                    : nextEvent.event.duration
-
-            start(durationSec)
+            start(nextEvent.event.duration)
         }
 
         function start(durationSec: number) {
@@ -97,20 +94,31 @@ export function Replay() {
         }
     }, [getLatest, isPlaying])
 
-    const allQuestionEvents = allEvents.filter((e): e is ReplayEvent<QuestionEvent> => e.event.type === 'question')
+    let currentQuestionText = ''
 
-    const currentQuestion = allQuestionEvents.findIndex((e) => {
-        let currentQuestionText = ''
+    if (current?.event.type === 'question') {
+        currentQuestionText = current.event.question
+    } else if (current?.event.type === 'answer_reveal') {
+        currentQuestionText = current.event.question.question
+    }
 
-        if (current?.event.type === 'question') {
-            currentQuestionText = current.event.question
+    let currentQuestionId = -1
+    let totalQuestions = 0
+    let userAnswerId = -1
+
+    allEvents.forEach((event, index) => {
+        if (event.event.type === 'question') {
+            totalQuestions++
+
+            if (event.event.question === currentQuestionText) {
+                currentQuestionId = totalQuestions - 1
+
+                const nextEvent = allEvents[index + 1]
+                if (nextEvent?.event.type === 'answer_reveal') {
+                    userAnswerId = nextEvent.event.correct_answer_ind
+                }
+            }
         }
-
-        if (current?.event.type === 'answer_reveal') {
-            currentQuestionText = current.event.question.question
-        }
-
-        return e.event.question === currentQuestionText
     })
 
     return (
@@ -119,9 +127,11 @@ export function Replay() {
                 {current ? (
                     <GameManager
                         event={current.event}
-                        currentQuestionId={currentQuestion}
-                        totalQuestions={allQuestionEvents.length}
+                        currentQuestionId={currentQuestionId}
+                        totalQuestions={totalQuestions}
+                        userAnswerId={userAnswerId}
                         isPlaying={isPlaying}
+                        speed={SPEED}
                     />
                 ) : null}
             </View>

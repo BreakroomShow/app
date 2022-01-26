@@ -1,7 +1,7 @@
 import { Box, Column, Columns, Inline, Typography, keyframes, styled } from '../design-system'
 import { CountUp } from './CountUp'
 
-export type AnswerVariant = 'correct' | 'wrong' | 'neutral'
+export type AnswerVariant = 'correct' | 'wrong' | 'neutral' | 'pending'
 
 interface AnswerProps {
     index: 0 | 1 | 2
@@ -48,6 +48,9 @@ const AnswerContainer = styled('button', {
                 $$fillColor: '#D93E29',
                 background: '$orange',
             },
+            pending: {
+                background: '$yellow',
+            },
             neutral: {
                 $$fillColor: '#3B3B3B',
                 outline: `$borderWidths$xs solid $$fillColor`,
@@ -79,10 +82,16 @@ export function Answer({ index, children, variant, count, share, disabled, onCli
                 <Columns alignY="center">
                     <Column>
                         <Inline space="md" wrap="nowrap">
-                            <Typography as="h3" color={variant === 'correct' ? 'greyA' : 'whiteA'}>
+                            <Typography
+                                as="h3"
+                                color={variant === 'correct' || variant === 'pending' ? 'greyA' : 'whiteA'}
+                            >
                                 {letter}
                             </Typography>
-                            <Typography as="h3" color={variant === 'correct' ? 'black' : 'white'}>
+                            <Typography
+                                as="h3"
+                                color={variant === 'correct' || variant === 'pending' ? 'black' : 'white'}
+                            >
                                 {children}
                             </Typography>
                         </Inline>

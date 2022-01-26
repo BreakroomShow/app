@@ -30,6 +30,7 @@ const Overlay = styled(Box, {
         visible: {
             false: {
                 opacity: 0,
+                transition: 'opacity .3s',
             },
         },
     },
@@ -56,6 +57,14 @@ const Badge = styled(Box, {
     transform: 'rotate(20deg)',
 
     pointerEvents: 'none',
+    userSelect: 'none',
+})
+
+const PlayButton = styled(Box, {
+    position: 'absolute',
+    inset: 0,
+    margin: 'auto',
+    size: 92,
 })
 
 const PlayIconSmall = styled(Box, {
@@ -75,7 +84,7 @@ const GameReplayContainer = styled(Box, {
     alignItems: 'center',
     justifyContent: 'center',
     size: '100%',
-    background: '$black',
+    background: 'black',
 })
 
 const TARGET_WIDTH = 1280
@@ -131,20 +140,27 @@ export function GameReplaySection() {
         >
             <AspectRatio ratio={RATIO}>
                 <GameReplayContainer ref={containerRef}>
-                    <Iframe title="game replay" src="/_replay" ref={iframeRef} onLoad={onLoad} />
+                    <Iframe title="game replay" src="/_replay" ref={iframeRef} onLoad={onLoad} tabIndex={-1} />
                 </GameReplayContainer>
 
-                <Overlay visible={!play}>
-                    {bridge ? <PlayIcon /> : null}
-                    <Badge>
-                        <Stack align="center" space="sm">
-                            <PlayIconSmall />
-                            <Typography as="body2" color="white" align="center">
-                                Last Game Replay
-                            </Typography>
-                        </Stack>
-                    </Badge>
-                </Overlay>
+                <Overlay visible={!play} />
+                {play ? null : (
+                    <>
+                        {bridge ? (
+                            <PlayButton>
+                                <PlayIcon />
+                            </PlayButton>
+                        ) : null}
+                        <Badge>
+                            <Stack align="center" space="sm">
+                                <PlayIconSmall />
+                                <Typography as="body2" color="white" align="center">
+                                    Last Game Replay
+                                </Typography>
+                            </Stack>
+                        </Badge>
+                    </>
+                )}
             </AspectRatio>
         </Container>
     )

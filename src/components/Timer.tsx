@@ -12,13 +12,13 @@ const TimeContainer = styled(Box, {
     justifyContent: 'center',
 })
 
-export function Timer({ deadline, active }: { deadline: number; active?: boolean }) {
+export function Timer({ deadline, active, speed = 1 }: { deadline: number; active?: boolean; speed?: number }) {
     const { nonce, stop } = useNonce({ delay: 333, active })
 
     const [startTime] = useState(() => Date.now())
     const remainTime = Math.max(deadline - nonce, 0)
     const totalTime = deadline - startTime
-    const timeOffset = 800
+    const timeOffset = 800 / speed
     const pastTime = totalTime - remainTime + timeOffset
     const progress = 1 - pastTime / totalTime
 
@@ -28,7 +28,7 @@ export function Timer({ deadline, active }: { deadline: number; active?: boolean
         color = 'yellow'
     }
 
-    if (progress < 0.3 || remainTime <= 4 * 1000) {
+    if (progress < 0.3 || remainTime <= (4 * 1000) / speed) {
         color = 'orange'
     }
 
@@ -41,7 +41,7 @@ export function Timer({ deadline, active }: { deadline: number; active?: boolean
             <Progress value={progress} color={color} background="darkGrey" size={84} width={5} />
             <TimeContainer>
                 <Typography as="h2" color="white" lineHeight="base">
-                    {Math.floor(remainTime / 1000)}
+                    {Math.floor(remainTime / (1000 / speed))}
                 </Typography>
             </TimeContainer>
         </Box>
