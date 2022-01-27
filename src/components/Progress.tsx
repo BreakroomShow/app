@@ -12,6 +12,7 @@ const Container = styled(Box, {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    transform: 'scaleX(-1)',
 })
 
 const Circle = styled('circle', {
@@ -25,7 +26,8 @@ export function Progress({ value, color, background, width, size }: ProgressProp
 
     const radius = center - width / 2
     const c = Math.PI * (radius * 2)
-    const strokeDashoffset = -((1 - value) * c)
+    const strokeDasharray = 2 * Math.PI * radius
+    const strokeDashoffset = (1 - value) * c
 
     return (
         <Container css={{ size }}>
@@ -35,7 +37,7 @@ export function Progress({ value, color, background, width, size }: ProgressProp
                     cx={center}
                     cy={center}
                     fill="transparent"
-                    strokeDasharray="565.48"
+                    strokeDasharray={strokeDasharray}
                     strokeWidth={width}
                     stroke={theme.colors[background].value}
                 />
@@ -44,7 +46,7 @@ export function Progress({ value, color, background, width, size }: ProgressProp
                     cx={center}
                     cy={center}
                     fill="transparent"
-                    strokeDasharray="565.48"
+                    strokeDasharray={strokeDasharray}
                     strokeDashoffset={strokeDashoffset}
                     strokeLinecap="round"
                     transform={`rotate(270 ${center} ${center})`}

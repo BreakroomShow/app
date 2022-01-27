@@ -11,10 +11,7 @@ const Container = styled(Box, {
     borderRadius: '$md',
     overflow: 'hidden',
     lineHeight: 0,
-
-    '& video': {
-        width: '100%',
-    },
+    transform: 'translateZ(0)',
 })
 
 const Overlay = styled(Box, {

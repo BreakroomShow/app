@@ -53,7 +53,7 @@ const AnswerContainer = styled('button', {
             },
             neutral: {
                 $$fillColor: '#3B3B3B',
-                outline: `$borderWidths$xs solid $$fillColor`,
+                boxShadow: `0 0 0 $borderWidths$xs $$fillColor`,
             },
         },
     },
