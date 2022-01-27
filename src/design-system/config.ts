@@ -36,6 +36,7 @@ export const cssFactory = stitches.createStitches({
             brightGreen: '#CCFD51',
         },
         fontSizes: {
+            xs: '12px',
             sm: '16px',
             md: '18px',
             lg: '24px',

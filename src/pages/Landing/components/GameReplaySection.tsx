@@ -1,9 +1,16 @@
 import { AspectRatio } from '@radix-ui/react-aspect-ratio'
 import { useEffect, useReducer, useRef } from 'react'
 
-import { Box, Stack, Typography, styled } from '../../../design-system'
+import { Box, Text, styled } from '../../../design-system'
 import { ReactComponent as PlayIcon } from '../../../images/play.svg'
 import { useReplayBridge } from '../useReplayBridge'
+
+const PlayButton = styled(Box, {
+    position: 'absolute',
+    inset: 0,
+    margin: 'auto',
+    size: 92,
+})
 
 const Container = styled(Box, {
     position: 'relative',
@@ -11,7 +18,14 @@ const Container = styled(Box, {
     borderRadius: '$md',
     overflow: 'hidden',
     lineHeight: 0,
+    userSelect: 'none',
     transform: 'translateZ(0)',
+    '&:active': {
+        [`& ${PlayButton}`]: {
+            transform: 'scale(0.85)',
+            transition: 'transform .15s',
+        },
+    },
 })
 
 const Overlay = styled(Box, {
@@ -36,32 +50,37 @@ const Overlay = styled(Box, {
 const Badge = styled(Box, {
     size: 160,
     padding: 25,
+    top: -30,
+    right: -10,
+    fontSize: '$sm',
+
     '@down-md': {
         size: 100,
-        padding: 0,
+        padding: 10,
+        top: -20,
+        right: 0,
+        fontSize: '$xs',
     },
+
     borderRadius: '$round',
     background: '$blue',
 
     position: 'absolute',
-    top: 20,
-    right: 20,
 
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+
+    '& > * + *': {
+        marginTop: '$sm',
+        '@down-md': { marginTop: '$xs' },
+    },
 
     transform: 'rotate(20deg)',
 
     pointerEvents: 'none',
     userSelect: 'none',
-})
-
-const PlayButton = styled(Box, {
-    position: 'absolute',
-    inset: 0,
-    margin: 'auto',
-    size: 92,
 })
 
 const PlayIconSmall = styled(Box, {
@@ -130,35 +149,33 @@ export function GameReplaySection() {
     }, [bridge, play])
 
     return (
-        <Container
-            tabIndex={0}
-            onClick={bridge ? togglePlay : undefined}
-            onKeyPress={(e) => (e.key === 'Enter' && bridge ? togglePlay() : undefined)}
-        >
-            <AspectRatio ratio={RATIO}>
-                <GameReplayContainer ref={containerRef}>
-                    <Iframe title="game replay" src="/_replay" ref={iframeRef} onLoad={onLoad} tabIndex={-1} />
-                </GameReplayContainer>
+        <Box css={{ position: 'relative' }}>
+            <Container
+                tabIndex={0}
+                onClick={bridge ? togglePlay : undefined}
+                onKeyPress={(e) => (e.key === 'Enter' && bridge ? togglePlay() : undefined)}
+            >
+                <AspectRatio ratio={RATIO}>
+                    <GameReplayContainer ref={containerRef}>
+                        <Iframe title="game replay" src="/_replay" ref={iframeRef} onLoad={onLoad} tabIndex={-1} />
+                    </GameReplayContainer>
 
-                <Overlay visible={!play} />
-                {play ? null : (
-                    <>
-                        {bridge ? (
-                            <PlayButton>
-                                <PlayIcon />
-                            </PlayButton>
-                        ) : null}
-                        <Badge>
-                            <Stack align="center" space="sm">
-                                <PlayIconSmall />
-                                <Typography as="body2" color="white" align="center">
-                                    Last Game Replay
-                                </Typography>
-                            </Stack>
-                        </Badge>
-                    </>
-                )}
-            </AspectRatio>
-        </Container>
+                    <Overlay visible={!play} />
+
+                    {bridge && !play ? (
+                        <PlayButton>
+                            <PlayIcon />
+                        </PlayButton>
+                    ) : null}
+                </AspectRatio>
+            </Container>
+
+            <Badge>
+                <PlayIconSmall />
+                <Text font="body" size="inherit" color="white" align="center">
+                    Last Game Replay
+                </Text>
+            </Badge>
+        </Box>
     )
 }
