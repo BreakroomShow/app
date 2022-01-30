@@ -3,6 +3,7 @@ import { useQuery } from 'react-query'
 
 import { getReplay } from '../../api/methods'
 import { GameManager } from '../../containers/GameManager'
+import { VFX } from '../../containers/VFX'
 import { View } from '../../containers/View'
 import { Box, styled } from '../../design-system'
 import { useGetLatest } from '../../hooks/useGetLatest'
@@ -122,19 +123,22 @@ export function Replay() {
     })
 
     return (
-        <Container disableAnimation={!isPlaying}>
-            <View>
-                {current ? (
-                    <GameManager
-                        event={current.event}
-                        currentQuestionId={currentQuestionId}
-                        totalQuestions={totalQuestions}
-                        userAnswerId={userAnswerId}
-                        isPlaying={isPlaying}
-                        speed={SPEED}
-                    />
-                ) : null}
-            </View>
-        </Container>
+        <>
+            <VFX event={current && current.event} isPlaying={isPlaying} />
+            <Container disableAnimation={!isPlaying}>
+                <View>
+                    {current ? (
+                        <GameManager
+                            event={current.event}
+                            currentQuestionId={currentQuestionId}
+                            totalQuestions={totalQuestions}
+                            userAnswerId={userAnswerId}
+                            isPlaying={isPlaying}
+                            speed={SPEED}
+                        />
+                    ) : null}
+                </View>
+            </Container>
+        </>
     )
 }
