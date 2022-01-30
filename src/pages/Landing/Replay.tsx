@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { useQuery } from 'react-query'
 
-import { getReplay } from '../../api/methods'
+import { useReplayQuery } from '../../api/query'
 import { GameManager } from '../../containers/GameManager'
 import { VFX } from '../../containers/VFX'
 import { View } from '../../containers/View'
@@ -31,7 +30,7 @@ const PREVIEW_EVENT = 'answer_reveal'
 const SPEED = 2.4
 
 export function Replay() {
-    const { data: replay, isSuccess } = useQuery(['replay'], getReplay)
+    const { data: replay, isSuccess } = useReplayQuery()
     const allEvents = (replay?.events || []).map((e) => ({
         ...e,
         event: { ...e.event, duration: e.event.duration / SPEED },

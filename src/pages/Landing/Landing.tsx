@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 
+import { useReplayQuery } from '../../api/query'
 import { Box, Stack, globalCss, styled } from '../../design-system'
 import { lazy } from '../../utils/lazy'
 import { GameReplaySection } from './components/GameReplaySection'
@@ -14,6 +15,7 @@ import { PageSpacer } from './components/PageSpacer'
 import { PageTitle } from './components/PageTitle'
 
 const Replay = lazy(() => import(/* webpackChunkName: "Replay" */ './Replay').then((m) => m.Replay), null)
+useReplayQuery.preload()
 
 const styles = globalCss({
     html: { background: '$blue' },
