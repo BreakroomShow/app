@@ -27,6 +27,7 @@ const AnswerContainer = styled('button', {
     paddingY: '$xxl',
 
     transition: 'background 0.5s, transform .3s',
+    transform: 'translateZ(0)',
 
     '&:not([disabled])': {
         cursor: 'pointer',
