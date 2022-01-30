@@ -1,5 +1,4 @@
-import { randInt } from 'three/src/math/MathUtils'
-
+import { selectRandom } from '../../../utils/selectRandom'
 import { colors } from './constants'
 
-export const getRandomColor = () => colors.trivia[randInt(0, colors.trivia.length - 1)]
+export const getRandomColor = () => selectRandom(colors.trivia)

@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 
 import { getReplay } from '../../api/methods'
 import { GameManager } from '../../containers/GameManager'
-import VFX from '../../containers/VFX'
+import { VFX } from '../../containers/VFX'
 import { View } from '../../containers/View'
 import { Box, styled } from '../../design-system'
 import { useGetLatest } from '../../hooks/useGetLatest'
@@ -124,6 +124,7 @@ export function Replay() {
 
     return (
         <>
+            <VFX event={current && current.event} isPlaying={isPlaying} />
             <Container disableAnimation={!isPlaying}>
                 <View>
                     {current ? (
@@ -137,9 +138,6 @@ export function Replay() {
                         />
                     ) : null}
                 </View>
-                <div style={{ position: 'absolute', inset: 0, zIndex: -1 }}>
-                    <VFX event={current && current.event} isPlaying={isPlaying} />
-                </div>
             </Container>
         </>
     )

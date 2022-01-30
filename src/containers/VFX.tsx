@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber'
 
-import Stars from '../components/VFX/Stars'
+import { Stars } from '../components/VFX/Stars'
+import { Box } from '../design-system'
 import { GameEvent } from '../types'
 
 interface VFXProps {
@@ -8,12 +9,12 @@ interface VFXProps {
     isPlaying: boolean
 }
 
-const VFX = ({ event, isPlaying }: VFXProps) => {
+export const VFX = ({ event, isPlaying }: VFXProps) => {
     return (
-        <Canvas>
-            <Stars count={300} />
-        </Canvas>
+        <Box style={{ position: 'fixed', inset: 0, zIndex: -1 }}>
+            <Canvas>
+                <Stars count={300} />
+            </Canvas>
+        </Box>
     )
 }
-
-export default VFX
