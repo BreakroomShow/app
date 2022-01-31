@@ -33,7 +33,7 @@ export default function Stars({
     fixed,
     color,
 }: StarsProps) {
-    const shaderRef = useRef()
+    const shaderRef = useRef<any>()
     const particlesRef = useRef(null!)
 
     //   const ref = useRef<Mesh>(null!)
@@ -55,7 +55,7 @@ export default function Stars({
     useFrame((_, delta) => {
         // particlesRef.current.rotation.y =
         //   state.clock.getElapsedTime() * rotationSpeed
-        // if (shaderRef.current && !fixed) shaderRef.current.uTime += delta
+        if (shaderRef.current && shaderRef.current.uTime && !fixed) shaderRef.current.uTime += delta / 2
     })
 
     return (

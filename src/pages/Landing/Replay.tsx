@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 
 import { getReplay } from '../../api/methods'
 import { GameManager } from '../../containers/GameManager'
-import VFX from '../../containers/VFX'
+import { VFX } from '../../containers/VFX'
 import { View } from '../../containers/View'
 import { Box, styled } from '../../design-system'
 import { useGetLatest } from '../../hooks/useGetLatest'

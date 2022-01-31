@@ -8,12 +8,10 @@ interface VFXProps {
     isPlaying: boolean
 }
 
-const VFX = ({ event, isPlaying }: VFXProps) => {
+export const VFX = ({ event, isPlaying }: VFXProps) => {
     return (
         <Canvas>
             <Stars count={300} />
         </Canvas>
     )
 }
-
-export default VFX
