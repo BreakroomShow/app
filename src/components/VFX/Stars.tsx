@@ -20,7 +20,7 @@ interface StarsProps {
     depth?: number
     // height?: number
     size?: number
-    fixed?: boolean
+    isPlaying?: boolean
     color?: Color
 }
 
@@ -30,7 +30,7 @@ export function Stars({
     depth = 40,
     // height = 40,
     size = 1000,
-    fixed,
+    isPlaying,
     color,
 }: StarsProps) {
     const shaderRef = useRef<any>()
@@ -41,7 +41,7 @@ export function Stars({
 
     const pointsArray = useMemo(
         () =>
-            Array.from({ length: count }, (v, k) => ({
+            Array.from({ length: count }, () => ({
                 position: new Vector3(
                     (Math.random() - 0.5) * depth,
                     (Math.random() - 0.5) * height * 2,
@@ -55,7 +55,7 @@ export function Stars({
     useFrame((_, delta) => {
         // particlesRef.current.rotation.y =
         //   state.clock.getElapsedTime() * rotationSpeed
-        if (shaderRef.current && shaderRef.current.uTime && !fixed) shaderRef.current.uTime += delta / 2
+        if (shaderRef.current && isPlaying) shaderRef.current.uTime += delta / 2
     })
 
     return (

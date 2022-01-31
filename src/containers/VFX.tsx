@@ -13,7 +13,7 @@ export const VFX = ({ event, isPlaying }: VFXProps) => {
     return (
         <Box style={{ position: 'fixed', inset: 0, zIndex: -1 }}>
             <Canvas>
-                <Stars count={300} />
+                <Stars isPlaying={isPlaying} count={300} />
             </Canvas>
         </Box>
     )
