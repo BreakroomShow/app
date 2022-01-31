@@ -10,16 +10,18 @@ const getBridge = (target: Window) => bridgeFactory<ReplayBridgeEvents>(target)
 
 export const { subscribe, init } = getBridge(window)
 
-export function useReplayState() {
+export function useReplayState(isReady: boolean) {
     const [play, setPlay] = useState(false)
 
     useEffect(() => {
+        if (!isReady) return
+
         const unsubscribe = subscribe('Play', setPlay)
 
         init()
 
         return unsubscribe
-    }, [])
+    }, [isReady])
 
     return play
 }

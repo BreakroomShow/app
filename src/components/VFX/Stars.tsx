@@ -16,15 +16,15 @@ declare global {
 
 interface StarsProps {
     count?: number
-    width?: number
+    // width?: number
     depth?: number
-    height?: number
+    // height?: number
     size?: number
     fixed?: boolean
     color?: Color
 }
 
-export default function Stars({
+export function Stars({
     count = 40,
     // width = 40,
     depth = 40,

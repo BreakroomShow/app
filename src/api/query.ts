@@ -8,6 +8,7 @@ import { config } from '../config'
 import { useCluster } from '../containers/ConnectProvider'
 import { Game, Question, UnrevealedQuestion } from '../types'
 import { ProgramError } from '../utils/error'
+import { getReplay } from './methods'
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -289,3 +290,8 @@ export function useNextGameQuery() {
         },
     )
 }
+
+export function useReplayQuery() {
+    return useQuery(['replay'], getReplay)
+}
+useReplayQuery.preload = () => queryClient.prefetchQuery(['replay'], getReplay)

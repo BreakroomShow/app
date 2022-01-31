@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { useQuery } from 'react-query'
 
-import { getReplay } from '../../api/methods'
+import { useReplayQuery } from '../../api/query'
 import { GameManager } from '../../containers/GameManager'
 import { VFX } from '../../containers/VFX'
 import { View } from '../../containers/View'
@@ -31,7 +30,7 @@ const PREVIEW_EVENT = 'answer_reveal'
 const SPEED = 2.4
 
 export function Replay() {
-    const { data: replay } = useQuery(['replay'], getReplay)
+    const { data: replay, isSuccess } = useReplayQuery()
     const allEvents = (replay?.events || []).map((e) => ({
         ...e,
         event: { ...e.event, duration: e.event.duration / SPEED },
@@ -47,7 +46,7 @@ export function Replay() {
     }))
 
     const playedRef = useRef(false)
-    const isPlaying = useReplayState()
+    const isPlaying = useReplayState(isSuccess)
 
     const previewEventIndex = allEvents.findIndex((e) => e.event.type === PREVIEW_EVENT) || null
 
@@ -124,6 +123,7 @@ export function Replay() {
 
     return (
         <>
+            <VFX event={current && current.event} isPlaying={isPlaying} />
             <Container disableAnimation={!isPlaying}>
                 <View>
                     {current ? (
@@ -137,9 +137,6 @@ export function Replay() {
                         />
                     ) : null}
                 </View>
-                <div style={{ position: 'absolute', inset: 0, zIndex: -1 }}>
-                    <VFX event={current && current.event} isPlaying={isPlaying} />
-                </div>
             </Container>
         </>
     )
