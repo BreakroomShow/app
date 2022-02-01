@@ -1,9 +1,21 @@
 import { shaderMaterial } from '@react-three/drei'
-import { extend } from '@react-three/fiber'
+import { ReactThreeFiber, extend } from '@react-three/fiber'
+import { ShaderMaterial } from 'three'
 
-// eslint-disable-next-line new-cap
-const AnimatedGalaxyMaterial = new shaderMaterial(
-    { uSize: 2, uTime: 1 },
+export type ShaderMaterialRef = ShaderMaterial & typeof uniforms
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            animatedGalaxyMaterial: ReactThreeFiber.MaterialNode<ShaderMaterialRef, []>
+        }
+    }
+}
+
+const uniforms = { uSize: 2, uTime: 1 }
+
+const AnimatedGalaxyMaterial = shaderMaterial(
+    uniforms,
     `
     uniform float uTime;
     uniform float uSize;
@@ -46,8 +58,4 @@ const AnimatedGalaxyMaterial = new shaderMaterial(
   `,
 )
 
-AnimatedGalaxyMaterial.key = Math.random()
-
 extend({ AnimatedGalaxyMaterial })
-
-export { AnimatedGalaxyMaterial }
