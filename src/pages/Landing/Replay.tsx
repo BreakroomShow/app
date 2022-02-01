@@ -123,7 +123,7 @@ export function Replay() {
 
     return (
         <>
-            <VFX event={current && current.event} isPlaying={isPlaying} />
+            <VFX event={current && current.event} isPlaying={isPlaying} speed={SPEED} />
             <Container disableAnimation={!isPlaying}>
                 <View>
                     {current ? (
