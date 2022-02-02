@@ -16,10 +16,9 @@ const Container = styled(Box, {
     position: 'relative',
     width: '100%',
     borderRadius: '$md',
-    overflow: 'hidden',
+    overflow: 'radius',
     lineHeight: 0,
     userSelect: 'none',
-    transform: 'translateZ(0)',
     '&:active': {
         [`& ${PlayButton}`]: {
             transform: 'scale(0.85)',
