@@ -27,6 +27,8 @@ const Segment = styled(SegmentComponent, {
     alignItems: 'center',
 })
 
+export const howToStartId = 'how-to-start'
+
 export function HowToStartSection() {
     const steps = [
         {
@@ -61,7 +63,7 @@ export function HowToStartSection() {
     return (
         <Container>
             <PageContent>
-                <SectionTitle>How To Start</SectionTitle>
+                <SectionTitle id={howToStartId}>How To Start</SectionTitle>
                 <PageSpacer />
                 <Columns collapseBelow="@down-xl">
                     {steps.map((i) => (

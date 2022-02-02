@@ -5,7 +5,7 @@ import { Box, Stack, globalCss, styled } from '../../design-system'
 import { lazy } from '../../utils/lazy'
 import { GameReplaySection } from './components/GameReplaySection'
 import { GameRulesSection } from './components/GameRulesSection'
-import { HowToStartSection } from './components/HowToStartSection'
+import { HowToStartSection, howToStartId } from './components/HowToStartSection'
 import { LeaderboardSection } from './components/LeaderboardSection'
 import { NextGameSection } from './components/NextGameSection'
 import { PageContent } from './components/PageContent'
@@ -38,7 +38,7 @@ function Index() {
                 <Stack dividers={<PageSpacer />}>
                     <PageHeader />
                     <PageTitle />
-                    <NextGameSection />
+                    <NextGameSection participateUrl={`#${howToStartId}`} />
                     <GameReplaySection />
                     <GameRulesSection />
                 </Stack>

@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 
 import { globalCss } from './config'
 
@@ -55,6 +55,22 @@ const globalStyles = globalCss({
 
 export const StyleProvider = ({ children }: { children: ReactElement }) => {
     globalStyles()
+
+    useEffect(() => {
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+            anchor.addEventListener('click', (e) => {
+                e.preventDefault()
+
+                const href = anchor.getAttribute('href')!
+                const target = document.querySelector(href)
+
+                if (target) {
+                    window.history.pushState(null, '', href)
+                    target.scrollIntoView({ behavior: 'smooth' })
+                }
+            })
+        })
+    }, [])
 
     return children
 }

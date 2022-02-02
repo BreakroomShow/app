@@ -4,11 +4,14 @@ import { SegmentComponent } from '../../../components/Segment'
 import { Column, Columns, Stack, Text, Typography } from '../../../design-system'
 import { useNonce } from '../../../hooks/useNonce'
 import { msToTimeUntil } from '../../../utils/date'
-import { signinUrl } from '../const'
 
 const nextGameDate = new Date(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).setHours(19, 0, 0))
 
-export function NextGameSection() {
+interface NextGameSectionProps {
+    participateUrl: string
+}
+
+export function NextGameSection({ participateUrl }: NextGameSectionProps) {
     useNonce()
 
     const nextGameDateString = nextGameDate.toLocaleString('default', { day: 'numeric', month: 'short' })
@@ -56,7 +59,7 @@ export function NextGameSection() {
                     </Column>
                 ))}
             </Columns>
-            <Link to={signinUrl} css={{ borderRadius: '$pill' }}>
+            <Link to={participateUrl} css={{ borderRadius: '$pill' }}>
                 <SegmentComponent
                     inset="center"
                     variant="pill"

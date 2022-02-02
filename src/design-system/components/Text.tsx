@@ -21,6 +21,7 @@ import {
 export interface TextProps extends TextStyleProps, Pick<ComponentProps<typeof TextComponent>, 'css'> {
     children: ReactNode
     as?: keyof JSX.IntrinsicElements
+    id?: string
     className?: string
 }
 
@@ -77,6 +78,7 @@ const TextComponent = styled(Box, {
 
 export function Text({
     as = 'span',
+    id,
     children,
     className,
     align,
@@ -108,6 +110,7 @@ export function Text({
     return (
         <TextContext.Provider value={textContext}>
             <TextComponent
+                id={id}
                 as={as}
                 className={className}
                 size={size}
