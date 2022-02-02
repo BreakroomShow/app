@@ -97,7 +97,7 @@ export const cssFactory = stitches.createStitches({
                           willChange: 'transform',
                       },
                   }
-                : value,
+                : { overflow: value },
     },
 })
 
