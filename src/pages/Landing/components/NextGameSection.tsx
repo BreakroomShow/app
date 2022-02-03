@@ -69,7 +69,7 @@ export function NextGameSection({ participateUrl }: NextGameSectionProps) {
                         '@down-md': { minHeight: 125 },
                     }}
                 >
-                    <LinkButton>Participate in the game</LinkButton>
+                    <LinkButton>Sign up for the game</LinkButton>
                 </SegmentComponent>
             </Link>
         </>

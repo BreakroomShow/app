@@ -49,19 +49,19 @@ const Caret = styled('span', {
 })
 
 export function PageTitle() {
-    const [text, isTyping] = useTextTyping(['Prizes', 'Solana', 'Seva', 'Big Moooney'])
+    const [text, isTyping] = useTextTyping(['With Prizes', 'on Solana', 'for beginners in crypto'])
 
     return (
         <Box>
             <Title>On-chain Live{nbsp}Trivia</Title>
             <Title>
-                With{nbsp}
+                {nbsp}
                 {text}
                 <Caret animated={!isTyping} />
             </Title>
             <Spacer size="lg" />
             <Text font="body" size="lg" color="blackA" align="center">
-                Answer the questions and get crypto to your wallet
+                Answer twelve questions in the game and win crypto
             </Text>
         </Box>
     )
