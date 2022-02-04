@@ -49,7 +49,7 @@ const Caret = styled('span', {
 })
 
 export function PageTitle() {
-    const [text, isTyping] = useTextTyping(['With Prizes', 'on Solana', 'for beginners in crypto'])
+    const [text, isTyping] = useTextTyping(['With Prizes', 'on Solana', 'for Newcomers'])
 
     return (
         <Box>
