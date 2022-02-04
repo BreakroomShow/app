@@ -172,7 +172,7 @@ export function GameReplaySection() {
             <Badge>
                 <PlayIconSmall />
                 <Text font="body" size="inherit" color="white" align="center">
-                    Last Game Replay
+                    Demo Game Replay
                 </Text>
             </Badge>
         </Box>
