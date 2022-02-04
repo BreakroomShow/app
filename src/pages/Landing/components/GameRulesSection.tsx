@@ -29,11 +29,9 @@ export function GameRulesSection() {
         <Box>
             <Stack align="center" space="sm">
                 <SectionTitle>Live Trivia Show</SectionTitle>
-                <Text font="body" size="md" color="blackA" align="center">
-                    Games are hosted throughout the week.{' '}
-                    <span style={{ whiteSpace: 'nowrap' }}>
-                        The prize fund is split between players who answered correctly to all questions.
-                    </span>
+                <Text font="body" size="md" color="blackA" align="center" preserveLinebreaks>
+                    Games are hosted throughout the week.{'\n'}The prize fund is split between players who answered
+                    correctly to all questions.
                 </Text>
             </Stack>
             <PageSpacer />

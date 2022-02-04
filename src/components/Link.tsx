@@ -8,7 +8,7 @@ function LinkComponent({ to, ...props }: LinkProps) {
     }
 
     // eslint-disable-next-line jsx-a11y/anchor-has-content
-    return <a href={to} {...props} />
+    return <a href={to} target="_blank" rel="noreferrer" {...props} />
 }
 
 export const Link = styled(LinkComponent, {
