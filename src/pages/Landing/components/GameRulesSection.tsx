@@ -32,7 +32,7 @@ export function GameRulesSection() {
                 <Text font="body" size="md" color="blackA" align="center">
                     Games are hosted throughout the week.{' '}
                     <span style={{ whiteSpace: 'nowrap' }}>
-                        The prize fund is split between players, who answered correctly on all questions.
+                        The prize fund is split between players who answered correctly to all questions.
                     </span>
                 </Text>
             </Stack>
