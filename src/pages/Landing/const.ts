@@ -6,6 +6,7 @@ export const faqUrl = '/'
 export const sponsorUrl = 'https://breakroomshow.typeform.com/sponsors'
 export const signinUrl = '/'
 export const howItWorksUrl = '/'
+export const githubUrl = 'https://github.com/breakroomshow'
 
 export const phantomWalletUrl = 'https://phantom.app/'
 export const breakroomEmailUrl = `mailto:${breakroomEmail}`

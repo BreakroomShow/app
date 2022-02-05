@@ -2,7 +2,7 @@ import { Link } from '../../../components/Link'
 import { LinkButton } from '../../../components/LinkButton'
 import { Box, TypeGroup, Typography, styled } from '../../../design-system'
 import { ReactComponent as PhantomIcon } from '../../../images/phantom.svg'
-import { breakroomEmail, breakroomEmailUrl, faqUrl, signinUrl, sponsorUrl } from '../const'
+import { breakroomEmail, breakroomEmailUrl, faqUrl, githubUrl, signinUrl, sponsorUrl } from '../const'
 
 const Container = styled('footer', {
     display: 'flex',
@@ -46,6 +46,9 @@ export function PageFooter() {
                     </Link>
                     <Link to={faqUrl}>
                         <Typography>F.A.Q.</Typography>
+                    </Link>
+                    <Link to={githubUrl}>
+                        <Typography>GitHub</Typography>
                     </Link>
                 </Box>
                 <Box css={{ color: '$white' }}>
