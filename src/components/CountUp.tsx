@@ -1,25 +1,26 @@
 import { CountUp as CountUpJs } from 'countup.js'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface CountUpProps {
     children: number
+    duration?: number
 }
 
-export function CountUp({ children }: CountUpProps) {
-    const ref = useRef<HTMLSpanElement | null>(null)
+export function CountUp({ children, duration }: CountUpProps) {
+    const [ref, setRef] = useState<HTMLSpanElement | null>(null)
     const countUpRef = useRef<CountUpJs | null>(null)
 
     useEffect(() => {
-        if (!ref.current) return
+        if (!ref) return
 
         if (countUpRef.current) {
             countUpRef.current.update(children)
             return
         }
 
-        countUpRef.current = new CountUpJs(ref.current, children)
+        countUpRef.current = new CountUpJs(ref, children, { duration })
         countUpRef.current.start()
-    }, [children])
+    }, [children, duration, ref])
 
-    return <span ref={ref} />
+    return <span ref={setRef} />
 }

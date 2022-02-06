@@ -11,4 +11,4 @@ export const weightTokens = Object.keys(config.theme.fontWeights) as FontWeight[
 export const lineHeightTokens = Object.keys(config.theme.lineHeights) as LineHeight[]
 export const mediaTokens = Object.keys(medias) as MediaToken[]
 export const alignTokens = ['left', 'center', 'right'] as const
-export const alignYTokens = ['top', 'center', 'bottom'] as const
+export const alignYTokens = ['top', 'center', 'bottom', 'baseline'] as const

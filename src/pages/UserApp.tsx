@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { useEventListener } from '../api/events'
 import { cacheKeys, queryClient, useGamesQuery, useNextGameQuery, useTriviaQuery, useUserQuery } from '../api/query'
 import { ConnectionStatus } from '../components/ConnectionStatus'
+import { SegmentContainer } from '../components/Segment'
 import { ChatView } from '../containers/Chat'
 import { View } from '../containers/View'
 import { bnToLocaleString, bnToMs } from '../utils/date'
@@ -85,8 +86,10 @@ export function UserApp() {
             <button onClick={reloadGames}>Reload Game</button>
             {nextGame && nextGameId != null ? (
                 <View>
-                    <QuestionScreen gameId={nextGameId} game={nextGame} />
-                    <ChatView />
+                    <SegmentContainer>
+                        <QuestionScreen gameId={nextGameId} game={nextGame} />
+                    </SegmentContainer>
+                    <ChatView viewers={0} messages={[]} />
                 </View>
             ) : null}
         </main>

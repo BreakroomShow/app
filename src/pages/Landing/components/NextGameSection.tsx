@@ -2,16 +2,17 @@ import { Link } from '../../../components/Link'
 import { LinkButton } from '../../../components/LinkButton'
 import { SegmentComponent } from '../../../components/Segment'
 import { Column, Columns, Stack, Text, Typography } from '../../../design-system'
+import { useHtmlAnchor } from '../../../hooks/useHtmlAnchor'
 import { useNonce } from '../../../hooks/useNonce'
 import { msToTimeUntil } from '../../../utils/date'
 
 const nextGameDate = new Date(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).setHours(19, 0, 0))
 
 interface NextGameSectionProps {
-    participateUrl: string
+    howToStartId: string
 }
 
-export function NextGameSection({ participateUrl }: NextGameSectionProps) {
+export function NextGameSection({ howToStartId }: NextGameSectionProps) {
     useNonce()
 
     const nextGameDateString = nextGameDate.toLocaleString('default', { day: 'numeric', month: 'short' })
@@ -59,7 +60,7 @@ export function NextGameSection({ participateUrl }: NextGameSectionProps) {
                     </Column>
                 ))}
             </Columns>
-            <Link to={participateUrl} css={{ borderRadius: '$pill' }}>
+            <Link css={{ borderRadius: '$pill' }} {...useHtmlAnchor(howToStartId)}>
                 <SegmentComponent
                     inset="center"
                     variant="pill"

@@ -1,10 +1,12 @@
-import { Link as LinkBase, LinkProps } from 'react-router-dom'
+import { Link as LinkBase, LinkProps, useLocation } from 'react-router-dom'
 
 import { styled } from '../design-system'
 
-function LinkComponent({ to, ...props }: LinkProps) {
+function LinkComponent({ to, state, ...props }: LinkProps) {
+    const location = useLocation()
+
     if (typeof to !== 'string' || to.startsWith('/')) {
-        return <LinkBase to={to} {...props} />
+        return <LinkBase to={to} state={{ bgLocation: location, ...state }} {...props} />
     }
 
     // eslint-disable-next-line jsx-a11y/anchor-has-content

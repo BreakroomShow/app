@@ -88,19 +88,21 @@ export function QuestionScreen({ gameId, game }: QuestionsScreenProps) {
     }
 
     return (
-        <RevealedQuestionScreen
-            questionId={questionId}
-            totalQuestions={questions.length}
-            questionText={revealedQuestion.question}
-            answers={revealedQuestion.variants}
-            userAnswer={userAnswer}
-            correctAnswer={correctAnswer}
-            answerCount={correctAnswer == null ? null : [2100, 5523, 4245]} // TODO real stats
-            answered={answered}
-            lives={lives}
-            fund={fund}
-            resultIcon={resultIcon}
-            onAnswer={canAnswer ? (variantId) => submitAnswer({ questionKey, variantId }) : null}
-        />
+        <Segment color="black" w={4} h={3} inset="lg">
+            <RevealedQuestionScreen
+                questionId={questionId}
+                totalQuestions={questions.length}
+                questionText={revealedQuestion.question}
+                answers={revealedQuestion.variants}
+                userAnswer={userAnswer}
+                correctAnswer={correctAnswer}
+                answerCount={correctAnswer == null ? null : [2100, 5523, 4245]} // TODO real stats
+                answered={answered}
+                lives={lives}
+                fund={fund}
+                resultIcon={resultIcon}
+                onAnswer={canAnswer ? (variantId) => submitAnswer({ questionKey, variantId }) : null}
+            />
+        </Segment>
     )
 }

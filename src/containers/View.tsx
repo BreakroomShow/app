@@ -1,9 +1,7 @@
-import { ReactNode } from 'react'
-
-import { SEGMENT_WIDTH, SegmentContainer } from '../components/Segment'
+import { SEGMENT_WIDTH } from '../components/Segment'
 import { Box, styled } from '../design-system'
 
-const Container = styled(Box, {
+export const View = styled(Box, {
     marginX: 'auto',
 
     display: 'flex',
@@ -14,11 +12,3 @@ const Container = styled(Box, {
         maxWidth: SEGMENT_WIDTH * 4,
     },
 })
-
-export function View({ children }: { children: ReactNode }) {
-    return (
-        <Container>
-            <SegmentContainer>{children}</SegmentContainer>
-        </Container>
-    )
-}

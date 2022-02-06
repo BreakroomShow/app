@@ -17,6 +17,8 @@ export const cssFactory = stitches.createStitches({
             xxxl: '36px',
         },
         colors: {
+            transparent: 'transparent',
+
             background: '#F4F4F4',
 
             black: '#171717',
@@ -52,6 +54,7 @@ export const cssFactory = stitches.createStitches({
         lineHeights: {
             base: '1',
             xs: '1.18',
+            md: '1.5',
         },
         letterSpacings: {},
         fontWeights: {
