@@ -2,7 +2,7 @@ import { Box, Column, Columns, Stack, Text, Typography, styled } from '../../../
 import { ReactComponent as HeartIcon } from '../../../images/heart.svg'
 import { ReactComponent as QuestionIcon } from '../../../images/question.svg'
 import { ReactComponent as TimerIcon } from '../../../images/timer.svg'
-import { nbsp } from '../const'
+import { nbsp } from '../../../utils/nbsp'
 import { PageSpacer } from './PageSpacer'
 import { SectionTitle } from './SectionTitle'
 

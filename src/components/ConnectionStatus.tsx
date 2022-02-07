@@ -1,8 +1,6 @@
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
-
 import { config } from '../config'
-import { useCluster } from '../containers/ConnectProvider'
+import { useWallet } from '../containers/ConnectProvider'
+import { ConnectButton } from './ConnectButton'
 import { Wallet } from './Wallet'
 
 function ConnectedApp() {
@@ -18,7 +16,7 @@ function ConnectedApp() {
 function DisconnectedApp() {
     return (
         <div>
-            <WalletMultiButton />
+            <ConnectButton />
         </div>
     )
 }
@@ -26,7 +24,7 @@ function DisconnectedApp() {
 export function ConnectionStatus() {
     const wallet = useWallet()
 
-    const [cluster, setCluster] = useCluster()
+    const { cluster, setCluster } = useWallet()
 
     const content = (() => {
         if (wallet.connected) return <ConnectedApp />
@@ -37,7 +35,7 @@ export function ConnectionStatus() {
     return (
         <div>
             <div style={{ padding: '5px 0' }}>
-                <select value={cluster} onChange={(e) => setCluster(e.target.value as config.Cluster)}>
+                <select value={cluster} onChange={(e) => setCluster(e.target.value as typeof cluster)}>
                     {config.clusters.map((c) => (
                         <option key={c} value={c}>
                             {c}

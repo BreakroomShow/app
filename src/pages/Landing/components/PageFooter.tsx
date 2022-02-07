@@ -1,8 +1,7 @@
+import { ConnectButton } from '../../../components/ConnectButton'
 import { Link } from '../../../components/Link'
-import { LinkButton } from '../../../components/LinkButton'
+import { breakroomEmail, breakroomEmailUrl, faqUrl, githubUrl, sponsorUrl } from '../../../config'
 import { Box, TypeGroup, Typography, styled } from '../../../design-system'
-import { ReactComponent as PhantomIcon } from '../../../images/phantom.svg'
-import { breakroomEmail, breakroomEmailUrl, faqUrl, githubUrl, signinUrl, sponsorUrl } from '../const'
 
 const Container = styled('footer', {
     display: 'flex',
@@ -11,6 +10,8 @@ const Container = styled('footer', {
     whiteSpace: 'nowrap',
     '@down-xl': { flexDirection: 'column' },
     '@down-sm': { alignItems: 'flex-start' },
+
+    color: '$white',
 
     '& > *': {
         display: 'flex',
@@ -33,7 +34,7 @@ const Container = styled('footer', {
 
 export function PageFooter() {
     return (
-        <TypeGroup as="body2" color="white">
+        <TypeGroup as="body2">
             <Container>
                 <Box>
                     <Link to={breakroomEmailUrl}>
@@ -51,10 +52,8 @@ export function PageFooter() {
                         <Typography>GitHub</Typography>
                     </Link>
                 </Box>
-                <Box css={{ color: '$white' }}>
-                    <LinkButton to={signinUrl} icon={<PhantomIcon />}>
-                        Sign in to play
-                    </LinkButton>
+                <Box>
+                    <ConnectButton />
                 </Box>
             </Container>
         </TypeGroup>

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-
 
 import { useReplayQuery } from '../../api/query'
 import { Dialog } from '../../components/Dialog'
+import { connectUrl } from '../../config'
 import { Box, Stack, globalCss, styled } from '../../design-system'
 import { useBackgroundLocation } from '../../hooks/useBackgroundLocation'
 import { lazy } from '../../utils/lazy'
@@ -101,13 +102,16 @@ export function Landing() {
             <Routes location={bgLocation || location}>
                 <Route path="_replay" element={<Replay />} />
                 <Route path="/" element={<Index />} />
-                <Route path="/connect" element={<Navigate to="/" state={{ bgLocation: { pathname: '/' } }} />} />
+                <Route
+                    path={connectUrl}
+                    element={<Navigate to={connectUrl} state={{ bgLocation: { pathname: '/' } }} />}
+                />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 
             {bgLocation ? (
                 <Routes>
-                    <Route path="/connect" element={<ConnectModal />} />
+                    <Route path={connectUrl} element={<ConnectModal />} />
                 </Routes>
             ) : null}
         </>

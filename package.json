@@ -20,8 +20,6 @@
         "@react-three/drei": "^8.7.5",
         "@react-three/fiber": "^7.0.25",
         "@solana/wallet-adapter-base": "^0.7.0",
-        "@solana/wallet-adapter-react": "^0.13.1",
-        "@solana/wallet-adapter-react-ui": "^0.6.1",
         "@solana/wallet-adapter-wallets": "^0.11.3",
         "@solana/web3.js": "^1.31.0",
         "@stitches/react": "^1.2.6",

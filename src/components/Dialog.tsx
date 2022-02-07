@@ -8,6 +8,7 @@ const delay = 150
 const Overlay = styled(DialogPrimitive.Overlay, {
     backgroundColor: '$greyA',
     position: 'fixed',
+    zIndex: 1,
     inset: 0,
     animation: `${keyframes({
         '0%': { opacity: 0 },
@@ -23,6 +24,7 @@ const Content = styled(DialogPrimitive.Content, {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
+    zIndex: 1,
     width: '90vw',
     maxWidth: '450px',
     maxHeight: '85vh',

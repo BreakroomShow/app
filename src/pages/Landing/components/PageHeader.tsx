@@ -1,8 +1,7 @@
+import { ConnectButton } from '../../../components/ConnectButton'
 import { Link } from '../../../components/Link'
-import { LinkButton } from '../../../components/LinkButton'
+import { faqUrl, sponsorUrl } from '../../../config'
 import { Box, Text, TypeGroup, Typography, styled } from '../../../design-system'
-import { ReactComponent as PhantomIcon } from '../../../images/phantom.svg'
-import { faqUrl, signinUrl, sponsorUrl } from '../const'
 
 const Container = styled('header', {
     display: 'flex',
@@ -42,10 +41,7 @@ export function PageHeader() {
                     breakroom
                 </Text>
                 <Box>
-                    <LinkButton to={signinUrl} icon={<PhantomIcon />}>
-                        <Box css={{ '@down-sm': { display: 'none' } }}>Sign in to play</Box>
-                        <Box css={{ '@sm': { display: 'none' } }}>Play</Box>
-                    </LinkButton>
+                    <ConnectButton mobileText="Play" />
                 </Box>
             </Container>
         </TypeGroup>

@@ -1,11 +1,10 @@
 import * as anchor from '@project-serum/anchor'
-import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import * as trivia from 'clic-trivia'
 import { QueryClient, useQuery } from 'react-query'
 import axios from 'redaxios'
 
 import { config } from '../config'
-import { useCluster } from '../containers/ConnectProvider'
+import { useWallet } from '../containers/ConnectProvider'
 import { Game, Question, UnrevealedQuestion } from '../types'
 import { ProgramError } from '../utils/error'
 import { getReplay } from './methods'
@@ -64,8 +63,7 @@ export function useWalletPublicKey() {
 
 export function useProvider() {
     const walletCtx = useWallet()
-    const { connection } = useConnection()
-    const [cluster] = useCluster()
+    const { connection, cluster } = walletCtx
 
     const provider = useQuery([cacheKeys.provider, walletCtx.publicKey, cluster], () => {
         let wallet = unauthorizedWallet

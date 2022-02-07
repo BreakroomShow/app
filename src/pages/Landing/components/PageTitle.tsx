@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Box, Spacer, Text, keyframes, styled } from '../../../design-system'
 import { useGetLatest } from '../../../hooks/useGetLatest'
-import { nbsp } from '../const'
+import { nbsp } from '../../../utils/nbsp'
 
 const Title = styled('span', {
     display: 'block',

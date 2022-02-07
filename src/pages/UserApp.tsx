@@ -1,4 +1,3 @@
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useMemo } from 'react'
 
 import { useEventListener } from '../api/events'
@@ -6,6 +5,7 @@ import { cacheKeys, queryClient, useGamesQuery, useNextGameQuery, useTriviaQuery
 import { ConnectionStatus } from '../components/ConnectionStatus'
 import { SegmentContainer } from '../components/Segment'
 import { ChatView } from '../containers/Chat'
+import { useWallet } from '../containers/ConnectProvider'
 import { View } from '../containers/View'
 import { bnToLocaleString, bnToMs } from '../utils/date'
 import { allGameIds } from '../utils/gameIds'
