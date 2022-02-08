@@ -1,42 +1,27 @@
+import './shaders/AnimatedGalaxyMaterial'
+
 import { Point, Points } from '@react-three/drei'
-import { ReactThreeFiber, useFrame, useThree } from '@react-three/fiber'
-import { Suspense, useMemo, useRef } from 'react'
-import { AdditiveBlending, Color, ShaderMaterial, Vector3 } from 'three'
+import { useFrame, useThree } from '@react-three/fiber'
+import { ComponentRef, Suspense, useMemo, useRef } from 'react'
+import { AdditiveBlending, Color, Vector3 } from 'three'
 
-import { getRandomColor } from './helpers'
-import { AnimatedGalaxyMaterial } from './shaders/AnimatedGalaxyMaterial'
+import { selectRandom } from '../../utils/selectRandom'
+import { colors } from './helpers/constants'
+import type { ShaderMaterialRef } from './shaders/AnimatedGalaxyMaterial'
 
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            animatedGalaxyMaterial: ReactThreeFiber.MaterialNode<ShaderMaterial, []>
-        }
-    }
-}
-
-interface StarsProps {
+export interface StarsProps {
     count?: number
-    // width?: number
     depth?: number
-    // height?: number
     size?: number
-    isPlaying?: boolean
     color?: Color
+    isPlaying?: boolean
+    speed?: number
 }
 
-export function Stars({
-    count = 40,
-    // width = 40,
-    depth = 40,
-    // height = 40,
-    size = 1000,
-    isPlaying,
-    color,
-}: StarsProps) {
-    const shaderRef = useRef<any>()
-    const particlesRef = useRef(null!)
+export function Stars({ count = 40, depth = 10, size = 800, isPlaying, color, speed = 1 }: StarsProps) {
+    const shaderRef = useRef<ShaderMaterialRef>(null)
+    const particlesRef = useRef<ComponentRef<typeof Points>>(null)
 
-    //   const ref = useRef<Mesh>(null!)
     const { dpr, width, height } = useThree(({ viewport }) => viewport)
 
     const pointsArray = useMemo(
@@ -48,14 +33,20 @@ export function Stars({
                     (Math.random() - 0.5) * width * 2,
                 ),
                 scale: Math.random(),
-                color: color ?? new Color(getRandomColor()),
+                color: color ?? new Color(selectRandom(colors.trivia)),
             })),
         [color, count, depth, height, width],
     )
-    useFrame((_, delta) => {
-        // particlesRef.current.rotation.y =
-        //   state.clock.getElapsedTime() * rotationSpeed
-        if (shaderRef.current && isPlaying) shaderRef.current.uTime += delta / 2
+
+    useFrame((state, delta) => {
+        if (!isPlaying) return
+        if (!shaderRef.current || !particlesRef.current) return
+
+        const coef = 0.01 * speed
+
+        particlesRef.current.rotation.x = state.clock.getElapsedTime() * coef
+        particlesRef.current.rotation.y = state.clock.getElapsedTime() * -coef
+        shaderRef.current.uTime += delta * coef
     })
 
     return (
@@ -65,9 +56,7 @@ export function Stars({
                     vertexColors
                     depthWrite={false}
                     blending={AdditiveBlending}
-                    /* @ts-ignore */
                     uSize={size * dpr}
-                    key={AnimatedGalaxyMaterial.key}
                     ref={shaderRef}
                 />
                 {pointsArray.map((el, i) => (
