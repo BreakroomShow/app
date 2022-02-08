@@ -1,90 +1,108 @@
 {
-    "name": "clic-trivia-app",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "vercel:install": "node scripts/replace-trivia-source.js && npm i",
-        "start:admin": "export REACT_APP_TARGET=admin; vercel dev",
-        "start:user": "export REACT_APP_TARGET=user; vercel dev",
-        "start:landing": "export REACT_APP_TARGET=landing; react-scripts start",
-        "build:admin": "export REACT_APP_TARGET=admin; react-scripts build",
-        "build:user": "export REACT_APP_TARGET=user; react-scripts build",
-        "build:landing": "export REACT_APP_TARGET=landing; react-scripts build",
-        "prettify": "eslint --fix '**/*.{tsx,jsx,js,ts}'; prettier --write \"**/*.{tsx,jsx,js,ts,scss,css}\""
-    },
-    "dependencies": {
-        "@project-serum/anchor": "0.18.2",
-        "@radix-ui/react-aspect-ratio": "^0.1.3",
-        "@react-three/drei": "^8.7.5",
-        "@react-three/fiber": "^7.0.25",
-        "@solana/wallet-adapter-base": "^0.7.0",
-        "@solana/wallet-adapter-react": "^0.13.1",
-        "@solana/wallet-adapter-react-ui": "^0.6.1",
-        "@solana/wallet-adapter-wallets": "^0.11.3",
-        "@solana/web3.js": "^1.31.0",
-        "@stitches/react": "^1.2.6",
-        "@supabase/supabase-js": "^1.28.5",
-        "@types/eslint": "^8.2.0",
-        "@types/eslint-plugin-prettier": "^3.1.0",
-        "@types/node": "^12.20.37",
-        "@types/react": "^17.0.37",
-        "@types/react-dom": "^17.0.11",
-        "@types/three": "^0.137.0",
-        "@typescript-eslint/eslint-plugin": "^5.4.0",
-        "@typescript-eslint/parser": "^5.4.0",
-        "@vercel/node": "^1.12.1",
-        "bs58": "4.0.1",
-        "countup.js": "^2.0.8",
-        "eslint": "^7.32.0",
-        "eslint-config-airbnb": "^19.0.1",
-        "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-import": "^2.25.3",
-        "eslint-plugin-jest": "^25.3.0",
-        "eslint-plugin-jsx-a11y": "^6.5.1",
-        "eslint-plugin-prettier": "^4.0.0",
-        "eslint-plugin-react": "^7.27.1",
-        "eslint-plugin-react-hooks": "^4.3.0",
-        "joi": "^17.5.0",
-        "js-sha256": "^0.9.0",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "react-keyed-flatten-children": "^1.3.0",
-        "react-query": "^3.33.7",
-        "react-router-dom": "6.2.1",
-        "react-scripts": "4.0.3",
-        "redaxios": "^0.4.1",
-        "three": "^0.137.4",
-        "typescript": "^4.5.2"
-    },
-    "devDependencies": {
-        "import-sort-style-module": "6.0.0",
-        "prettier": "^2.5.0",
-        "prettier-plugin-import-sort": "0.0.7"
-    },
-    "optionalDependencies": {
-        "clic-trivia": "github:Solana-Game/clic-trivia#8813e67f109356a8997d3a428b9b5b1e867ae419"
-    },
-    "eslintConfig": {
-        "extends": [
-            "react-app"
-        ]
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
+  "name": "clic-trivia-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "vercel:install": "node scripts/replace-trivia-source.js && npm i",
+    "start:admin": "export REACT_APP_TARGET=admin; vercel dev",
+    "start:user": "export REACT_APP_TARGET=user; vercel dev",
+    "start:landing": "export REACT_APP_TARGET=landing; react-scripts start",
+    "build:admin": "export REACT_APP_TARGET=admin; react-scripts build",
+    "build:user": "export REACT_APP_TARGET=user; react-scripts build",
+    "build:landing": "export REACT_APP_TARGET=landing; react-scripts build",
+    "prettify": "eslint --fix '**/*.{tsx,jsx,js,ts}'; prettier --write \"**/*.{tsx,jsx,js,ts,scss,css}\"",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
+  },
+  "dependencies": {
+    "@project-serum/anchor": "0.18.2",
+    "@radix-ui/react-aspect-ratio": "^0.1.3",
+    "@react-three/drei": "^8.7.5",
+    "@react-three/fiber": "^7.0.25",
+    "@solana/wallet-adapter-base": "^0.7.0",
+    "@solana/wallet-adapter-react": "^0.13.1",
+    "@solana/wallet-adapter-react-ui": "^0.6.1",
+    "@solana/wallet-adapter-wallets": "^0.11.3",
+    "@solana/web3.js": "^1.31.0",
+    "@stitches/react": "^1.2.6",
+    "@supabase/supabase-js": "^1.28.5",
+    "@types/eslint": "^8.2.0",
+    "@types/eslint-plugin-prettier": "^3.1.0",
+    "@types/node": "^12.20.37",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "@types/three": "^0.137.0",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vercel/node": "^1.12.1",
+    "bs58": "4.0.1",
+    "countup.js": "^2.0.8",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^19.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.3.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.27.1",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "joi": "^17.5.0",
+    "js-sha256": "^0.9.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-keyed-flatten-children": "^1.3.0",
+    "react-query": "^3.33.7",
+    "react-router-dom": "6.2.1",
+    "react-scripts": "4.0.3",
+    "redaxios": "^0.4.1",
+    "three": "^0.137.4",
+    "typescript": "^4.5.2"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^6.4.18",
+    "@storybook/addon-essentials": "^6.4.18",
+    "@storybook/addon-links": "^6.4.18",
+    "@storybook/node-logger": "^6.4.18",
+    "@storybook/preset-create-react-app": "^3.2.0",
+    "@storybook/react": "^6.4.18",
+    "import-sort-style-module": "6.0.0",
+    "prettier": "^2.5.0",
+    "prettier-plugin-import-sort": "0.0.7"
+  },
+  "optionalDependencies": {
+    "clic-trivia": "github:Solana-Game/clic-trivia#8813e67f109356a8997d3a428b9b5b1e867ae419"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
         ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    },
-    "importSort": {
-        ".js, .jsx, .ts, .tsx": {
-            "style": "module",
-            "parser": "typescript"
+        "rules": {
+          "import/no-anonymous-default-export": "off"
         }
+      }
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module",
+      "parser": "typescript"
     }
+  }
 }
