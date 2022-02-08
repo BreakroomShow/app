@@ -1,6 +1,5 @@
 import {
     MessageSignerWalletAdapterProps,
-    SendTransactionOptions,
     SignerWalletAdapterProps,
     WalletAdapterProps,
     WalletError,
@@ -8,12 +7,13 @@ import {
     WalletNotReadyError,
 } from '@solana/wallet-adapter-base'
 import { Wallet, getPhantomWallet } from '@solana/wallet-adapter-wallets'
-import { Cluster, Connection, PublicKey, Transaction } from '@solana/web3.js'
+import * as solana from '@solana/web3.js'
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 import { authorize } from '../api'
 import { config } from '../config'
 import { useGetLatest } from '../hooks/useGetLatest'
+import { useIsUnloading } from '../hooks/useIsUnloading'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { isIframe } from '../utils/isIframe'
 
@@ -24,7 +24,7 @@ type AuthState =
 
 const authIdle: AuthState = { status: 'idle', token: null }
 
-interface WalletContextState extends WalletAdapterProps {
+interface WalletContextState extends WalletAdapterProps, SignerWalletAdapterProps, MessageSignerWalletAdapterProps {
     status: 'idle' | 'connecting' | 'connected' | 'disconnecting'
     auth: AuthState
     idle: boolean
@@ -32,13 +32,9 @@ interface WalletContextState extends WalletAdapterProps {
 
     wallet: Wallet
     adapter: ReturnType<Wallet['adapter']> | null
-    cluster: Cluster
+    cluster: solana.Cluster
     setCluster(cluster: WalletContextState['cluster']): void
-    connection: Connection
-
-    signTransaction: SignerWalletAdapterProps['signTransaction'] | undefined
-    signAllTransactions: SignerWalletAdapterProps['signAllTransactions'] | undefined
-    signMessage: MessageSignerWalletAdapterProps['signMessage'] | undefined
+    connection: solana.Connection
 }
 
 const WalletContext = createContext<WalletContextState | null>(null)
@@ -63,7 +59,7 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
     const [status, setStatus] = useState<WalletContextState['status']>('idle')
     const [adapter, setAdapter] = useState<ReturnType<typeof wallet['adapter']> | null>(null)
     const [ready, setReady] = useState(false)
-    const [publicKey, setPublicKey] = useState<PublicKey | null>(null)
+    const [publicKey, setPublicKey] = useState<solana.PublicKey | null>(null)
 
     const [version, setVersion] = useLocalStorage(`tokens-version`, 1)
     const [tokens, setTokens] = useLocalStorage<{ [v in number]?: { [pKey in string]?: string } }>(`tokens`, {})
@@ -78,7 +74,12 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
 
     const [cluster, setCluster] = useState<WalletContextState['cluster']>('devnet')
     const endpoint = useMemo(() => config.clusterUrl(cluster), [cluster])
-    const connection = useMemo(() => new Connection(endpoint, { commitment: config.preflightCommitment }), [endpoint])
+    const connection = useMemo(
+        () => new solana.Connection(endpoint, { commitment: config.preflightCommitment }),
+        [endpoint],
+    )
+
+    const isUnloading = useIsUnloading()
 
     useEffect(() => {
         if (isIframe) return
@@ -102,6 +103,7 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         async function onAutoConnect() {
+            if (isUnloading.current) return
             if (!autoConnect) return
             if (!adapter) return
             if (!ready) return
@@ -117,7 +119,7 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
         }
 
         onAutoConnect()
-    }, [adapter, autoConnect, ready, status])
+    }, [adapter, autoConnect, isUnloading, ready, status])
 
     const connect = useCallback(async () => {
         if (status === 'connecting' || status === 'connected' || status === 'disconnecting') return
@@ -155,47 +157,33 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
         }
     }, [adapter, setAutoConnect, setVersion, status])
 
-    const sendTransaction = useCallback(
-        async (transaction: Transaction, _connection: Connection, options?: SendTransactionOptions) => {
-            if (!adapter) throw new WalletNotSelectedError()
-            if (status !== 'connected') throw new WalletNotConnectedError()
-            return adapter.sendTransaction(transaction, _connection, options)
-        },
-        [adapter, status],
-    )
+    const sendTransaction: WalletContextState['sendTransaction'] = useGetLatest((transaction, _connection, options) => {
+        if (!adapter) throw new WalletNotSelectedError()
+        if (status !== 'connected') throw new WalletNotConnectedError()
 
-    const signTransaction = useMemo(
-        () =>
-            adapter && 'signTransaction' in adapter
-                ? async (transaction: Transaction): Promise<Transaction> => {
-                      if (status !== 'connected') throw new WalletNotConnectedError()
-                      return adapter.signTransaction(transaction)
-                  }
-                : undefined,
-        [adapter, status],
-    )
+        return adapter.sendTransaction(transaction, _connection, options)
+    })
 
-    const signAllTransactions = useMemo(
-        () =>
-            adapter && 'signAllTransactions' in adapter
-                ? async (transactions: Transaction[]): Promise<Transaction[]> => {
-                      if (status !== 'connected') throw new WalletNotConnectedError()
-                      return adapter.signAllTransactions(transactions)
-                  }
-                : undefined,
-        [adapter, status],
-    )
+    const signTransaction: WalletContextState['signTransaction'] = useGetLatest(async (transaction) => {
+        if (!adapter || !('signTransaction' in adapter)) throw new WalletNotSelectedError()
+        if (status !== 'connected') throw new WalletNotConnectedError()
 
-    const signMessage = useMemo(
-        () =>
-            adapter && 'signMessage' in adapter
-                ? async (message: Uint8Array): Promise<Uint8Array> => {
-                      if (status !== 'connected') throw new WalletNotConnectedError()
-                      return adapter.signMessage(message)
-                  }
-                : undefined,
-        [adapter, status],
-    )
+        return adapter.signTransaction(transaction)
+    })
+
+    const signAllTransactions: WalletContextState['signAllTransactions'] = useGetLatest(async (transactions) => {
+        if (!adapter || !('signAllTransactions' in adapter)) throw new WalletNotSelectedError()
+        if (status !== 'connected') throw new WalletNotConnectedError()
+
+        return adapter.signAllTransactions(transactions)
+    })
+
+    const signMessage: WalletContextState['signMessage'] = useGetLatest(async (message) => {
+        if (!adapter || !('signMessage' in adapter)) throw new WalletNotSelectedError()
+        if (status !== 'connected') throw new WalletNotConnectedError()
+
+        return adapter.signMessage(message)
+    })
 
     useEffect(() => {
         if (status !== 'connected') {

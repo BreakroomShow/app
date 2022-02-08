@@ -7,9 +7,9 @@ function ConnectedApp() {
     const wallet = useWallet()
 
     return (
-        <p>
-            <Wallet>{wallet.publicKey}</Wallet> <button onClick={() => wallet.disconnect()}>disconnect</button>
-        </p>
+        <div>
+            <Wallet>{wallet.publicKey}</Wallet> <ConnectButton />
+        </div>
     )
 }
 
