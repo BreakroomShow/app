@@ -1,8 +1,13 @@
-import { Canvas } from '@react-three/fiber'
+import { Sphere } from '@react-three/drei'
 import { useEffect, useState } from 'react'
 
+import { AnimatePresence } from '../components/VFX/components/AnimatePresence'
+import Canvas from '../components/VFX/components/Canvas'
+import SceneViewer from '../components/VFX/components/SceneViewer'
+import { Splash } from '../components/VFX/scenes/Splash'
 import { Stars, StarsProps } from '../components/VFX/Stars'
 import { Box } from '../design-system'
+import useUpdateEffect from '../hooks/useUpdateEffect'
 import { GameEvent } from '../types'
 
 interface VFXProps extends Pick<StarsProps, 'isPlaying' | 'speed'> {
@@ -10,21 +15,10 @@ interface VFXProps extends Pick<StarsProps, 'isPlaying' | 'speed'> {
 }
 
 export const VFX = ({ event, isPlaying, speed }: VFXProps) => {
-    const [dpr, setDpr] = useState(1)
-    useEffect(() => setDpr(window.devicePixelRatio), [])
     return (
         <Box style={{ position: 'fixed', inset: 0, zIndex: -1 }}>
-            <Canvas
-                gl={{
-                    stencil: false,
-                    alpha: false,
-                    antialias: true,
-                    preserveDrawingBuffer: true,
-                }}
-                dpr={dpr}
-                flat
-                onCreated={({ gl }) => gl.setClearColor('#020207')}
-            >
+            <Canvas>
+                <SceneViewer event={event} />
                 <Stars isPlaying={isPlaying} speed={speed} count={300} />
             </Canvas>
         </Box>

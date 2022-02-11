@@ -46,6 +46,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "framer-motion": "^6.2.6",
+    "framer-motion-3d": "^6.2.6",
     "joi": "^17.5.0",
     "js-sha256": "^0.9.0",
     "react": "^17.0.2",
