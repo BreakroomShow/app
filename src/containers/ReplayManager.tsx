@@ -65,11 +65,10 @@ export function ReplayManager({
     )
 
     if (event.type === 'game_info_splash') {
-        return (
-            <Segment w={4} h={3} color="transparent" inset="lg">
-                <p>Sponsor: {event.sponsor_title}</p>
-            </Segment>
-        )
+        return null
+        // <Segment w={4} h={3} color="transparent" inset="lg">
+        //     <p>Sponsor: {event.sponsor_title}</p>
+        // </Segment>
     }
 
     if (event.type === 'question') {

@@ -36,6 +36,7 @@
         "@typescript-eslint/parser": "^5.4.0",
         "@vercel/node": "^1.12.1",
         "bs58": "4.0.1",
+        "canvas-sketch-util": "^1.10.0",
         "countup.js": "^2.0.8",
         "customize-cra": "^1.0.0",
         "eslint": "^7.32.0",

@@ -1,4 +1,5 @@
 import { Sphere } from '@react-three/drei'
+import { useThree } from '@react-three/fiber'
 import { useState } from 'react'
 
 import useUpdateEffect from '../../../hooks/useUpdateEffect'
@@ -8,7 +9,7 @@ import { AnimatePresence } from './AnimatePresence'
 
 const scenes = {
     game_info_splash: <Splash />,
-    question: null,
+    question: <Splash />,
     answer_reveal: null,
     question_fact: null,
     crypto_fact: null,
@@ -23,6 +24,8 @@ const SceneViewer = ({ event }: { event: GameEvent | null }) => {
     const updateScene = () => {
         setScene(event && scenes ? scenes[event.type] : null)
     }
+
+    const viewport = useThree(({ viewport }) => viewport)
 
     useUpdateEffect(() => {
         if (scene) {
@@ -39,9 +42,11 @@ const SceneViewer = ({ event }: { event: GameEvent | null }) => {
         setKey((key) => key + 1)
     }
     return (
-        <AnimatePresence id={key} handleExitFinished={handleExitFinished} isVisible={isVisible}>
-            {scene}
-        </AnimatePresence>
+        <group position={[-viewport.width / 7, 0, 0]}>
+            <AnimatePresence id={key} handleExitFinished={handleExitFinished} isVisible={isVisible}>
+                {scene}
+            </AnimatePresence>
+        </group>
     )
 }
 
