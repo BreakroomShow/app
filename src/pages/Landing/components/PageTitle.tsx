@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Box, Spacer, Text, keyframes, styled } from '../../../design-system'
-import { useDebounce } from '../../../hooks/useDebounce'
 import { useGetLatest } from '../../../hooks/useGetLatest'
-import { nbsp } from '../const'
+import { nbsp } from '../../../utils/nbsp'
 
 const Title = styled('span', {
     display: 'block',
@@ -49,19 +48,19 @@ const Caret = styled('span', {
 })
 
 export function PageTitle() {
-    const [text, isTyping] = useTextTyping(['Prizes', 'Solana', 'Seva', 'Big Moooney'])
+    const [text, isTyping] = useTextTyping(['With Prizes', 'on Solana', 'for Newcomers'])
 
     return (
         <Box>
             <Title>On-chain Live{nbsp}Trivia</Title>
             <Title>
-                With{nbsp}
+                {nbsp}
                 {text}
                 <Caret animated={!isTyping} />
             </Title>
             <Spacer size="lg" />
             <Text font="body" size="lg" color="blackA" align="center">
-                Answer the questions and get crypto to your wallet
+                Answer twelve questions in the game and win crypto
             </Text>
         </Box>
     )
@@ -69,15 +68,23 @@ export function PageTitle() {
 
 function useTextTyping(
     words: string[],
-    { pauseDelay = 2000, typingDelay = 150 }: { pauseDelay?: number; typingDelay?: number } = {},
+    { pauseDelay = 2000, typingDelay = 120 }: { pauseDelay?: number; typingDelay?: number } = {},
 ) {
-    const [text, setText] = useState('')
-    const textDebounced = useDebounce(text, 500)
-    const getText = useGetLatest(() => text)
+    const textRef = useRef<HTMLSpanElement>(null)
+    const currentTextRef = useRef('')
+    const [isTyping, setIsTyping] = useState(true)
     const getWords = useGetLatest(() => words)
 
     useEffect(() => {
-        setText('')
+        function setText(textOrUpdater: string | ((prev: string) => string)) {
+            if (!textRef.current) return
+
+            const currentText = currentTextRef.current
+            const nextText = typeof textOrUpdater === 'string' ? textOrUpdater : textOrUpdater(currentText)
+
+            currentTextRef.current = nextText
+            textRef.current.innerText = nextText
+        }
 
         let currentWord = 0
         let currentLetter = 0
@@ -107,13 +114,17 @@ function useTextTyping(
 
             if (!letter) {
                 stopLoop()
+                setIsTyping(false)
 
-                withPause(() => runLoop(deleteLoop))
+                withPause(() => {
+                    setIsTyping(true)
+                    runLoop(deleteLoop)
+                })
             }
         }
 
         function deleteLoop() {
-            const currentText = getText()
+            const currentText = currentTextRef.current
 
             if (currentText.length <= 1) {
                 currentWord = (currentWord + 1) % getWords().length
@@ -127,12 +138,10 @@ function useTextTyping(
             })
         }
 
-        runLoop(enterLoop)
+        runLoop(currentTextRef.current ? deleteLoop : enterLoop)
 
         return stopLoop
-    }, [getText, getWords, pauseDelay, typingDelay])
+    }, [getWords, pauseDelay, typingDelay])
 
-    const isTyping = text !== textDebounced
-
-    return [text, isTyping] as const
+    return [<span ref={textRef} />, isTyping] as const
 }

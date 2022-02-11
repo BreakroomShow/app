@@ -17,6 +17,8 @@ export const cssFactory = stitches.createStitches({
             xxxl: '36px',
         },
         colors: {
+            transparent: 'transparent',
+
             background: '#F4F4F4',
 
             black: '#171717',
@@ -52,6 +54,7 @@ export const cssFactory = stitches.createStitches({
         lineHeights: {
             base: '1',
             xs: '1.18',
+            md: '1.5',
         },
         letterSpacings: {},
         fontWeights: {
@@ -88,6 +91,16 @@ export const cssFactory = stitches.createStitches({
         inset: (value: stitches.PropertyValue<'inset'>) => ({ left: value, right: value, top: value, bottom: value }),
         size: (value: stitches.PropertyValue<'width' | 'height'>) => ({ width: value, height: value }),
         minSize: (value: stitches.PropertyValue<'minWidth' | 'minHeight'>) => ({ minWidth: value, minHeight: value }),
+        overflow: (value: stitches.PropertyValue<'overflow'> | 'radius') =>
+            value === 'radius'
+                ? {
+                      overflow: 'hidden',
+                      // safari fix only
+                      '@supports (-webkit-appearance: none) and (stroke-color: transparent)': {
+                          willChange: 'transform',
+                      },
+                  }
+                : { overflow: value },
     },
 })
 

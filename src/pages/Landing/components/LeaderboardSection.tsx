@@ -1,3 +1,4 @@
+import { Avatar } from '../../../components/Avatar'
 import { SegmentComponent } from '../../../components/Segment'
 import { Wallet } from '../../../components/Wallet'
 import { Box, Column, Columns, Inline, Stack, Text, Typography, styled } from '../../../design-system'
@@ -37,11 +38,6 @@ const TableCell = styled(Box, {
     height: 28,
     display: 'flex',
     alignItems: 'center',
-})
-
-const Avatar = styled('img', {
-    size: 28,
-    borderRadius: 100,
 })
 
 function LeaderboardTable() {

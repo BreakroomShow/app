@@ -2,13 +2,17 @@ import { Link } from '../../../components/Link'
 import { LinkButton } from '../../../components/LinkButton'
 import { SegmentComponent } from '../../../components/Segment'
 import { Column, Columns, Stack, Text, Typography } from '../../../design-system'
+import { useHtmlAnchor } from '../../../hooks/useHtmlAnchor'
 import { useNonce } from '../../../hooks/useNonce'
 import { msToTimeUntil } from '../../../utils/date'
-import { signinUrl } from '../const'
 
 const nextGameDate = new Date(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).setHours(19, 0, 0))
 
-export function NextGameSection() {
+interface NextGameSectionProps {
+    howToStartId: string
+}
+
+export function NextGameSection({ howToStartId }: NextGameSectionProps) {
     useNonce()
 
     const nextGameDateString = nextGameDate.toLocaleString('default', { day: 'numeric', month: 'short' })
@@ -56,7 +60,7 @@ export function NextGameSection() {
                     </Column>
                 ))}
             </Columns>
-            <Link to={signinUrl} css={{ borderRadius: '$pill' }}>
+            <Link css={{ borderRadius: '$pill' }} {...useHtmlAnchor(howToStartId)}>
                 <SegmentComponent
                     inset="center"
                     variant="pill"
@@ -66,7 +70,7 @@ export function NextGameSection() {
                         '@down-md': { minHeight: 125 },
                     }}
                 >
-                    <LinkButton>Participate in the game</LinkButton>
+                    <LinkButton>Sign up for the game</LinkButton>
                 </SegmentComponent>
             </Link>
         </>

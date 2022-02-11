@@ -18,6 +18,7 @@ export const alignYToFlexAlign = {
     top: 'flex-start',
     center: 'center',
     bottom: 'flex-end',
+    baseline: 'baseline',
 } as const
 
 export function mapPropToStyle<Keys extends string | number, MappedValues extends string>(

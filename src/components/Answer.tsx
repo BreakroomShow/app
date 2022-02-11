@@ -20,14 +20,13 @@ const AnswerContainer = styled('button', {
     cursor: 'unset',
 
     position: 'relative',
-    overflow: 'hidden',
+    overflow: 'radius',
 
     borderRadius: '$md',
     paddingX: '$xxxl',
     paddingY: '$xxl',
 
     transition: 'background 0.5s, transform .3s',
-    transform: 'translateZ(0)',
 
     '&:not([disabled])': {
         cursor: 'pointer',

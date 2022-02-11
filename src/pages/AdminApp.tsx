@@ -1,9 +1,9 @@
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useEffect, useState } from 'react'
 
 import { useWhitelistUser } from '../api/mutations'
 import { useGamesQuery, useTriviaQuery } from '../api/query'
 import { ConnectionStatus } from '../components/ConnectionStatus'
+import { useWallet } from '../containers/ConnectProvider'
 import { Typography } from '../design-system'
 import { allGameIds } from '../utils/gameIds'
 import { CreateGameForm } from '../views/CreateGameForm'

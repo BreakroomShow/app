@@ -1,4 +1,12 @@
-export type GameEvent = GameInfoSplashEvent | QuestionEvent | AnswerRevealEvent | QuestionFactEvent | CryptoFactEvent
+export type GameFlowEvent = Exclude<GameEvent, ViewerCountUpdateEvent>
+
+export type GameEvent =
+    | GameInfoSplashEvent
+    | QuestionEvent
+    | AnswerRevealEvent
+    | QuestionFactEvent
+    | CryptoFactEvent
+    | ViewerCountUpdateEvent
 
 export type DistributionType = 'socket' | 'chain'
 
@@ -30,24 +38,41 @@ export interface AnswerRevealEvent extends BaseEvent {
 
 export interface QuestionFactEvent extends BaseEvent {
     type: 'question_fact'
-    text: number
+    text: string
     image_url: null | string
 }
 
 export interface CryptoFactEvent extends BaseEvent {
     type: 'crypto_fact'
-    text: number
+    text: string
     image_url: null | string
 }
 
-export type Replay = {
+export interface ViewerCountUpdateEvent extends BaseEvent {
+    type: 'viewer_count_update'
+    viewer_count: number
+}
+
+export interface Replay {
     game_id: string
     game_started_at_timestamp: number
     game_finished_at_timestamp: number
     events: ReplayEvent<GameEvent>[]
+    chat_messages: ReplayChatMessage[]
 }
 
-export type ReplayEvent<E extends GameEvent> = {
+export interface ReplayEvent<E extends GameEvent> {
     timestamp: number
     event: E
+}
+
+export interface ReplayChatMessage {
+    timestamp: number
+    message: ChatMessage
+}
+
+export interface ChatMessage {
+    id: string
+    from_id: string
+    text: string
 }

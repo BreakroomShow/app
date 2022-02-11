@@ -1,8 +1,8 @@
 import { Link } from '../../../components/Link'
 import { LinkButton } from '../../../components/LinkButton'
 import { SegmentComponent } from '../../../components/Segment'
+import { guides, phantomWalletUrl } from '../../../config'
 import { Box, Column, Columns, Spacer, Stack, Text, styled } from '../../../design-system'
-import { guides, phantomWalletUrl } from '../const'
 import { PageContent } from './PageContent'
 import { PageSpacer } from './PageSpacer'
 import { SectionTitle } from './SectionTitle'
@@ -26,6 +26,8 @@ const Segment = styled(SegmentComponent, {
     flexDirection: 'column',
     alignItems: 'center',
 })
+
+export const howToStartId = 'how-to-start'
 
 export function HowToStartSection() {
     const steps = [
@@ -61,7 +63,7 @@ export function HowToStartSection() {
     return (
         <Container>
             <PageContent>
-                <SectionTitle>How To Start</SectionTitle>
+                <SectionTitle id={howToStartId}>How To Start</SectionTitle>
                 <PageSpacer />
                 <Columns collapseBelow="@down-xl">
                     {steps.map((i) => (

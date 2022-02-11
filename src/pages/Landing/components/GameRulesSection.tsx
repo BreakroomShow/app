@@ -2,7 +2,7 @@ import { Box, Column, Columns, Stack, Text, Typography, styled } from '../../../
 import { ReactComponent as HeartIcon } from '../../../images/heart.svg'
 import { ReactComponent as QuestionIcon } from '../../../images/question.svg'
 import { ReactComponent as TimerIcon } from '../../../images/timer.svg'
-import { nbsp } from '../const'
+import { nbsp } from '../../../utils/nbsp'
 import { PageSpacer } from './PageSpacer'
 import { SectionTitle } from './SectionTitle'
 
@@ -16,22 +16,22 @@ const Icon = styled(Box, {
 
 export function GameRulesSection() {
     const rules = [
-        { icon: <QuestionIcon />, title: '12 questions', description: `4${nbsp}easy, 4${nbsp}middle and 4${nbsp}hard` },
-        { icon: <TimerIcon />, title: '10 seconds', description: 'for every question' },
+        { icon: <QuestionIcon />, title: '12 questions', description: `for everyone` },
+        { icon: <TimerIcon />, title: '10 seconds', description: `to answer a${nbsp}question` },
         {
             icon: <HeartIcon style={{ height: 76, width: 88 }} />,
             title: '1 extra life',
-            description: 'except for last question',
+            description: 'for each invited friend',
         },
     ]
 
     return (
         <Box>
             <Stack align="center" space="sm">
-                <SectionTitle>Weekly Live Trivia</SectionTitle>
-                <Text font="body" size="md" color="blackA" align="center">
-                    Every week there are new questions on different topics and{' '}
-                    <span style={{ whiteSpace: 'nowrap' }}>a new prize fund</span>
+                <SectionTitle>Live Trivia Show</SectionTitle>
+                <Text font="body" size="md" color="blackA" align="center" preserveLinebreaks>
+                    Games are hosted throughout the week.{'\n'}The prize fund is split between players who answered
+                    correctly to all questions.
                 </Text>
             </Stack>
             <PageSpacer />

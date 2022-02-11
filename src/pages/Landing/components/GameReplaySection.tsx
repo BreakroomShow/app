@@ -16,10 +16,9 @@ const Container = styled(Box, {
     position: 'relative',
     width: '100%',
     borderRadius: '$md',
-    overflow: 'hidden',
+    overflow: 'radius',
     lineHeight: 0,
     userSelect: 'none',
-    transform: 'translateZ(0)',
     '&:active': {
         [`& ${PlayButton}`]: {
             transform: 'scale(0.85)',
@@ -173,7 +172,7 @@ export function GameReplaySection() {
             <Badge>
                 <PlayIconSmall />
                 <Text font="body" size="inherit" color="white" align="center">
-                    Last Game Replay
+                    Demo Game Replay
                 </Text>
             </Badge>
         </Box>

@@ -1,10 +1,7 @@
-import '@solana/wallet-adapter-react-ui/styles.css'
-
 import { StrictMode } from 'react'
 import { render } from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 
-import { AuthProvider } from './containers/AuthProvider'
 import { ConnectProvider } from './containers/ConnectProvider'
 import { QueryProvider } from './containers/QueryProvider'
 import { StyleProvider } from './design-system'
@@ -33,11 +30,9 @@ render(
         <StyleProvider>
             <BrowserRouter>
                 <ConnectProvider>
-                    <AuthProvider>
-                        <QueryProvider>
-                            <App />
-                        </QueryProvider>
-                    </AuthProvider>
+                    <QueryProvider>
+                        <App />
+                    </QueryProvider>
                 </ConnectProvider>
             </BrowserRouter>
         </StyleProvider>

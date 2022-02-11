@@ -1,10 +1,8 @@
-import { ReactNode } from 'react'
+import { Text, TextProps } from '../../../design-system'
 
-import { Color, Text } from '../../../design-system'
-
-export function SectionTitle({ children, color = 'black' }: { children: ReactNode; color?: Color }) {
+export function SectionTitle({ id, children, color = 'black' }: Pick<TextProps, 'children' | 'color' | 'id'>) {
     return (
-        <Text font="heading" color={color} align="center" css={{ fontSize: 50, '@down-lg': { fontSize: 36 } }}>
+        <Text id={id} font="heading" color={color} align="center" css={{ fontSize: 50, '@down-lg': { fontSize: 36 } }}>
             {children}
         </Text>
     )
