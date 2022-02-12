@@ -1,10 +1,11 @@
-import { extend, useFrame, useThree } from '@react-three/fiber'
-import PropTypes from 'prop-types'
+import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 
+import { useReplay } from '../../../pages/Landing/useReplay'
 import { selectRandom } from '../../../utils/selectRandom'
-import { colors as ogColors } from './../helpers/constants'
+import { MeshLineRef } from '../extend'
 import {
+    Attractor,
     aizawaAttractor,
     arneodoAttractor,
     createAttractor,
@@ -14,15 +15,13 @@ import {
     lorenzMod2Attractor,
     updateAttractor,
 } from '../helpers/attractor'
-import * as meshline from '../MeshLine'
+import { colors as ogColors } from '../helpers/constants'
 
-extend(meshline)
-
-export const randomFloat = (min, max) => {
+export const randomFloat = (min: number, max: number) => {
     return Math.random() * (max - min + 1) + min
 }
 
-const simulation = () =>
+const randomSimulation = () =>
     selectRandom([
         dadrasAttractor,
         aizawaAttractor,
@@ -32,18 +31,29 @@ const simulation = () =>
         lorenzMod2Attractor,
     ])
 
-function Fatline({ radius, simulation, width, color }) {
-    const line = useRef()
+interface FatlineProps {
+    radius: number
+    simulation: Attractor
+    width: number
+    color: string
+}
+
+function Fatline({ radius, simulation, width, color }: FatlineProps) {
+    const { isPlaying } = useReplay()
+
+    const line = useRef<MeshLineRef>()
+
+    const [positions, currentPosition] = useMemo(() => createAttractor(5), [])
 
     useFrame(() => {
+        if (!isPlaying) return
+
         if (line.current) {
             const nextPosition = updateAttractor(currentPosition, radius, simulation, 0.005)
 
             line.current.advance(nextPosition)
         }
     })
-
-    const [positions, currentPosition] = useMemo(() => createAttractor(5), [])
 
     return (
         <mesh>
@@ -53,25 +63,33 @@ function Fatline({ radius, simulation, width, color }) {
     )
 }
 
-export function SparkStorm({ count = 500, colors = ogColors.trivia, radius = 10, range = [0.01, 0.02] }) {
-    const lines = useMemo(
-        () =>
-            new Array(count)
-                .fill()
-                .map(() => ({
-                    color: selectRandom(colors),
-                    width: randomFloat(...range),
-                    speed: randomFloat(0.001, 0.002),
-                    simulation: simulation(),
-                    radius: randomFloat(2, 2.25) * radius,
-                })),
-        [count, colors, radius, range],
-    )
+interface SparkStormProps {
+    count?: number
+    colors?: string[]
+    radius?: number
+    range?: [number, number]
+}
+
+export function SparkStorm({
+    count = 500,
+    colors = ogColors.trivia,
+    radius = 10,
+    range = [0.01, 0.02],
+}: SparkStormProps) {
+    const lines = useMemo(() => {
+        return new Array(count).fill(null).map(() => ({
+            color: selectRandom(colors),
+            width: randomFloat(...range),
+            speed: randomFloat(0.001, 0.002),
+            simulation: randomSimulation(),
+            radius: randomFloat(2, 2.25) * radius,
+        }))
+    }, [count, colors, range, radius])
 
     const storm = useRef()
 
-    const { size, viewport } = useThree()
-    const aspect = size.width / viewport.width
+    // const { size, viewport } = useThree()
+    // const aspect = size.width / viewport.width
 
     useFrame(() => {
         // if (storm.current) {
@@ -97,9 +115,4 @@ export function SparkStorm({ count = 500, colors = ogColors.trivia, radius = 10,
             </group>
         </group>
     )
-}
-
-SparkStorm.propTypes = {
-    count: PropTypes.number.isRequired,
-    colors: PropTypes.arrayOf(PropTypes.string).isRequired,
 }

@@ -1,10 +1,14 @@
-import { useFrame, useThree } from '@react-three/fiber'
-import React, { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
-const SpaceDust = ({ count }) => {
-    const mesh = useRef()
-    const light = useRef()
+import { useReplay } from '../../../pages/Landing/useReplay'
+
+export const SpaceDust = ({ count }: { count: number }) => {
+    const { isPlaying } = useReplay()
+
+    const mesh = useRef<THREE.InstancedMesh>(null)
+    const light = useRef<THREE.PointLight>(null)
     // const { size, viewport } = useThree()
     // const aspect = size.width / viewport.width
 
@@ -25,6 +29,7 @@ const SpaceDust = ({ count }) => {
     }, [count])
     // The innards of this hook will run every frame
     useFrame((state) => {
+        if (!isPlaying) return
         // Makes the light follow the mouse
         // light.current.position.set(
         //   mouse.current[0] / aspect,
@@ -33,10 +38,10 @@ const SpaceDust = ({ count }) => {
         // );
         // Run through the randomized data to calculate some movement
         particles.forEach((particle, i) => {
-            let { t, factor, speed, xFactor, yFactor, zFactor } = particle
+            const { factor, speed, xFactor, yFactor, zFactor } = particle
             // There is no sense or reason to any of this, just messing around with trigonometric functions
-            t = particle.t += speed / 2
-            const a = Math.cos(t) + Math.sin(t * 1) / 10
+            const t = (particle.t += speed / 2)
+            const a = Math.cos(t) + Math.sin(t) / 10
             const b = Math.sin(t) + Math.cos(t * 2) / 10
             const s = Math.cos(t)
             // particle.mx += (mouse.current[0] - particle.mx) * 0.01;
@@ -51,19 +56,19 @@ const SpaceDust = ({ count }) => {
             dummy.rotation.set(s * 5, s * 5, s * 5)
             dummy.updateMatrix()
             // And apply the matrix to the instanced item
-            mesh.current.setMatrixAt(i, dummy.matrix)
+            mesh.current?.setMatrixAt(i, dummy.matrix)
         })
-        mesh.current.instanceMatrix.needsUpdate = true
+        if (mesh.current) {
+            mesh.current.instanceMatrix.needsUpdate = true
+        }
     })
     return (
         <>
             <pointLight ref={light} distance={40} intensity={8} color="lightblue" />
-            <instancedMesh ref={mesh} args={[null, null, count]}>
+            <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
                 <dodecahedronBufferGeometry args={[0.2, 0]} />
                 <meshPhongMaterial color="#050505" />
             </instancedMesh>
         </>
     )
 }
-
-export default SpaceDust

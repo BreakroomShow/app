@@ -1,25 +1,24 @@
-import './shaders/AnimatedGalaxyMaterial'
-
 import { Point, Points } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { ComponentRef, Suspense, useMemo, useRef } from 'react'
 import { AdditiveBlending, Color, Vector3 } from 'three'
 
+import { useReplay } from '../../pages/Landing/useReplay'
 import { selectRandom } from '../../utils/selectRandom'
+import { AnimatedGalaxyMaterialRef } from './extend'
 import { colors } from './helpers/constants'
-import type { ShaderMaterialRef } from './shaders/AnimatedGalaxyMaterial'
 
 export interface StarsProps {
     count?: number
     depth?: number
     size?: number
     color?: Color
-    isPlaying?: boolean
-    speed?: number
 }
 
-export function Stars({ count = 40, depth = 10, size = 800, isPlaying, color, speed = 1 }: StarsProps) {
-    const shaderRef = useRef<ShaderMaterialRef>(null)
+export function Stars({ count = 40, depth = 10, size = 800, color }: StarsProps) {
+    const { isPlaying, speed } = useReplay()
+
+    const shaderRef = useRef<AnimatedGalaxyMaterialRef>(null)
     const particlesRef = useRef<ComponentRef<typeof Points>>(null)
 
     const { dpr, width, height } = useThree(({ viewport }) => viewport)

@@ -115,11 +115,12 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
                 await adapter.connect()
             } catch (AutoConnectError) {
                 console.error({ AutoConnectError })
+                setAutoConnect(false)
             }
         }
 
         onAutoConnect()
-    }, [adapter, autoConnect, isUnloading, ready, status])
+    }, [adapter, autoConnect, isUnloading, ready, setAutoConnect, status])
 
     const connect = useCallback(async () => {
         if (status === 'connecting' || status === 'connected' || status === 'disconnecting') return

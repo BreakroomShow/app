@@ -17,6 +17,7 @@ import {
 } from '../../types'
 import { findLastIndex } from '../../utils/findLastIndex'
 import { sleep } from '../../utils/sleep'
+import { ReplayContext } from './useReplay'
 import { useReplayState } from './useReplayBridge'
 
 const Container = styled(Box, {
@@ -210,9 +211,11 @@ export function Replay() {
         }
     })
 
+    const ctx = useMemo(() => ({ isPlaying, speed: SPEED }), [isPlaying])
+
     return (
-        <>
-            <VFX event={currentEvent} isPlaying={isPlaying} speed={SPEED} />
+        <ReplayContext.Provider value={ctx}>
+            <VFX event={currentEvent} offset={500} />
             <Container disableAnimation={!isPlaying}>
                 {currentEvent ? (
                     <View>
@@ -222,14 +225,12 @@ export function Replay() {
                                 currentQuestionId={currentQuestionId}
                                 totalQuestions={totalQuestions}
                                 userAnswerId={userAnswerId}
-                                isPlaying={isPlaying}
-                                speed={SPEED}
                             />
                         </SegmentContainer>
                         <ChatView viewers={viewers} messages={messages} scrollToBottom />
                     </View>
                 ) : null}
             </Container>
-        </>
+        </ReplayContext.Provider>
     )
 }

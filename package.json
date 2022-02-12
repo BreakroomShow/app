@@ -3,13 +3,14 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
+        "postinstall": "echo 'Remove conflicting types'; rm -rf node_modules/@emotion/core/types/index.d.ts",
         "vercel:install": "node scripts/replace-trivia-source.js && npm i",
         "start:admin": "export REACT_APP_TARGET=admin; vercel dev",
         "start:user": "export REACT_APP_TARGET=user; vercel dev",
         "start:landing": "export REACT_APP_TARGET=landing; react-app-rewired start",
-        "build:admin": "export REACT_APP_TARGET=admin; react-scripts build",
-        "build:user": "export REACT_APP_TARGET=user; react-scripts build",
-        "build:landing": "export REACT_APP_TARGET=landing; react-scripts build",
+        "build:admin": "export REACT_APP_TARGET=admin; react-app-rewired build",
+        "build:user": "export REACT_APP_TARGET=user; react-app-rewired build",
+        "build:landing": "export REACT_APP_TARGET=landing; react-app-rewired build",
         "prettify": "eslint --fix '**/*.{tsx,jsx,js,ts}'; prettier --write \"**/*.{tsx,jsx,js,ts,scss,css}\"",
         "storybook": "start-storybook -p 6006 -s public",
         "build-storybook": "build-storybook -s public"
@@ -63,12 +64,12 @@
         "typescript": "^4.5.2"
     },
     "devDependencies": {
-        "@storybook/addon-actions": "^6.4.18",
-        "@storybook/addon-essentials": "^6.4.18",
-        "@storybook/addon-links": "^6.4.18",
-        "@storybook/node-logger": "^6.4.18",
-        "@storybook/preset-create-react-app": "^3.2.0",
-        "@storybook/react": "^6.4.18",
+        "@storybook/addon-actions": "^6.2.9",
+        "@storybook/addon-essentials": "^6.2.9",
+        "@storybook/addon-links": "^6.2.9",
+        "@storybook/node-logger": "^6.2.9",
+        "@storybook/preset-create-react-app": "^3.1.7",
+        "@storybook/react": "^6.2.9",
         "eslint-plugin-storybook": "^0.5.6",
         "framer-motion": "^6.2.6",
         "framer-motion-3d": "^6.2.6",
@@ -82,16 +83,6 @@
     "eslintConfig": {
         "extends": [
             "react-app"
-        ],
-        "overrides": [
-            {
-                "files": [
-                    "**/*.stories.*"
-                ],
-                "rules": {
-                    "import/no-anonymous-default-export": "off"
-                }
-            }
         ]
     },
     "browserslist": {
