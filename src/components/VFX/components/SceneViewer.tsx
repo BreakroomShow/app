@@ -7,7 +7,7 @@ import { AnimatePresence } from './AnimatePresence'
 const scenes = {
     empty: null,
     game_info_splash: <Splash />,
-    question: <Splash />,
+    question: null,
     answer_reveal: null,
     question_fact: null,
     crypto_fact: null,
