@@ -1,18 +1,24 @@
-import { Canvas } from '@react-three/fiber'
+import '../components/VFX/extend'
 
-import { Stars, StarsProps } from '../components/VFX/Stars'
+import { Canvas } from '../components/VFX/components/Canvas'
+import { SceneViewer } from '../components/VFX/components/SceneViewer'
+import { SpaceDust } from '../components/VFX/components/SpaceDust'
+import { Stars } from '../components/VFX/Stars'
 import { Box } from '../design-system'
 import { GameEvent } from '../types'
 
-interface VFXProps extends Pick<StarsProps, 'isPlaying' | 'speed'> {
+interface VFXProps {
     event: GameEvent | null
+    offset?: number
 }
 
-export const VFX = ({ event, isPlaying, speed }: VFXProps) => {
+export const VFX = ({ event, offset }: VFXProps) => {
     return (
-        <Box style={{ position: 'fixed', inset: 0, zIndex: -1 }}>
+        <Box css={{ position: 'fixed', inset: 0, zIndex: -1 }}>
             <Canvas>
-                <Stars isPlaying={isPlaying} speed={speed} count={300} />
+                <SceneViewer event={event} offset={offset} />
+                <SpaceDust count={1000} />
+                <Stars count={300} />
             </Canvas>
         </Box>
     )

@@ -1,0 +1,34 @@
+import { BufferGeometryNode, ReactThreeFiber, extend } from '@react-three/fiber'
+import { MeshBasicMaterial, ShaderMaterial } from 'three'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+
+import { MeshLine, MeshLineMaterial, MeshLineRaycast } from './MeshLine'
+import { AnimatedGalaxyMaterial, uniforms } from './shaders/AnimatedGalaxyMaterial'
+
+export type AnimatedGalaxyMaterialRef = ShaderMaterial & typeof uniforms
+
+export type MeshLineRef = MeshBasicMaterial & {
+    points?: ReactThreeFiber.Vector3[]
+    advance(vec: ReactThreeFiber.Vector3): void
+}
+
+export type MeshLineMaterialRef = MeshBasicMaterial & { transparent?: boolean; lineWidth?: number; color?: string }
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            animatedGalaxyMaterial: ReactThreeFiber.MaterialNode<AnimatedGalaxyMaterialRef, []>
+            meshLine: ReactThreeFiber.MaterialNode<MeshLineRef, []>
+            meshLineMaterial: ReactThreeFiber.MaterialNode<MeshLineMaterialRef, []>
+            textGeometry: BufferGeometryNode<TextGeometry, typeof TextGeometry>
+        }
+    }
+}
+
+extend({
+    AnimatedGalaxyMaterial,
+    MeshLine,
+    MeshLineMaterial,
+    MeshLineRaycast,
+    TextGeometry,
+})

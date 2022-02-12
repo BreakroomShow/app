@@ -29,6 +29,7 @@ module.exports = {
         'no-continue': 'off',
         'no-redeclare': 'off',
         'no-unused-vars': 'off',
+        'no-multi-assign': 'off',
         'no-await-in-loop': 'off',
         'no-param-reassign': 'off',
         'consistent-return': 'off',
@@ -82,6 +83,12 @@ module.exports = {
             rules: {
                 'import/no-anonymous-default-export': 'off',
                 'import/no-extraneous-dependencies': 'off',
+            },
+        },
+        {
+            files: ['**/*.stories.*'],
+            rules: {
+                'import/no-anonymous-default-export': 'off',
             },
         },
     ],
