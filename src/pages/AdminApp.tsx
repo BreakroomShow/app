@@ -38,7 +38,7 @@ export function AdminApp() {
                 <ConnectionStatus />
             </div>
 
-            {wallet.connected ? (
+            {wallet.status === 'connected' ? (
                 <section>
                     <Typography as="h2">Create new game</Typography>
                     <CreateGameForm gameId={totalGames} onSuccess={() => setCurrentGame(totalGames)} />

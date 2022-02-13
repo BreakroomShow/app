@@ -3,34 +3,8 @@ import { useWallet } from '../containers/ConnectProvider'
 import { ConnectButton } from './ConnectButton'
 import { Wallet } from './Wallet'
 
-function ConnectedApp() {
-    const wallet = useWallet()
-
-    return (
-        <div>
-            <Wallet>{wallet.publicKey}</Wallet> <ConnectButton />
-        </div>
-    )
-}
-
-function DisconnectedApp() {
-    return (
-        <div>
-            <ConnectButton />
-        </div>
-    )
-}
-
 export function ConnectionStatus() {
-    const wallet = useWallet()
-
-    const { cluster, setCluster } = useWallet()
-
-    const content = (() => {
-        if (wallet.connected) return <ConnectedApp />
-        if (wallet.connecting) return null
-        return <DisconnectedApp />
-    })()
+    const { status, publicKey, cluster, setCluster } = useWallet()
 
     return (
         <div>
@@ -43,7 +17,7 @@ export function ConnectionStatus() {
                     ))}
                 </select>
             </div>
-            {content}
+            {status === 'connected' ? <Wallet>{publicKey}</Wallet> : null} <ConnectButton />
         </div>
     )
 }

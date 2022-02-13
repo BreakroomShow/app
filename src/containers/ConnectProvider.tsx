@@ -17,25 +17,27 @@ import { useIsUnloading } from '../hooks/useIsUnloading'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { isIframe } from '../utils/isIframe'
 
-type AuthState =
-    | { status: 'idle'; token: null }
-    | { status: 'connecting'; token: null }
-    | { status: 'connected'; token: string }
+type Token = string & {}
 
-const authIdle: AuthState = { status: 'idle', token: null }
+type ConnectState =
+    | { status: 'idle'; token: null; publicKey: null }
+    | { status: 'auto-connecting'; token: null; publicKey: null }
+    | { status: 'connecting'; token: null; publicKey: null }
+    | { status: 'signing'; token: null; publicKey: solana.PublicKey | null }
+    | { status: 'connected'; token: Token; publicKey: solana.PublicKey }
+    | { status: 'disconnecting'; token: null; publicKey: solana.PublicKey }
 
-interface WalletContextState extends WalletAdapterProps, SignerWalletAdapterProps, MessageSignerWalletAdapterProps {
-    status: 'idle' | 'connecting' | 'connected' | 'disconnecting'
-    auth: AuthState
-    idle: boolean
-    disconnecting: boolean
-
-    wallet: Wallet
-    adapter: ReturnType<Wallet['adapter']> | null
-    cluster: solana.Cluster
-    setCluster(cluster: WalletContextState['cluster']): void
-    connection: solana.Connection
-}
+type WalletContextState = ConnectState &
+    Pick<WalletAdapterProps, 'publicKey' | 'ready' | 'connect' | 'disconnect' | 'sendTransaction'> &
+    SignerWalletAdapterProps &
+    MessageSignerWalletAdapterProps & {
+        isPending: boolean
+        wallet: Wallet
+        adapter: ReturnType<Wallet['adapter']> | null
+        cluster: solana.Cluster
+        setCluster(cluster: WalletContextState['cluster']): void
+        connection: solana.Connection
+    }
 
 const WalletContext = createContext<WalletContextState | null>(null)
 
@@ -56,21 +58,25 @@ class WalletNotSelectedError extends WalletError {
 const wallet = getPhantomWallet()
 
 export function ConnectProvider({ children }: { children: ReactNode }) {
-    const [status, setStatus] = useState<WalletContextState['status']>('idle')
+    const [autoConnect, setAutoConnect] = useLocalStorage('autoConnect', false)
+
+    const [connectState, setStatus] = useState<ConnectState>({
+        status: autoConnect ? 'auto-connecting' : 'idle',
+        token: null,
+        publicKey: null,
+    })
+
+    const { status, publicKey } = connectState
+
     const [adapter, setAdapter] = useState<ReturnType<typeof wallet['adapter']> | null>(null)
     const [ready, setReady] = useState(false)
-    const [publicKey, setPublicKey] = useState<solana.PublicKey | null>(null)
 
-    const [version, setVersion] = useLocalStorage(`tokens-version`, 1)
-    const [tokens, setTokens] = useLocalStorage<{ [v in number]?: { [pKey in string]?: string } }>(`tokens`, {})
-    const setToken = useGetLatest((key: typeof publicKey, token: string) => {
-        setTokens({ [version]: { [String(publicKey)]: token } })
+    const [_tokenCache, _setTokenCache] = useLocalStorage<{ [pKey in string]?: string }>(`token_cache`, {})
+    const getCachedToken = useGetLatest((pKey: typeof publicKey) => _tokenCache?.[String(pKey)] || null)
+    const setTokenCache = useGetLatest((key: typeof publicKey, newToken?: string) => {
+        if (!key) _setTokenCache({})
+        else _setTokenCache({ [String(key)]: newToken })
     })
-    const token = tokens[version]?.[String(publicKey)] || null
-
-    const [auth, setAuth] = useState<AuthState>(token ? { status: 'connected', token } : authIdle)
-
-    const [autoConnect, setAutoConnect] = useLocalStorage('autoConnect', false)
 
     const [cluster, setCluster] = useState<WalletContextState['cluster']>('devnet')
     const endpoint = useMemo(() => config.clusterUrl(cluster), [cluster])
@@ -89,17 +95,113 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
         if (_adapter) {
             setAdapter(_adapter)
             setReady(_adapter.ready)
-            setPublicKey(_adapter.publicKey)
-
-            if (_adapter.connected) {
-                setStatus('connected')
-            }
-        } else {
-            setAdapter(null)
-            setReady(false)
-            setPublicKey(null)
         }
     }, [])
+
+    const onConnected = useCallback(
+        (token: string) => {
+            if (!adapter) return
+
+            setReady(adapter.ready)
+
+            if (adapter.connected && adapter.publicKey) {
+                setStatus({ status: 'connected', token, publicKey: adapter.publicKey })
+                setAutoConnect(true)
+            } else {
+                setStatus({ status: 'idle', token: null, publicKey: null })
+            }
+        },
+        [adapter, setAutoConnect],
+    )
+
+    const onConnectFailed = useCallback(() => {
+        setAutoConnect(false)
+        setStatus({ status: 'idle', token: null, publicKey: null })
+    }, [setAutoConnect])
+
+    const sendTransaction: WalletContextState['sendTransaction'] = useGetLatest((transaction, _connection, options) => {
+        if (!adapter) throw new WalletNotSelectedError()
+        if (status !== 'connected') throw new WalletNotConnectedError()
+
+        return adapter.sendTransaction(transaction, _connection, options)
+    })
+    const signTransaction: WalletContextState['signTransaction'] = useGetLatest(async (transaction) => {
+        if (!adapter || !('signTransaction' in adapter)) throw new WalletNotSelectedError()
+        if (status !== 'connected') throw new WalletNotConnectedError()
+
+        return adapter.signTransaction(transaction)
+    })
+    const signAllTransactions: WalletContextState['signAllTransactions'] = useGetLatest(async (transactions) => {
+        if (!adapter || !('signAllTransactions' in adapter)) throw new WalletNotSelectedError()
+        if (status !== 'connected') throw new WalletNotConnectedError()
+
+        return adapter.signAllTransactions(transactions)
+    })
+    const signMessage: WalletContextState['signMessage'] = useGetLatest(async (message) => {
+        if (!adapter || !('signMessage' in adapter)) throw new WalletNotSelectedError()
+        if (status !== 'connected' && status !== 'signing') throw new WalletNotConnectedError()
+
+        return adapter.signMessage(message)
+    })
+
+    const disconnect = useCallback(async () => {
+        if (!adapter) return
+        if (status === 'disconnecting') return
+
+        setStatus((prev) => ({ status: 'disconnecting', token: null, publicKey: prev.publicKey! }))
+        setAutoConnect(false)
+        setTokenCache(null)
+
+        try {
+            await adapter.disconnect()
+            setStatus({ status: 'idle', token: null, publicKey: null })
+        } catch (DisconnectError) {
+            console.error({ DisconnectError })
+
+            const token = getCachedToken(adapter.publicKey)
+            if (token) onConnected(token)
+            else onConnectFailed()
+
+            throw DisconnectError
+        }
+    }, [adapter, getCachedToken, onConnectFailed, onConnected, setAutoConnect, setTokenCache, status])
+
+    const signup = useGetLatest(async (pKey: typeof publicKey) => {
+        const _token = getCachedToken(pKey)
+
+        if (_token) return _token
+
+        setStatus({ status: 'signing', token: null, publicKey: pKey })
+
+        return authorize({ sign: signMessage, publicKey: pKey })
+            .then((result) => {
+                setTokenCache(pKey, result)
+                return result
+            })
+            .catch((error) => {
+                disconnect()
+                throw error
+            })
+    })
+
+    const connect = useCallback(async () => {
+        if (status === 'connecting' || status === 'connected' || status === 'disconnecting') return
+
+        if (!adapter) throw new WalletNotSelectedError()
+        if (!ready) throw new WalletNotReadyError()
+
+        setStatus({ status: 'connecting', token: null, publicKey: null })
+
+        try {
+            await adapter.connect()
+            const token = await signup(adapter.publicKey)
+            onConnected(token)
+        } catch (ConnectError) {
+            console.error({ ConnectError })
+            onConnectFailed()
+            throw ConnectError
+        }
+    }, [adapter, onConnectFailed, onConnected, ready, signup, status])
 
     useEffect(() => {
         async function onAutoConnect() {
@@ -108,188 +210,67 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
             if (!adapter) return
             if (!ready) return
 
-            if (status !== 'idle') return
+            if (status !== 'idle' && status !== 'auto-connecting') return
 
-            setStatus('connecting')
+            setStatus({ status: 'connecting', token: null, publicKey: null })
             try {
                 await adapter.connect()
+                const token = await signup(adapter.publicKey)
+                onConnected(token)
             } catch (AutoConnectError) {
+                onConnectFailed()
                 console.error({ AutoConnectError })
-                setAutoConnect(false)
             }
         }
 
         onAutoConnect()
-    }, [adapter, autoConnect, isUnloading, ready, setAutoConnect, status])
-
-    const connect = useCallback(async () => {
-        if (status === 'connecting' || status === 'connected' || status === 'disconnecting') return
-
-        if (!adapter) throw new WalletNotSelectedError()
-        if (!ready) throw new WalletNotReadyError()
-
-        setStatus('connecting')
-
-        try {
-            await adapter.connect()
-
-            if (adapter.connected) {
-                setStatus('connected')
-            }
-        } catch (ConnectError) {
-            console.error({ ConnectError })
-            throw ConnectError
-        }
-    }, [adapter, ready, status])
-
-    const disconnect = useCallback(async () => {
-        if (!adapter) return
-        if (status === 'disconnecting') return
-
-        setStatus('disconnecting')
-        setAutoConnect(false)
-        setVersion((prev) => prev + 1)
-
-        try {
-            await adapter.disconnect()
-        } catch (DisconnectError) {
-            console.error({ DisconnectError })
-            throw DisconnectError
-        }
-    }, [adapter, setAutoConnect, setVersion, status])
-
-    const sendTransaction: WalletContextState['sendTransaction'] = useGetLatest((transaction, _connection, options) => {
-        if (!adapter) throw new WalletNotSelectedError()
-        if (status !== 'connected') throw new WalletNotConnectedError()
-
-        return adapter.sendTransaction(transaction, _connection, options)
-    })
-
-    const signTransaction: WalletContextState['signTransaction'] = useGetLatest(async (transaction) => {
-        if (!adapter || !('signTransaction' in adapter)) throw new WalletNotSelectedError()
-        if (status !== 'connected') throw new WalletNotConnectedError()
-
-        return adapter.signTransaction(transaction)
-    })
-
-    const signAllTransactions: WalletContextState['signAllTransactions'] = useGetLatest(async (transactions) => {
-        if (!adapter || !('signAllTransactions' in adapter)) throw new WalletNotSelectedError()
-        if (status !== 'connected') throw new WalletNotConnectedError()
-
-        return adapter.signAllTransactions(transactions)
-    })
-
-    const signMessage: WalletContextState['signMessage'] = useGetLatest(async (message) => {
-        if (!adapter || !('signMessage' in adapter)) throw new WalletNotSelectedError()
-        if (status !== 'connected') throw new WalletNotConnectedError()
-
-        return adapter.signMessage(message)
-    })
-
-    useEffect(() => {
-        if (status !== 'connected') {
-            setAuth((prev) => (prev.status === 'idle' ? prev : authIdle))
-            return
-        }
-
-        if (token) {
-            setAuth({ status: 'connected', token })
-            return
-        }
-
-        setAuth({ status: 'connecting', token: null })
-
-        authorize({ sign: signMessage, publicKey })
-            .then((result) => {
-                setToken(publicKey, result)
-                setAutoConnect(true)
-            })
-            .catch(() => {
-                setAutoConnect(false)
-                setAuth({ status: 'idle', token: null })
-                disconnect()
-            })
-    }, [disconnect, publicKey, setAutoConnect, setToken, signMessage, status, token])
+    }, [adapter, autoConnect, isUnloading, onConnectFailed, onConnected, ready, signup, status])
 
     useEffect(() => {
         if (!adapter) return
 
-        function onReady() {
-            setReady(true)
-        }
-
-        const onConnect = () => {
-            setReady(adapter.ready)
-            setPublicKey(adapter.publicKey)
-
-            if (adapter.connected) {
-                setStatus('connected')
-            }
-        }
-
-        const onDisconnect = () => {
-            setStatus('idle')
-        }
-
-        const onError = () => {
-            if (adapter.connected) {
-                setStatus('connected')
-            } else {
-                setStatus('idle')
-            }
-        }
+        const onReady = () => setReady(adapter.ready)
 
         adapter.on('ready', onReady)
-        adapter.on('connect', onConnect)
-        adapter.on('disconnect', onDisconnect)
-        adapter.on('error', onError)
 
         return () => {
             adapter.off('ready', onReady)
-            adapter.off('connect', onConnect)
-            adapter.off('disconnect', onDisconnect)
-            adapter.off('error', onError)
         }
     }, [adapter])
 
-    const ctx: WalletContextState = useMemo(
-        () => ({
-            status,
-            auth,
+    const ctx: WalletContextState = useMemo(() => {
+        const pendingStatuses: typeof status[] = ['auto-connecting', 'connecting', 'signing', 'disconnecting']
+        const isPending = pendingStatuses.includes(connectState.status)
+
+        return {
+            ...connectState,
+            isPending,
             wallet,
             adapter,
-            publicKey,
             ready,
             cluster,
             setCluster,
             connection,
-            idle: status === 'idle',
-            connecting: status === 'connecting',
-            connected: status === 'connected',
-            disconnecting: status === 'disconnecting',
             connect,
             disconnect,
             sendTransaction,
             signTransaction,
             signAllTransactions,
             signMessage,
-        }),
-        [
-            adapter,
-            auth,
-            cluster,
-            connect,
-            connection,
-            disconnect,
-            publicKey,
-            ready,
-            sendTransaction,
-            signAllTransactions,
-            signMessage,
-            signTransaction,
-            status,
-        ],
-    )
+        }
+    }, [
+        adapter,
+        cluster,
+        connect,
+        connection,
+        disconnect,
+        ready,
+        sendTransaction,
+        signAllTransactions,
+        signMessage,
+        signTransaction,
+        connectState,
+    ])
 
     return <WalletContext.Provider value={ctx}>{children}</WalletContext.Provider>
 }
