@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 
 import { GameEvent } from '../../../types'
+import QuestionFact from '../scenes/QuestionFact'
 import { Splash } from '../scenes/Splash'
 import { AnimatePresence } from './AnimatePresence'
 
@@ -9,7 +10,7 @@ const scenes = {
     game_info_splash: <Splash />,
     question: null,
     answer_reveal: null,
-    question_fact: null,
+    question_fact: <QuestionFact />,
     crypto_fact: null,
     viewer_count_update: null,
 } as const
@@ -21,7 +22,7 @@ export const SceneViewer = ({ event, offset = 0 }: { offset?: number; event: Gam
     return (
         <group position={[-offset / 250, 0, 0]}>
             <AnimatePresence id={scene} onExit={() => setScene(nextScene)} isVisible={nextScene === scene}>
-                {scenes[scene]}
+                <Suspense fallback={null}>{scenes[scene]}</Suspense>
             </AnimatePresence>
         </group>
     )

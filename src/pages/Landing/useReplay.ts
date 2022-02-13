@@ -1,6 +1,18 @@
 import { createContext, useContext } from 'react'
 
-export const ReplayContext = createContext({ isPlaying: true, speed: 1 })
+import { GameEvent } from '../../types'
+
+type ContextProps = {
+    isPlaying: boolean
+    speed: number
+    event?: null | GameEvent
+}
+
+export const ReplayContext = createContext<ContextProps>({
+    isPlaying: true,
+    speed: 1,
+    event: null,
+})
 
 export function useReplay() {
     return useContext(ReplayContext)

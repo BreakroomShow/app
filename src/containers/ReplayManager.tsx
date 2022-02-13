@@ -115,11 +115,7 @@ export function ReplayManager({ event, currentQuestionId, totalQuestions, userAn
     }
 
     if (event.type === 'question_fact' || event.type === 'crypto_fact') {
-        return (
-            <Segment w={4} h={3} color="transparent" inset="lg">
-                <p>{event.text}</p>
-            </Segment>
-        )
+        return placeholder
     }
 
     exhaustiveCheck(event)
