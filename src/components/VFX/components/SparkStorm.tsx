@@ -54,7 +54,7 @@ function Fatline({ radius, simulation, width, color, points, currentPosition }: 
     return (
         <mesh>
             <meshLine ref={line} attach="geometry" points={points} />
-            <meshLineMaterial attach="material" transparent lineWidth={width} color={color} />
+            <meshLineMaterial attach="material" lineWidth={width} color={color} />
         </mesh>
     )
 }
@@ -70,7 +70,7 @@ export function SparkStorm({
     count = 500,
     colors = ogColors.trivia,
     radius = 1,
-    range = [0.01, 0.52],
+    range = [0.01, 0.02],
 }: SparkStormProps) {
     const lines = useMemo(
         () =>
@@ -80,7 +80,8 @@ export function SparkStorm({
                     color: selectRandom(colors),
                     width: randomFloat(...range),
                     speed: randomFloat(0.001, 0.002),
-                    simulation: randomSimulation(),
+                    // simulation: randomSimulation(),
+                    simulation: lorenzAttractor,
                     radius: randomFloat(2, 2.25) * radius,
                     points,
                     currentPosition,
