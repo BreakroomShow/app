@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber'
 // @ts-ignore
 // import { mapRange } from 'canvas-sketch-util/math'
 import { useMemo, useRef } from 'react'
-import { BufferGeometry, CatmullRomCurve3, LineBasicMaterial, LineLoop, Vector3 } from 'three'
+import { CatmullRomCurve3, Vector3 } from 'three'
 
 import { useReplay } from '../../../pages/Landing/useReplay'
 import { randomFloat, selectRandom } from '../../../utils/selectRandom'
@@ -53,8 +53,6 @@ const FatLine = ({ curve, width, color, speed, isPlaying }: FatlineProps) => {
             // material.current.uniforms.lineWidth.value = width * mapRange(0.4, 0.2, 0.4, 0.1, 2, true)
         }
     })
-
-    const line = new LineLoop(new BufferGeometry().setFromPoints(curve), new LineBasicMaterial({ color: 0x00ff00 }))
 
     return (
         <>
