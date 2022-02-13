@@ -75,7 +75,8 @@
         "framer-motion-3d": "^6.2.6",
         "import-sort-style-module": "6.0.0",
         "prettier": "^2.5.0",
-        "prettier-plugin-import-sort": "0.0.7"
+        "prettier-plugin-import-sort": "0.0.7",
+        "r3f-perf": "^4.9.1"
     },
     "optionalDependencies": {
         "clic-trivia": "github:Solana-Game/clic-trivia#8813e67f109356a8997d3a428b9b5b1e867ae419"

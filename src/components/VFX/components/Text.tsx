@@ -25,7 +25,6 @@ export const Text = ({
     size = 1,
     config = defaultConfig,
     color = '',
-    // matcap = '55C404_BCFA0E_97F004_7AE104',
     ...props
 }) => {
     const font = useLoader(FontLoader, './fonts/Blacker.json')
@@ -65,7 +64,6 @@ export const Text = ({
         }
     }, [children, hAlign, vAlign])
 
-    // const [matcapTex] = useMatcapTexture(matcap)
     const matcapTex = useTexture(matcap)
 
     return (
@@ -73,7 +71,6 @@ export const Text = ({
             <mesh ref={mesh}>
                 <textGeometry args={[children, fontConfig]} />
                 {color ? <meshBasicMaterial color={color} /> : <meshMatcapMaterial matcap={matcapTex} />}
-                {/* <meshBasicMaterial color={color} /> */}
             </mesh>
         </group>
     )

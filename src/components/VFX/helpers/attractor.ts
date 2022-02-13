@@ -7,7 +7,7 @@ export function createAttractor(length: number) {
     const positions = []
 
     const p = Random.onSphere(1)
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < length * 10; i++) {
         positions.push(new THREE.Vector3().fromArray(p))
     }
 
