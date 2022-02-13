@@ -102,7 +102,7 @@ export function ReplayManager({ event, currentQuestionId, totalQuestions, userAn
                     totalQuestions={totalQuestions}
                     questionText={event.question.question}
                     answers={event.question.answers}
-                    userAnswer={null}
+                    userAnswer={event.correct_answer_ind}
                     correctAnswer={event.correct_answer_ind}
                     answerCount={event.answer_count}
                     answered={answered}

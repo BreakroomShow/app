@@ -1,9 +1,11 @@
-import { ReactNode } from 'react'
+import confetti from 'canvas-confetti'
+import { ReactNode, useEffect } from 'react'
 
 import { Answer, AnswerVariant } from '../components/Answer'
 import { Label } from '../components/Label'
 import { Box, Inline, Stack, Typography } from '../design-system'
 import { ReactComponent as Heart } from '../images/heart.svg'
+import { useReplay } from '../pages/Landing/useReplay'
 import { ordinal } from '../utils/ordinal'
 
 interface RevealedQuestionScreenProps {
@@ -24,6 +26,34 @@ interface RevealedQuestionScreenProps {
     onAnswer?: null | ((answerIndex: number) => void)
 }
 
+function useConfetti(show: boolean) {
+    const { isPlaying, speed } = useReplay()
+
+    /* prettier-ignore */
+    useEffect(() => {
+        if (!isPlaying) return
+        if (!show) return
+
+        function fire(x: number, y: number, opts: confetti.Options) {
+            confetti({
+                shapes: ['circle'],
+                origin: { y, x },
+                particleCount: 50,
+                ...opts,
+            })
+        }
+
+        fire(0,   0.8, { angle: 50,  spread: 60, startVelocity: 50, ticks: 120 / speed, scalar: 1.4, gravity: 0.3 * speed, drift:  1 })
+        fire(1,   0.8, { angle: 130, spread: 60, startVelocity: 50, ticks: 120 / speed, scalar: 1.4, gravity: 0.3 * speed, drift: -1 })
+        fire(0.3, 1,   { angle: 60,  spread: 70, startVelocity: 65, ticks: 150 / speed, scalar: 1.6, gravity: 0.7 * speed, drift: -2 })
+        fire(0.7, 1,   { angle: 120, spread: 70, startVelocity: 65, ticks: 150 / speed, scalar: 1.6, gravity: 0.7 * speed, drift:  2 })
+
+        return () => {
+            confetti.reset()
+        }
+    }, [isPlaying, show, speed])
+}
+
 export function RevealedQuestionScreen({
     questionId,
     totalQuestions,
@@ -41,6 +71,9 @@ export function RevealedQuestionScreen({
     resultIcon,
     onAnswer,
 }: RevealedQuestionScreenProps) {
+    const show = userAnswer != null && userAnswer === correctAnswer
+    useConfetti(show)
+
     const totalAnswers = answerCount ? Object.values(answerCount).reduce((acc, c) => acc + c, 0) : null
 
     return (
