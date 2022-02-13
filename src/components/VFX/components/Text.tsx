@@ -1,21 +1,10 @@
-import { useMatcapTexture, useTexture } from '@react-three/drei'
-import { BufferGeometryNode, extend, useLoader } from '@react-three/fiber'
+import { useTexture } from '@react-three/drei'
+import { useLoader } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import { Mesh, Vector3 } from 'three'
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 
-import matcap from '../assets/55C404_BCFA0E_97F004_7AE104.png'
-
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            textGeometry: BufferGeometryNode<TextGeometry, typeof TextGeometry>
-        }
-    }
-}
-
-extend({ TextGeometry })
+import matcap from '../assets/matcap_texture.png'
 
 const defaultConfig = {
     size: 5,
@@ -28,7 +17,7 @@ const defaultConfig = {
     bevelSegments: 2,
 }
 
-const Text = ({
+export const Text = ({
     children = `Breakroom
       Show`,
     vAlign = 'center',
@@ -89,4 +78,3 @@ const Text = ({
         </group>
     )
 }
-export default Text

@@ -76,8 +76,8 @@ export function UserApp() {
             </p>
             <p style={{ whiteSpace: 'pre-wrap' }}>
                 {(() => {
-                    if (!wallet.connected) return 'Connect the wallet'
-                    if (wallet.connecting) return 'Connecting the wallet...'
+                    if (wallet.status === 'idle') return 'Connect the wallet'
+                    if (wallet.isPending) return 'Connecting the wallet...'
                     if (isUserIdle || isUserLoading) return 'User loading...'
                     if (!user) return 'You are not invited yet'
                     // return JSON.stringify({ user, trivia }, null, 4)

@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 
 import { SparkStorm } from '../components/SparkStorm'
-import Text from '../components/Text'
+import { Text } from '../components/Text'
 import { colors } from '../helpers/constants'
 
 export const Splash = () => (

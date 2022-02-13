@@ -12,7 +12,7 @@ export function ConnectButton({ mobileText }: { mobileText?: string }) {
     const wallet = useWallet()
 
     if (mobileText) {
-        console.log({ r: wallet.ready, w: wallet.status, a: wallet.auth.status })
+        console.log({ r: wallet.ready, w: wallet.status })
     }
 
     const onClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
@@ -22,7 +22,11 @@ export function ConnectButton({ mobileText }: { mobileText?: string }) {
         }
     }
 
-    if (wallet.status === 'connected' && wallet.auth.status === 'connected') {
+    if (wallet.isPending) {
+        return null
+    }
+
+    if (wallet.status === 'connected') {
         return <button onClick={() => wallet.disconnect()}>disconnect</button>
     }
 

@@ -1,20 +1,8 @@
 import { shaderMaterial } from '@react-three/drei'
-import { ReactThreeFiber, extend } from '@react-three/fiber'
-import { ShaderMaterial } from 'three'
 
-export type ShaderMaterialRef = ShaderMaterial & typeof uniforms
+export const uniforms = { uSize: 2, uTime: 1 }
 
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            animatedGalaxyMaterial: ReactThreeFiber.MaterialNode<ShaderMaterialRef, []>
-        }
-    }
-}
-
-const uniforms = { uSize: 2, uTime: 1 }
-
-const AnimatedGalaxyMaterial = shaderMaterial(
+export const AnimatedGalaxyMaterial = shaderMaterial(
     uniforms,
     `
     uniform float uTime;
@@ -57,5 +45,3 @@ const AnimatedGalaxyMaterial = shaderMaterial(
     }
   `,
 )
-
-extend({ AnimatedGalaxyMaterial })

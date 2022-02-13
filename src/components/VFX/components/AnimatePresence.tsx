@@ -1,39 +1,37 @@
 import { AnimatePresence as AnimatePresenceOG } from 'framer-motion'
 import { motion } from 'framer-motion-3d'
-import { useMemo } from 'react'
+import { ReactNode } from 'react'
 
 const variants = {
-    hidden: { x: -10 },
+    enter: { x: -20 },
     visible: { x: 0 },
-    exit: { x: 10 },
+    exit: { x: 20 },
 }
 
 interface AnimatePresenceProps {
+    id: string
     isVisible: boolean
-    children: any
-    handleExitFinished: any
-    id: number
+    children: ReactNode
+    onExit(): void
 }
 
-export const AnimatePresence = ({ handleExitFinished, isVisible, children, id }: AnimatePresenceProps) => {
-    const animate = useMemo(() => (isVisible ? 'visible' : 'exit'), [isVisible, children])
-
-    const handleAnimationComplete = () => animate === 'exit' && handleExitFinished()
-
+export const AnimatePresence = ({ onExit, isVisible, children, id }: AnimatePresenceProps) => {
     return (
         <AnimatePresenceOG>
-            {children && (
-                <motion.group
-                    key={id}
-                    variants={variants}
-                    initial="hidden"
-                    animate={animate}
-                    transition={{ duration: 1 }}
-                    onAnimationComplete={handleAnimationComplete}
-                >
-                    {children}
-                </motion.group>
-            )}
+            <motion.group
+                key={id}
+                variants={variants}
+                // @ts-ignore
+                initial="enter"
+                animate={isVisible ? 'visible' : 'exit'}
+                exit="exit"
+                transition={{ duration: children ? 1 : 0 }}
+                onAnimationComplete={(definition) => {
+                    if (definition === 'exit') onExit()
+                }}
+            >
+                {children}
+            </motion.group>
         </AnimatePresenceOG>
     )
 }

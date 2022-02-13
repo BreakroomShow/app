@@ -1,8 +1,10 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
 import { VFX } from '../containers/VFX'
+import { ReplayContext } from '../pages/Landing/useReplay'
+import { GameEvent } from '../types'
 
-const types: any = {
+const types: { [event in GameEvent['type']]?: GameEvent } = {
     game_info_splash: {
         type: 'game_info_splash',
         players: 100,
@@ -48,7 +50,6 @@ const types: any = {
         text: 'Ronaldo has made over $1 billion in career earnings, the first team sport athlete to hit the milestone.',
         image_url: null,
     },
-    empty: null,
 }
 
 export default {
@@ -59,9 +60,18 @@ export default {
     },
 } as ComponentMeta<typeof VFX>
 
-const Template: ComponentStory<typeof VFX> = (args) => <VFX {...args} />
+const Template: Story<{
+    speed: number
+    isPlaying: boolean
+    event: GameEvent
+}> = (args) => (
+    <ReplayContext.Provider value={args}>
+        <VFX {...args} />
+    </ReplayContext.Provider>
+)
 
 export const Default = Template.bind({})
+
 Default.args = {
     speed: 2.4,
     isPlaying: true,

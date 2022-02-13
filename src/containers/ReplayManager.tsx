@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ResultIcon } from '../components/ResultIcon'
 import { Segment } from '../components/Segment'
 import { Timer } from '../components/Timer'
+import { useReplay } from '../pages/Landing/useReplay'
 import { GameFlowEvent } from '../types'
 import { exhaustiveCheck } from '../utils/exhaustiveCheck'
 import { selectRandom } from '../utils/selectRandom'
@@ -13,8 +14,6 @@ interface ReplayManagerProps {
     currentQuestionId: number
     totalQuestions: number
     userAnswerId: number
-    isPlaying: boolean
-    speed: number
 }
 
 // TODO real stats
@@ -47,14 +46,9 @@ function UserAnswerProvider({
     return children(userAnswerId)
 }
 
-export function ReplayManager({
-    event,
-    currentQuestionId,
-    totalQuestions,
-    userAnswerId,
-    isPlaying,
-    speed,
-}: ReplayManagerProps) {
+export function ReplayManager({ event, currentQuestionId, totalQuestions, userAnswerId }: ReplayManagerProps) {
+    const { isPlaying, speed } = useReplay()
+
     const deadline = useMemo(
         () => Date.now() + event.duration * 1000 + 10,
         [
@@ -64,11 +58,14 @@ export function ReplayManager({
         ],
     )
 
+    const placeholder = (
+        <Segment w={4} h={3} color="transparent" inset="lg">
+            {null}
+        </Segment>
+    )
+
     if (event.type === 'game_info_splash') {
-        return null
-        // <Segment w={4} h={3} color="transparent" inset="lg">
-        //     <p>Sponsor: {event.sponsor_title}</p>
-        // </Segment>
+        return placeholder
     }
 
     if (event.type === 'question') {

@@ -1,53 +1,28 @@
-import { Sphere } from '@react-three/drei'
-import { useThree } from '@react-three/fiber'
 import { useState } from 'react'
 
-import useUpdateEffect from '../../../hooks/useUpdateEffect'
 import { GameEvent } from '../../../types'
 import { Splash } from '../scenes/Splash'
 import { AnimatePresence } from './AnimatePresence'
 
 const scenes = {
+    empty: null,
     game_info_splash: <Splash />,
     question: null,
     answer_reveal: null,
     question_fact: null,
     crypto_fact: null,
-}
+    viewer_count_update: null,
+} as const
 
-const SceneViewer = ({ event }: { event: GameEvent | null }) => {
-    const [scene, setScene] = useState(event && scenes ? scenes[event.type] : null)
+export const SceneViewer = ({ event, offset = 0 }: { offset?: number; event: GameEvent | null }) => {
+    const nextScene = event?.type || ('empty' as const)
+    const [scene, setScene] = useState(nextScene)
 
-    const [isVisible, setVisible] = useState(true)
-    const [key, setKey] = useState(0)
-
-    const updateScene = () => {
-        setScene(event && scenes ? scenes[event.type] : null)
-    }
-
-    const viewport = useThree(({ viewport }) => viewport)
-
-    useUpdateEffect(() => {
-        if (scene) {
-            setVisible(false)
-        } else {
-            setVisible(true)
-            updateScene()
-        }
-    }, [event])
-
-    const handleExitFinished = () => {
-        updateScene()
-        setVisible(true)
-        setKey((key) => key + 1)
-    }
     return (
-        <group position={[-viewport.width / 7, 0, 0]}>
-            <AnimatePresence id={key} handleExitFinished={handleExitFinished} isVisible={isVisible}>
-                {scene}
+        <group position={[-offset / 250, 0, 0]}>
+            <AnimatePresence id={scene} onExit={() => setScene(nextScene)} isVisible={nextScene === scene}>
+                {scenes[scene]}
             </AnimatePresence>
         </group>
     )
 }
-
-export default SceneViewer
