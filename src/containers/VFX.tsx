@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 
 import { Canvas } from '../components/VFX/components/Canvas'
 import { SceneViewer } from '../components/VFX/components/SceneViewer'
-import { SpaceDust } from '../components/VFX/components/SpaceDust'
+// import { SpaceDust } from '../components/VFX/components/SpaceDust'
 import { Stars } from '../components/VFX/Stars'
 import { Box } from '../design-system'
 import { GameEvent } from '../types'
@@ -21,7 +21,6 @@ export const VFX = ({ event, offset, children }: VFXProps) => {
             <Canvas>
                 {children}
                 <SceneViewer event={event} offset={offset} />
-                <SpaceDust count={1000} />
                 <Stars count={300} />
             </Canvas>
         </Box>
