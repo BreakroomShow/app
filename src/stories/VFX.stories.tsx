@@ -1,4 +1,6 @@
+import { OrbitControls } from '@react-three/drei'
 import { ComponentMeta, Story } from '@storybook/react'
+import { Perf } from 'r3f-perf'
 
 import { VFX } from '../containers/VFX'
 import { ReplayContext } from '../pages/Landing/useReplay'
@@ -66,7 +68,10 @@ const Template: Story<{
     event: GameEvent
 }> = (args) => (
     <ReplayContext.Provider value={args}>
-        <VFX {...args} />
+        <VFX {...args}>
+            <OrbitControls />
+            {/* <Perf /> */}
+        </VFX>
     </ReplayContext.Provider>
 )
 

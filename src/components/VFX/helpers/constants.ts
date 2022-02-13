@@ -10,6 +10,14 @@ export const colors = {
         theme.colors.green,
         theme.colors.pink,
     ].map((c) => c.value),
+    sparks: [
+        theme.colors.yellow,
+        theme.colors.purple,
+        theme.colors.orange,
+        theme.colors.blue,
+        theme.colors.lightBlue,
+        theme.colors.pink,
+    ].map((c) => c.value),
 }
 
 export const textConfig = { size: 1, height: 0.75 }

@@ -1,8 +1,10 @@
 import '../components/VFX/extend'
 
+import { ReactNode } from 'react'
+
 import { Canvas } from '../components/VFX/components/Canvas'
 import { SceneViewer } from '../components/VFX/components/SceneViewer'
-import { SpaceDust } from '../components/VFX/components/SpaceDust'
+// import { SpaceDust } from '../components/VFX/components/SpaceDust'
 import { Stars } from '../components/VFX/Stars'
 import { Box } from '../design-system'
 import { GameEvent } from '../types'
@@ -10,14 +12,15 @@ import { GameEvent } from '../types'
 interface VFXProps {
     event: GameEvent | null
     offset?: number
+    children?: ReactNode
 }
 
-export const VFX = ({ event, offset }: VFXProps) => {
+export const VFX = ({ event, offset, children }: VFXProps) => {
     return (
         <Box css={{ position: 'fixed', inset: 0, zIndex: -1 }}>
             <Canvas>
+                {children}
                 <SceneViewer event={event} offset={offset} />
-                <SpaceDust count={1000} />
                 <Stars count={300} />
             </Canvas>
         </Box>

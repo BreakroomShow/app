@@ -25,7 +25,7 @@ export const AnimatePresence = ({ onExit, isVisible, children, id }: AnimatePres
                 initial="enter"
                 animate={isVisible ? 'visible' : 'exit'}
                 exit="exit"
-                transition={{ duration: children ? 1 : 0 }}
+                transition={{ type: 'spring', duration: children ? 3 : 0, bounce: 0.1 }}
                 onAnimationComplete={(definition) => {
                     if (definition === 'exit') onExit()
                 }}

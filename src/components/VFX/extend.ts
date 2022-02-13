@@ -10,9 +10,14 @@ export type AnimatedGalaxyMaterialRef = ShaderMaterial & typeof uniforms
 export type MeshLineRef = MeshBasicMaterial & {
     points?: ReactThreeFiber.Vector3[]
     advance(vec: ReactThreeFiber.Vector3): void
+    uniforms?: { dashOffset: { value: number }; lineWidth: { value: number } }
 }
 
-export type MeshLineMaterialRef = MeshBasicMaterial & { transparent?: boolean; lineWidth?: number; color?: string }
+export type MeshLineMaterialRef = MeshBasicMaterial & {
+    transparent?: boolean
+    lineWidth?: number
+    color?: string
+}
 
 declare global {
     namespace JSX {
