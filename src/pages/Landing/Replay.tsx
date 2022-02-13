@@ -211,7 +211,7 @@ export function Replay() {
         }
     })
 
-    const ctx = useMemo(() => ({ isPlaying, speed: SPEED }), [isPlaying])
+    const ctx = useMemo(() => ({ isPlaying, speed: SPEED, event: currentEvent }), [isPlaying, currentEvent])
 
     return (
         <ReplayContext.Provider value={ctx}>

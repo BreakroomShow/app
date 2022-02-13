@@ -49,7 +49,7 @@ const types: { [event in GameEvent['type']]?: GameEvent } = {
         distribution_type: 'socket',
         duration: 2.0833333333333335,
         game_start_offset: 30,
-        text: 'Ronaldo has made over $1 billion in career earnings, the first team sport athlete to hit the milestone.',
+        text: `Ronaldo has made over $1 billion in career earnings, the first team sport athlete to hit the milestone.`,
         image_url: null,
     },
 }
@@ -80,5 +80,5 @@ export const Default = Template.bind({})
 Default.args = {
     speed: 2.4,
     isPlaying: true,
-    event: types.game_info_splash,
+    event: types.question_fact,
 }
