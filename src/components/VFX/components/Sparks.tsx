@@ -5,6 +5,7 @@ import { useMemo, useRef } from 'react'
 // import { BufferGeometry, CatmullRomCurve3, LineBasicMaterial, LineLoop, Vector3 } from 'three'
 import { CatmullRomCurve3, Vector3 } from 'three'
 
+import { useReplay } from '../../../pages/Landing/useReplay'
 import { randomFloat, selectRandom } from '../../../utils/selectRandom'
 import { MeshLineRef } from '../extend'
 import { colors as colorsOG } from '../helpers/constants'
@@ -34,12 +35,14 @@ interface FatlineProps {
     width: number
     color: string
     speed: number
+    isPlaying?: boolean
 }
 
-const FatLine = ({ curve, width, color, speed }: FatlineProps) => {
+const FatLine = ({ curve, width, color, speed, isPlaying }: FatlineProps) => {
     const material = useRef<MeshLineRef>()
 
     useFrame(() => {
+        if (!isPlaying) return
         if (material.current && material.current.uniforms) {
             material.current.uniforms.dashOffset.value -= speed
             // material.current.uniforms.lineWidth.value = width * mapRange(0.4, 0.2, 0.4, 0.1, 2, true)
@@ -78,6 +81,13 @@ interface SparksProps {
 
 export const Sparks = ({ count = 50, colors = colorsOG.sparks, radius = 3.4 }: SparksProps) => {
     const lines = useMemo(() => generateLines(colors, count, radius), [colors, count, radius])
+    const { isPlaying } = useReplay()
 
-    return lines.map((props, index) => <FatLine key={index} {...props} />)
+    return (
+        <>
+            {lines.map((props, index) => (
+                <FatLine isPlaying={isPlaying} key={index} {...props} />
+            ))}
+        </>
+    )
 }
