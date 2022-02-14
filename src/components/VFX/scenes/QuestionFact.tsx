@@ -2,14 +2,17 @@ import { Text, useTexture } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 
 import { useReplay } from '../../../pages/Landing/useReplay'
-import { QuestionFactEvent } from '../../../types'
 import matcap from '../assets/matcap_texture.png'
 
-const QuestionFact = () => {
+export const QuestionFact = () => {
     const { event } = useReplay()
     const matcapTex = useTexture(matcap)
-    const { width } = useThree(({ viewport }) => viewport)
-    console.log(width)
+    const width = useThree(({ viewport }) => viewport.width)
+
+    if (!event || event.type !== 'question_fact') {
+        return null
+    }
+
     return (
         <Text
             textAlign="center"
@@ -18,10 +21,8 @@ const QuestionFact = () => {
             fontSize={width / 35}
             maxWidth={width * 0.5}
         >
-            {(event as QuestionFactEvent).text}
+            {event.text}
             <meshMatcapMaterial matcap={matcapTex} />
         </Text>
     )
 }
-
-export default QuestionFact

@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react'
 
 import { GameEvent } from '../../../types'
-import QuestionFact from '../scenes/QuestionFact'
+import { QuestionFact } from '../scenes/QuestionFact'
 import { Splash } from '../scenes/Splash'
 import { AnimatePresence } from './AnimatePresence'
 

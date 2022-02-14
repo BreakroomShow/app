@@ -66,16 +66,16 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
         publicKey: null,
     })
 
-    const { status, publicKey } = connectState
+    const { status } = connectState
 
     const [adapter, setAdapter] = useState<ReturnType<typeof wallet['adapter']> | null>(null)
     const [ready, setReady] = useState(false)
 
-    const [_tokenCache, _setTokenCache] = useLocalStorage<{ [pKey in string]?: string }>(`token_cache`, {})
-    const getCachedToken = useGetLatest((pKey: typeof publicKey) => _tokenCache?.[String(pKey)] || null)
-    const setTokenCache = useGetLatest((key: typeof publicKey, newToken?: string) => {
-        if (!key) _setTokenCache({})
-        else _setTokenCache({ [String(key)]: newToken })
+    const [_tokenCache, _setTokenCache] = useLocalStorage<{ [pKey in string]?: Token }>(`token_cache`, {})
+    const getCachedToken = useGetLatest((pKey: WalletContextState['publicKey']) => _tokenCache?.[String(pKey)] || null)
+    const setTokenCache = useGetLatest((pKey: WalletContextState['publicKey'], newToken?: Token) => {
+        if (!pKey) _setTokenCache({})
+        else _setTokenCache({ [String(pKey)]: newToken })
     })
 
     const [cluster, setCluster] = useState<WalletContextState['cluster']>('devnet')
@@ -99,7 +99,7 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
     }, [])
 
     const onConnected = useCallback(
-        (token: string) => {
+        (token: Token) => {
             if (!adapter) return
 
             setReady(adapter.ready)
@@ -166,7 +166,7 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
         }
     }, [adapter, getCachedToken, onConnectFailed, onConnected, setAutoConnect, setTokenCache, status])
 
-    const signup = useGetLatest(async (pKey: typeof publicKey) => {
+    const signup = useGetLatest(async (pKey: WalletContextState['publicKey']) => {
         const _token = getCachedToken(pKey)
 
         if (_token) return _token
