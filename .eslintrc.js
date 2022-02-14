@@ -39,8 +39,10 @@ module.exports = {
         'no-underscore-dangle': 'off',
         'max-classes-per-file': 'off',
         'no-use-before-define': 'off',
+        'class-methods-use-this': 'off',
 
         'import/extensions': 'off',
+        'import/no-default-export': 'error',
         'import/prefer-default-export': 'off',
         'import/no-extraneous-dependencies': ['error', { optionalDependencies: true }],
 
@@ -83,6 +85,7 @@ module.exports = {
             rules: {
                 'import/no-anonymous-default-export': 'off',
                 'import/no-extraneous-dependencies': 'off',
+                'import/no-default-export': 'off',
             },
         },
         {
