@@ -114,7 +114,7 @@ export function ReplayManager({ event, currentQuestionId, totalQuestions, userAn
         )
     }
 
-    if (event.type === 'question_fact' || event.type === 'crypto_fact') {
+    if (event.type === 'question_fact' || event.type === 'crypto_fact' || event.type === 'intro_splash') {
         return placeholder
     }
 
