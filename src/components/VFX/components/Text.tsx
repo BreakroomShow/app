@@ -7,35 +7,41 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import matcap from '../assets/matcap_texture.png'
 
 const defaultConfig = {
-    size: 5,
-    height: 1.25,
+    size: 0.5,
+    height: 0.125,
     curveSegments: 32,
+    bevelThickness: 0.03,
+    bevelSize: 0.005,
     bevelEnabled: true,
-    bevelThickness: 0.3,
-    bevelSize: 0.05,
     bevelOffset: 0,
     bevelSegments: 2,
 }
 
 export const Text = ({
-    children = `Breakroom
-      Show`,
+    children = `Breakroom`,
     vAlign = 'center',
     hAlign = 'center',
     size = 1,
     config = defaultConfig,
     color = '',
+    dontAlign = false,
     ...props
 }) => {
     const font = useLoader(FontLoader, './fonts/Blacker.json')
 
     const mesh = useRef<Mesh>(null)
+
     const fontConfig = useMemo(
         () => ({
             font,
             ...config,
+            size: config.size * size,
+            height: config.height * size,
+            curveSegments: config.curveSegments * size,
+            bevelThickness: config.bevelThickness * size,
+            bevelSize: config.bevelSize * size,
         }),
-        [font, config],
+        [font, config, size],
     )
 
     useLayoutEffect(() => {
@@ -59,15 +65,15 @@ export const Text = ({
                 }
 
                 mesh.current.position.x = xPos
-                mesh.current.position.y = yPos
+                if (!dontAlign) mesh.current.position.y = yPos
             }
         }
-    }, [children, hAlign, vAlign])
+    }, [children, dontAlign, hAlign, vAlign])
 
     const matcapTex = useTexture(matcap)
 
     return (
-        <group scale={0.15 * 0.7 * size} {...props}>
+        <group {...props}>
             <mesh ref={mesh}>
                 <textGeometry args={[children, fontConfig]} />
                 {color ? <meshBasicMaterial color={color} /> : <meshMatcapMaterial matcap={matcapTex} />}

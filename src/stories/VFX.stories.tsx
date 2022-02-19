@@ -1,12 +1,17 @@
 import { OrbitControls } from '@react-three/drei'
 import { ComponentMeta, Story } from '@storybook/react'
-import { Perf } from 'r3f-perf'
 
 import { VFX } from '../containers/VFX'
 import { ReplayContext } from '../pages/Landing/useReplay'
 import { GameEvent } from '../types'
 
 const types: { [event in GameEvent['type']]?: GameEvent } = {
+    intro_splash: {
+        type: 'intro_splash',
+        distribution_type: 'socket',
+        duration: 4.166666666666667,
+        game_start_offset: 0,
+    },
     game_info_splash: {
         type: 'game_info_splash',
         players: 100,
@@ -80,5 +85,5 @@ export const Default = Template.bind({})
 Default.args = {
     speed: 2.4,
     isPlaying: true,
-    event: types.question_fact,
+    event: types.intro_splash,
 }

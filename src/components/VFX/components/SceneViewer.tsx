@@ -6,8 +6,9 @@ import { Splash } from '../scenes/Splash'
 import { AnimatePresence } from './AnimatePresence'
 
 const scenes = {
+    intro_splash: <Splash />,
+    game_info_splash: null,
     empty: null,
-    game_info_splash: <Splash />,
     question: null,
     answer_reveal: null,
     question_fact: <QuestionFact />,

@@ -1,6 +1,7 @@
 export type GameFlowEvent = Exclude<GameEvent, ViewerCountUpdateEvent>
 
 export type GameEvent =
+    | IntroSplashEvent
     | GameInfoSplashEvent
     | QuestionEvent
     | AnswerRevealEvent
@@ -14,6 +15,10 @@ export interface BaseEvent {
     distribution_type: DistributionType
     duration: number
     game_start_offset: number
+}
+
+export interface IntroSplashEvent extends BaseEvent {
+    type: 'intro_splash'
 }
 
 export interface GameInfoSplashEvent extends BaseEvent {
