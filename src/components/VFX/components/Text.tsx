@@ -65,7 +65,7 @@ export const Text = ({
                 }
 
                 mesh.current.position.x = xPos
-                if (!dontAlign) mesh.current.position.y = yPos
+                mesh.current.position.y = yPos
             }
         }
     }, [children, dontAlign, hAlign, vAlign])

@@ -8,7 +8,7 @@ export const MultilineText = ({ texts = ['Breakroom', 'Show'], size = 1 }) => {
             {texts.map((el, i) => (
                 <group key={i}>
                     <Box height={size * 0.5}>
-                        <Text size={size} dontAlign>
+                        <Text size={size} vAlign="bottom">
                             {el}
                         </Text>
                     </Box>
