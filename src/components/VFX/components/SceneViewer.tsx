@@ -1,13 +1,14 @@
 import { Suspense, useState } from 'react'
 
 import { GameEvent } from '../../../types'
+import { GameInfoSplash } from '../scenes/GameInfoSplash'
 import { QuestionFact } from '../scenes/QuestionFact'
 import { Splash } from '../scenes/Splash'
 import { AnimatePresence } from './AnimatePresence'
 
 const scenes = {
     intro_splash: <Splash />,
-    game_info_splash: null,
+    game_info_splash: <GameInfoSplash />,
     empty: null,
     question: null,
     answer_reveal: null,

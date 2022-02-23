@@ -1,6 +1,6 @@
 import '../components/VFX/extend'
 
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 import { Canvas } from '../components/VFX/components/Canvas'
 import { SceneViewer } from '../components/VFX/components/SceneViewer'
@@ -21,7 +21,7 @@ export const VFX = ({ event, offset, children }: VFXProps) => {
             <Canvas>
                 {children}
                 <SceneViewer event={event} offset={offset} />
-                <Stars count={300} />
+                <Stars depth={800} size={500} count={2520} />
             </Canvas>
         </Box>
     )
