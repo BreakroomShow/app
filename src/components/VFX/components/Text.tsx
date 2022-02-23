@@ -4,7 +4,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import { Mesh, Vector3 } from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 
-import matcap from '../assets/matcap_texture.png'
+import initialMatcap from '../assets/matcap_texture.png'
 
 const defaultConfig = {
     size: 0.5,
@@ -25,6 +25,7 @@ export const Text = ({
     config = defaultConfig,
     color = '',
     dontAlign = false,
+    matcap = initialMatcap,
     ...props
 }) => {
     const font = useLoader(FontLoader, './fonts/Blacker.json')

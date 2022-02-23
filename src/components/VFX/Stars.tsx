@@ -51,6 +51,7 @@ export function Stars({ count = 40, depth = 10, size = 800, color }: StarsProps)
 
     return (
         <Suspense fallback={null}>
+            {/* @ts-ignore */}
             <Points ref={particlesRef} limit={count}>
                 <animatedGalaxyMaterial
                     vertexColors
