@@ -1,5 +1,6 @@
-import { Point, Points } from '@react-three/drei'
+import { Box, Point, Points } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
+import Random from 'canvas-sketch-util/random'
 import { ComponentRef, Suspense, useMemo, useRef } from 'react'
 import { AdditiveBlending, Color, Vector3 } from 'three'
 
@@ -21,20 +22,21 @@ export function Stars({ count = 40, depth = 10, size = 800, color }: StarsProps)
     const shaderRef = useRef<AnimatedGalaxyMaterialRef>(null)
     const particlesRef = useRef<ComponentRef<typeof Points>>(null)
 
-    const { dpr, width, height } = useThree(({ viewport }) => viewport)
+    const { dpr } = useThree(({ viewport }) => viewport)
 
     const pointsArray = useMemo(
         () =>
-            Array.from({ length: count }, () => ({
-                position: new Vector3(
-                    (Math.random() - 0.5) * depth,
-                    (Math.random() - 0.5) * height * 2,
-                    (Math.random() - 0.5) * width * 2,
-                ),
-                scale: Math.random(),
-                color: color ?? new Color(selectRandom(colors.trivia)),
-            })),
-        [color, count, depth, height, width],
+            Array.from({ length: count }, () => {
+                const radius = (Math.random() - 0.5) * depth
+                const [x, z] = Random.onCircle(radius)
+                const y = Math.abs(radius) * Math.tan((37.5 * Math.PI) / 180)
+                return {
+                    position: new Vector3(x, y * (Math.random() - 0.5) * 2, z),
+                    scale: Math.random(),
+                    color: color ?? new Color(selectRandom(colors.trivia)),
+                }
+            }),
+        [color, count, depth],
     )
 
     useFrame((state, delta) => {
@@ -43,14 +45,13 @@ export function Stars({ count = 40, depth = 10, size = 800, color }: StarsProps)
 
         const coef = 0.01 * speed
 
-        particlesRef.current.rotation.x = state.clock.getElapsedTime() * coef
         particlesRef.current.rotation.y = state.clock.getElapsedTime() * -coef
         shaderRef.current.uTime += delta * coef
     })
 
     return (
         <Suspense fallback={null}>
-            <Points ref={particlesRef}>
+            <Points ref={particlesRef} limit={count}>
                 <animatedGalaxyMaterial
                     vertexColors
                     depthWrite={false}
