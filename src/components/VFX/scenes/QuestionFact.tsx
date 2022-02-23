@@ -1,11 +1,10 @@
 import { Text, useTexture } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 
-import { useReplay } from '../../../pages/Landing/useReplay'
+import { GameEvent } from '../../../types'
 import matcap from '../assets/matcap_texture.png'
 
-export const QuestionFact = () => {
-    const { event } = useReplay()
+export const QuestionFact = ({ event }: { event: GameEvent }) => {
     const matcapTex = useTexture(matcap)
     const width = useThree(({ viewport }) => viewport.width)
 

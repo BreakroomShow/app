@@ -22,7 +22,7 @@ export function Stars({ count = 40, depth = 10, size = 800, color }: StarsProps)
     const shaderRef = useRef<AnimatedGalaxyMaterialRef>(null)
     const particlesRef = useRef<ComponentRef<typeof Points>>(null)
 
-    const { dpr } = useThree(({ viewport }) => viewport)
+    const dpr = useThree(({ viewport }) => viewport.dpr)
 
     const pointsArray = useMemo(
         () =>

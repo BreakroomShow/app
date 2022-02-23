@@ -1,4 +1,3 @@
-import { Center } from '@react-three/drei'
 import { Box, Flex } from '@react-three/flex'
 
 import { Text } from './Text'
@@ -28,19 +27,16 @@ export const MultilineTextPro = ({
     textProps = {},
 }) => {
     return (
-        <Center>
-            <Flex justifyContent="center">
-                {texts.map(({ size, text }, i) => (
-                    <group key={i}>
-                        <Box height={size * 0.5}>
-                            <Text size={size} vAlign="bottom" {...textProps}>
-                                {text}
-                            </Text>
-                        </Box>
-                        {i < texts.length - 1 ? <Box padding={0.1 * size}>null</Box> : null}
-                    </group>
-                ))}
-            </Flex>
-        </Center>
+        <Flex justifyContent="center">
+            {texts.map(({ size, text }, i) => (
+                <group key={i}>
+                    <Box marginTop={0.1}>
+                        <Text size={size} vAlign="bottom" {...textProps}>
+                            {text}
+                        </Text>
+                    </Box>
+                </group>
+            ))}
+        </Flex>
     )
 }
