@@ -19,7 +19,7 @@ export type Media = `@${MediaToken}`
 export type Align = typeof alignTokens[number]
 export type AlignY = typeof alignYTokens[number]
 
-export type MediaMap<T> = { [media in Media]?: T }
+export type MediaMap<T> = { [media in Media | '@initial']?: T }
 export type MediaProp<T> = T | MediaMap<T>
 
 export type Custom<T> = {

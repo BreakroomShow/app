@@ -20,5 +20,9 @@ export const Link = styled(LinkComponent, {
         underline: {
             true: { textDecoration: 'underline' },
         },
+        wrap: {
+            wrap: {},
+            nowrap: { whiteSpace: 'nowrap' },
+        },
     },
 })

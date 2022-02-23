@@ -3,33 +3,30 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-
 import { useReplayQuery } from '../../api/query'
 import { Dialog } from '../../components/Dialog'
 import { connectUrl } from '../../config'
-import { Box, Stack, globalCss, styled } from '../../design-system'
+import { Stack, globalCss } from '../../design-system'
 import { useBackgroundLocation } from '../../hooks/useBackgroundLocation'
+import { htmlAnchor } from '../../utils/htmlAnchor'
 import { lazy } from '../../utils/lazy'
+import { FaqSection } from './components/FaqSection'
 import { GameReplaySection } from './components/GameReplaySection'
-import { GameRulesSection } from './components/GameRulesSection'
-import { HowToStartSection, howToStartId } from './components/HowToStartSection'
-import { LeaderboardSection } from './components/LeaderboardSection'
+import { GoalSection } from './components/GoalSection'
+import { HeadlineSection } from './components/HeadlineSection'
+import { HowItWorksSection } from './components/HowItWorksSection'
+import { HowToStartSection } from './components/HowToStartSection'
 import { NextGameSection } from './components/NextGameSection'
 import { PageContent } from './components/PageContent'
 import { PageFooter } from './components/PageFooter'
 import { PageHeader } from './components/PageHeader'
+import { PageLinkButton } from './components/PageLinkButton'
 import { PageSpacer } from './components/PageSpacer'
-import { PageTitle } from './components/PageTitle'
+import { TransparencySection } from './components/TransparencySection'
 
 const Replay = lazy(() => import(/* webpackChunkName: "Replay" */ './Replay').then((m) => m.Replay), null)
 useReplayQuery.preload()
 
 const styles = globalCss({
-    html: { background: '$blue' },
+    html: { background: '$background' },
     body: { background: '$background', color: '$black' },
-})
-
-const FooterContainer = styled(Box, {
-    paddingTop: 150,
-    marginTop: -150,
-    paddingBottom: 65,
-    background: '$blue',
 })
 
 function Index() {
@@ -40,22 +37,26 @@ function Index() {
             <PageContent css={{ paddingTop: 70, '@down-lg': { paddingTop: 25 } }}>
                 <Stack dividers={<PageSpacer />}>
                     <PageHeader />
-                    <PageTitle />
-                    <NextGameSection howToStartId={howToStartId} />
+                    <HeadlineSection />
+                    <NextGameSection>
+                        <PageLinkButton {...htmlAnchor(HowItWorksSection.id)}>How it works</PageLinkButton>
+                    </NextGameSection>
                     <GameReplaySection />
-                    <GameRulesSection />
                 </Stack>
             </PageContent>
+            <HowItWorksSection />
+            <HowToStartSection>
+                <PageLinkButton {...htmlAnchor('TODO')}>Sign up for the game</PageLinkButton>
+            </HowToStartSection>
+            <TransparencySection />
             <PageSpacer />
-            <HowToStartSection />
-            <FooterContainer>
-                <PageSpacer />
-                <PageContent>
-                    <LeaderboardSection />
-                    <PageSpacer />
+            <PageContent>
+                <Stack dividers={<PageSpacer />}>
+                    <FaqSection />
+                    <GoalSection />
                     <PageFooter />
-                </PageContent>
-            </FooterContainer>
+                </Stack>
+            </PageContent>
         </>
     )
 }

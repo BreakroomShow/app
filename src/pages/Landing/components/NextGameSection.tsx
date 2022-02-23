@@ -1,18 +1,13 @@
-import { Link } from '../../../components/Link'
-import { LinkButton } from '../../../components/LinkButton'
+import { ReactNode } from 'react'
+
 import { SegmentComponent } from '../../../components/Segment'
 import { Column, Columns, Stack, Text, Typography } from '../../../design-system'
-import { useHtmlAnchor } from '../../../hooks/useHtmlAnchor'
 import { useNonce } from '../../../hooks/useNonce'
 import { msToTimeUntil } from '../../../utils/date'
 
 const nextGameDate = new Date(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).setHours(19, 0, 0))
 
-interface NextGameSectionProps {
-    howToStartId: string
-}
-
-export function NextGameSection({ howToStartId }: NextGameSectionProps) {
+export function NextGameSection({ children }: { children: ReactNode }) {
     useNonce()
 
     const nextGameDateString = nextGameDate.toLocaleString('default', { day: 'numeric', month: 'short' })
@@ -60,19 +55,7 @@ export function NextGameSection({ howToStartId }: NextGameSectionProps) {
                     </Column>
                 ))}
             </Columns>
-            <Link css={{ borderRadius: '$pill' }} {...useHtmlAnchor(howToStartId)}>
-                <SegmentComponent
-                    inset="center"
-                    variant="pill"
-                    css={{
-                        background: '$brightGreen',
-                        minHeight: 225,
-                        '@down-md': { minHeight: 125 },
-                    }}
-                >
-                    <LinkButton>Sign up for the game</LinkButton>
-                </SegmentComponent>
-            </Link>
+            {children}
         </>
     )
 }

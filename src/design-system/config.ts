@@ -25,6 +25,7 @@ export const cssFactory = stitches.createStitches({
             blackA: '#17171780',
             white: '#FFFFFF',
             whiteA: '#FFFFFF80',
+            lightGrey: '#F5F5F5',
             darkGrey: '#232323',
             greyA: '#00000080',
             blue: '#1A51CC',

@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react'
 
-export function useHtmlAnchor(id: string) {
+export function htmlAnchor(id: string) {
     const url = `#${id}`
 
     return {

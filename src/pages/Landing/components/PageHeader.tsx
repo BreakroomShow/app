@@ -1,7 +1,10 @@
 import { ConnectButton } from '../../../components/ConnectButton'
 import { Link } from '../../../components/Link'
-import { faqUrl, sponsorUrl } from '../../../config'
-import { Box, Text, TypeGroup, Typography, styled } from '../../../design-system'
+import { sponsorUrl } from '../../../config'
+import { Box, Typography, styled } from '../../../design-system'
+import { ReactComponent as Logo } from '../../../images/logo.svg'
+import { htmlAnchor } from '../../../utils/htmlAnchor'
+import { FaqSection } from './FaqSection'
 
 const Container = styled('header', {
     display: 'flex',
@@ -27,23 +30,21 @@ const Container = styled('header', {
 
 export function PageHeader() {
     return (
-        <TypeGroup as="body2">
-            <Container>
-                <Box>
-                    <Link to={faqUrl}>
-                        <Typography>F.A.Q.</Typography>
-                    </Link>
-                    <Link to={sponsorUrl}>
-                        <Typography>Join as a sponsor</Typography>
-                    </Link>
-                </Box>
-                <Text color="orange" size="xl" align="center">
-                    breakroom
-                </Text>
-                <Box>
-                    <ConnectButton mobileText="Play" />
-                </Box>
-            </Container>
-        </TypeGroup>
+        <Container>
+            <Box>
+                <Link {...htmlAnchor(FaqSection.id)}>
+                    <Typography>F.A.Q.</Typography>
+                </Link>
+                <Link to={sponsorUrl}>
+                    <Typography>Join as a sponsor</Typography>
+                </Link>
+            </Box>
+            <Box>
+                <Logo />
+            </Box>
+            <Box>
+                <ConnectButton mobileText="Play" />
+            </Box>
+        </Container>
     )
 }

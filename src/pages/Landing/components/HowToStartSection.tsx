@@ -1,22 +1,16 @@
+import { ReactNode } from 'react'
+
 import { Link } from '../../../components/Link'
 import { LinkButton } from '../../../components/LinkButton'
 import { SegmentComponent } from '../../../components/Segment'
-import { guides, phantomWalletUrl } from '../../../config'
+import { guides, octaneUrl, phantomWalletUrl } from '../../../config'
 import { Box, Column, Columns, Spacer, Stack, Text, styled } from '../../../design-system'
+import { ReactComponent as Illustration1 } from '../../../images/illustration-1.svg'
+import { ReactComponent as Illustration2 } from '../../../images/illustration-2.svg'
+import { ReactComponent as Illustration3 } from '../../../images/illustration-3.svg'
+import { PageBlock } from './PageBlock'
 import { PageContent } from './PageContent'
-import { PageSpacer } from './PageSpacer'
 import { SectionTitle } from './SectionTitle'
-
-const Container = styled(Box, {
-    position: 'relative',
-    borderRadius: '$lg',
-
-    paddingY: 124,
-    '@down-md': { paddingY: 50 },
-
-    background: '#ECE9E3',
-    color: '$white',
-})
 
 const Segment = styled(SegmentComponent, {
     background: '$green',
@@ -25,14 +19,31 @@ const Segment = styled(SegmentComponent, {
     paddingX: 10,
     flexDirection: 'column',
     alignItems: 'center',
+    overflow: 'visible',
 })
 
-export const howToStartId = 'how-to-start'
+const Illustration = styled(Box, {
+    height: 200,
+    '@down-xl': {
+        height: 140,
+    },
 
-export function HowToStartSection() {
+    display: 'flex',
+    alignItems: 'flex-end',
+
+    '& > svg': {
+        maxWidth: '100%',
+        maxHeight: '180%',
+    },
+
+    pointerEvents: 'none',
+})
+
+export function HowToStartSection({ children }: { children: ReactNode }) {
     const steps = [
         {
             color: 'green',
+            illustration: <Illustration1 />,
             guideUrl: guides.installWallet,
             title: 'Get a crypto wallet\non the Solana',
             description: (
@@ -47,6 +58,7 @@ export function HowToStartSection() {
         },
         {
             color: 'orange',
+            illustration: <Illustration2 />,
             guideUrl: guides.connectWallet,
             title: 'Sign-in to our website\nusing your wallet',
             description:
@@ -54,23 +66,33 @@ export function HowToStartSection() {
         },
         {
             color: 'blue',
-            guideUrl: guides.depositWallet,
-            title: 'Add half a dollar on\nyour wallet',
-            description: 'Participation in each trivia costs\n$0,01. Because the game is built\non a blockchain',
+            illustration: <Illustration3 />,
+            guideUrl: null,
+            title: 'Play and get a crypto\non your wallet',
+            description: `Come to the trivia at the appointed\ntime, answer all the questions\nand get a prize`,
         },
     ]
 
     return (
-        <Container>
+        <PageBlock variant="dark">
             <PageContent>
-                <SectionTitle id={howToStartId}>How To Start</SectionTitle>
-                <PageSpacer />
+                <Stack align="center" space="md">
+                    <SectionTitle color="white">And... Without Transactions</SectionTitle>
+                    <Text font="body" size="md" color="whiteA" align="center" preserveLinebreaks>
+                        Usually, projects that are built on blockchain technologies require you to spend a few cents on
+                        your wallet.{'\n'}But not with us. Breakroom is free.{' '}
+                        <Link to={octaneUrl} underline wrap="nowrap">
+                            How it&apos;s possible?
+                        </Link>
+                    </Text>
+                </Stack>
+                <Spacer size="xl" />
                 <Columns collapseBelow="@down-xl">
                     {steps.map((i) => (
                         <Column key={i.color}>
                             <Segment css={{ background: `$${i.color}` }} variant="pill">
-                                <Spacer size={{ '@initial': 'xl', '@down-xl': 'md' }} />
-                                <Spacer size={{ '@initial': 'xl', '@down-xl': 'md' }} />
+                                <Illustration>{i.illustration}</Illustration>
+                                <Spacer size="lg" />
                                 <Stack space="sm">
                                     <Text font="body" size="lg" preserveLinebreaks align="center">
                                         {i.title}
@@ -80,12 +102,13 @@ export function HowToStartSection() {
                                     </Text>
                                 </Stack>
                                 <Spacer size={{ '@initial': 'bleed', '@down-xl': 'md' }} />
-                                <LinkButton to={i.guideUrl}>video guide</LinkButton>
+                                {i.guideUrl ? <LinkButton to={i.guideUrl}>video guide</LinkButton> : null}
                             </Segment>
                         </Column>
                     ))}
                 </Columns>
+                {children}
             </PageContent>
-        </Container>
+        </PageBlock>
     )
 }
