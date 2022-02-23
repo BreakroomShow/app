@@ -18,7 +18,6 @@ const scenes = {
 } as const
 
 export const SceneViewer = ({ event, offset = 0 }: { offset?: number; event: GameEvent | null }) => {
-    console.log(event)
     const nextScene = event?.type || ('empty' as const)
     const [scene, setScene] = useState(nextScene)
 

@@ -37,7 +37,7 @@ export const MultilineTextPro = ({
                                 {text}
                             </Text>
                         </Box>
-                        {i < texts.length - 1 ? <Box padding={0.15 * size}>null</Box> : null}
+                        {i < texts.length - 1 ? <Box padding={0.1 * size}>null</Box> : null}
                     </group>
                 ))}
             </Flex>
