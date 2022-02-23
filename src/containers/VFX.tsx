@@ -1,10 +1,9 @@
 import '../components/VFX/extend'
 
-import { ReactNode, useEffect } from 'react'
+import { ReactNode } from 'react'
 
 import { Canvas } from '../components/VFX/components/Canvas'
 import { SceneViewer } from '../components/VFX/components/SceneViewer'
-// import { SpaceDust } from '../components/VFX/components/SpaceDust'
 import { Stars } from '../components/VFX/Stars'
 import { Box } from '../design-system'
 import { GameEvent } from '../types'

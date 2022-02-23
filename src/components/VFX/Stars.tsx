@@ -1,4 +1,4 @@
-import { Box, Point, Points } from '@react-three/drei'
+import { Point, Points } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import Random from 'canvas-sketch-util/random'
 import { ComponentRef, Suspense, useMemo, useRef } from 'react'
