@@ -2,7 +2,8 @@ import { styled } from '../design-system'
 
 export const Avatar = styled('img', {
     borderRadius: 100,
-    flexShring: 0,
+    display: 'flex',
+    flexShrink: 0,
 
     variants: {
         size: {
