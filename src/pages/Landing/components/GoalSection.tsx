@@ -14,7 +14,8 @@ export function GoalSection() {
             </PageTitle>
             <Spacer size="lg" />
             <Text font="body" size="lg" color="blackA" align="center">
-                Breakroom wants to get more people into self-custody and crypto<br/> with simple, social and free games
+                Breakroom wants to get more people into self-custody and crypto
+                <br /> with simple, social and free games
             </Text>
         </>
     )

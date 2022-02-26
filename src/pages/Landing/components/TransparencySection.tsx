@@ -57,11 +57,12 @@ export function TransparencySection() {
                         <SectionTitle align="left">Transparent and{nbsp}fair</SectionTitle>
                         <Text font="body" size="md" color="blackA">
                             Since the game is built on the blockchain, you can verify that the game wen't as planned:
-                            how many people played, how much money we payed out. After the trivia, we
-                            publish a sheet of winners with their winnings and links to corresponding transactions.
+                            how many people played, how much money we payed out. After the trivia, we publish a sheet of
+                            winners with their winnings and links to corresponding transactions.
                         </Text>
                         <Text font="body" size="md" color="blackA">
-                            You can use alternative apps to play and win Breakroom. You data and playing history belongs to you, not us.
+                            You can use alternative apps to play and win Breakroom. You data and playing history belongs
+                            to you, not us.
                         </Text>
                     </Stack>
                 </Content>

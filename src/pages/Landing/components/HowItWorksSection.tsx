@@ -61,7 +61,7 @@ export function HowItWorksSection() {
 
             <PageSpacer />
 
-            <p style={{ textAlign: 'center' }}></p>
+            <p style={{ textAlign: 'center' }} />
         </Container>
     )
 }

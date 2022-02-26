@@ -61,8 +61,7 @@ export function HowToStartSection({ children }: { children: ReactNode }) {
             illustration: <Illustration2 />,
             guideUrl: guides.connectWallet,
             title: 'Sign-in to our website\nusing your wallet',
-            description:
-                'On-chain apps are accessed through\nwallets, not emails and passwords.',
+            description: 'On-chain apps are accessed through\nwallets, not emails and passwords.',
         },
         {
             color: 'blue',
@@ -79,7 +78,8 @@ export function HowToStartSection({ children }: { children: ReactNode }) {
                 <Stack align="center" space="md">
                     <SectionTitle color="white">Real Transactions, but Free to Play</SectionTitle>
                     <Text font="body" size="md" color="whiteA" align="center" preserveLinebreaks>
-                        Usually, projects that are built on blockchain require you to spend "gas fees" to play.{'\n'}But not with us. We pay gas fees for you.{' '}
+                        Usually, projects that are built on blockchain require you to spend "gas fees" to play.{'\n'}But
+                        not with us. We pay gas fees for you.{' '}
                         <Link to={octaneUrl} underline wrap="nowrap">
                             How it&apos;s possible?
                         </Link>
