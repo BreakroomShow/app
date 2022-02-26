@@ -62,14 +62,14 @@ export function HowToStartSection({ children }: { children: ReactNode }) {
             guideUrl: guides.connectWallet,
             title: 'Sign-in to our website\nusing your wallet',
             description:
-                'On-chain apps are accessed through\nwallets, not emails and passwords.\nDon’t worry, it’s safe',
+                'On-chain apps are accessed through\nwallets, not emails and passwords.',
         },
         {
             color: 'blue',
             illustration: <Illustration3 />,
             guideUrl: null,
             title: 'Play and get a crypto\non your wallet',
-            description: `Come to the trivia at the appointed\ntime, answer all the questions\nand get a prize`,
+            description: `Join the game at the scheduled\ntime, answer all the questions\nand get the prize`,
         },
     ]
 
@@ -77,10 +77,9 @@ export function HowToStartSection({ children }: { children: ReactNode }) {
         <PageBlock variant="dark">
             <PageContent>
                 <Stack align="center" space="md">
-                    <SectionTitle color="white">And... Without Transactions</SectionTitle>
+                    <SectionTitle color="white">Real Transactions, but Free to Play</SectionTitle>
                     <Text font="body" size="md" color="whiteA" align="center" preserveLinebreaks>
-                        Usually, projects that are built on blockchain technologies require you to spend a few cents on
-                        your wallet.{'\n'}But not with us. Breakroom is free.{' '}
+                        Usually, projects that are built on blockchain require you to spend "gas fees" to play.{'\n'}But not with us. We pay gas fees for you.{' '}
                         <Link to={octaneUrl} underline wrap="nowrap">
                             How it&apos;s possible?
                         </Link>

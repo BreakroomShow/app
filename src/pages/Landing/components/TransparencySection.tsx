@@ -54,13 +54,14 @@ export function TransparencySection() {
             <PageContent>
                 <Content>
                     <Stack space="xl">
-                        <SectionTitle align="left">Everything is{nbsp}fair</SectionTitle>
+                        <SectionTitle align="left">Transparent and{nbsp}fair</SectionTitle>
                         <Text font="body" size="md" color="blackA">
-                            Since the game is built on the blockchain, each winner can be checked. After the trivia, we
-                            publish a sheet of winners with their winnings and the opportunity to view each transaction.
+                            Since the game is built on the blockchain, you can verify that the game wen't as planned:
+                            how many people played, how much money we payed out. After the trivia, we
+                            publish a sheet of winners with their winnings and links to corresponding transactions.
                         </Text>
                         <Text font="body" size="md" color="blackA">
-                            The sheet will be published after the first game.
+                            You can use alternative apps to play and win Breakroom. You data and playing history belongs to you, not us.
                         </Text>
                     </Stack>
                 </Content>

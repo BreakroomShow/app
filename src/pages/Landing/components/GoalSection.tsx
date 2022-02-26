@@ -10,11 +10,11 @@ export function GoalSection() {
             </Text>
             <Spacer size="md" />
             <PageTitle>
-                On-chain live trivia is the ultimate first web{nbsp}3{nbsp}app for next 1B people in{nbsp}crypto
+                Making web3{nbsp}apps for the next 1B people in{nbsp}crypto
             </PageTitle>
             <Spacer size="lg" />
             <Text font="body" size="lg" color="blackA" align="center">
-                Breakroom wants to get more people into self-custody and web3 apps
+                Breakroom wants to get more people into self-custody and crypto<br/> with simple, social and free games
             </Text>
         </>
     )

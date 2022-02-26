@@ -5,7 +5,7 @@ import { Column, Columns, Stack, Text, Typography } from '../../../design-system
 import { useNonce } from '../../../hooks/useNonce'
 import { msToTimeUntil } from '../../../utils/date'
 
-const nextGameDate = new Date(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).setHours(19, 0, 0))
+const nextGameDate = new Date('March 15, 2022 19:00:00')
 
 export function NextGameSection({ children }: { children: ReactNode }) {
     useNonce()
@@ -20,7 +20,7 @@ export function NextGameSection({ children }: { children: ReactNode }) {
     const info = [
         { color: 'green', title: nextGameDateString, description: nextGameTimeString },
         { color: 'orange', title: msToTimeUntil(nextGameDate.getTime()), description: 'until the next game' },
-        { color: 'blue', title: '$560', description: 'in the prize fund' },
+        { color: 'blue', title: '$3000', description: 'in the prize fund' },
     ]
 
     return (

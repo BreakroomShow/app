@@ -3,7 +3,7 @@ export const breakroomEmail = 'hello@breakroom.show'
 export const connectUrl = '/connect'
 export const sponsorUrl = 'https://breakroomshow.typeform.com/sponsors'
 export const githubUrl = 'https://github.com/breakroomshow'
-export const octaneUrl = '/'
+export const octaneUrl = 'https://github.com/solana-labs/octane'
 
 export const phantomWalletUrl = 'https://phantom.app/'
 export const breakroomEmailUrl = `mailto:${breakroomEmail}`
