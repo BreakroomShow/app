@@ -23,7 +23,7 @@ export const faq = {
         ],
         [
             'Why do you need crypto for this?',
-            'Crypto payouts are instant and available everywhere in the planet. On-chain games are also cool for honesty and transparency: you can check we don’t tamper with prize funds and payout everyone who answered 12 questions correctly. \n\nEvery question answer is also stored on the blockchain, so other developers can build apps around our trivia. In crypto, any developer can create “Breakroom 2022 Wrapped”. We decided to go with Solana over Ethereum because of their low fees and high capacity.\n\nDon’t worry, we’ll help to set up everything you need to start playing. Once you are in the ecosystem, explore other apps in web3. It’s fun out there!',
+            'Crypto payouts are instant and available everywhere in the planet. On-chain games are also cool for transparency: you can check we don’t tamper with prize funds and payout everyone who answered 12 questions correctly. \n\nEvery question answer is stored on the blockchain, so other developers can build apps around our trivia. In crypto, any developer can create “Breakroom 2022 Wrapped”. We decided to go with Solana over Ethereum because of their low fees and high capacity.\n\nDon’t worry, we’ll help to set up everything you need to start playing. Once you are in the ecosystem, explore other apps in web3. It’s fun out there!',
         ],
         [
             'Does it work on my phone?',
@@ -51,7 +51,7 @@ export const faq = {
     Partners: [
         [
             'Can my organization sponsor a game? What would we get for sponsoring a game?',
-            'Yes! The sponsor provides the prize fund with a 10% service fee that is going to Breakroom. We prefer sponsorships in crypto, however, we are willing to work with more traditional approaches (we are a C-Corp in Delaware).\n\nAs a sponsor, you get a native shoutout in game announcements, notifications and a few times throughout the game. If you want to become a sponsor, fill sponsor form (https://breakroomshow.typeform.com/sponsors) or reach out to parterships@breakroom.show.\n\nBreakroom is a great way to spend your marketing budget: you give most of the money to the community; the players are new to crypto, but educated on the basics and already set up their wallets. You can combine sponsoring Breakroom with more traditional forms of marketing by launching targeted/influencer ads on a sponsored game announcement.',
+            'Yes! The sponsor provides the prize fund with a 10% service fee that is going to Breakroom. We prefer sponsorships in crypto, however, we are willing to work with more traditional approaches (we are a C-Corp in Delaware).\n\nAs a sponsor, you get a native shoutout in game announcements, notifications and a few times throughout the game. If you want to become a sponsor, fill sponsor form (https://breakroomshow.typeform.com/sponsors) or reach out to partnerships@breakroom.show.\n\nBreakroom is a great way to spend your marketing budget: you give most of the money to the community; the players are new to crypto, but educated on the basics and already set up their wallets. You can combine sponsoring Breakroom with more traditional forms of marketing by launching targeted/influencer ads on a sponsored game announcement.',
         ],
         [
             'What kind of organization can sponsor games?',
