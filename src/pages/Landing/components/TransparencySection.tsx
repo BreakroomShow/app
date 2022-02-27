@@ -56,7 +56,7 @@ export function TransparencySection() {
                     <Stack space="xl">
                         <SectionTitle align="left">Transparent and{nbsp}fair</SectionTitle>
                         <Text font="body" size="md" color="blackA">
-                            Since the game is built on the blockchain, you can verify that the game wen't as planned:
+                            Since the game is built on the blockchain, you can verify the game integrity:
                             how many people played, how much money we payed out. After the trivia, we publish a sheet of
                             winners with their winnings and links to corresponding transactions.
                         </Text>
