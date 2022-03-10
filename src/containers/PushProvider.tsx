@@ -1,6 +1,7 @@
 import * as PusherPushNotifications from '@pusher/push-notifications-web'
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
 
+import { config } from '../config'
 import { isIframe } from '../utils/isIframe'
 import { useWallet } from './ConnectProvider'
 
@@ -9,7 +10,7 @@ let beamsClient: null | PusherPushNotifications.Client = null
 try {
     if (!isIframe) {
         beamsClient = new PusherPushNotifications.Client({
-            instanceId: '47ddd9b2-42d5-445d-8202-91ac0d80009f',
+            instanceId: config.pusherNotificationInstanceId,
         })
     }
 } catch (e) {

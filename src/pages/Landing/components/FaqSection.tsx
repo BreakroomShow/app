@@ -125,7 +125,7 @@ function AccordionItem({ details, summary }: { details: ReactNode; summary: stri
                         tabIndex={0}
                         onKeyDown={(e) => e.code === 'Enter' && e.currentTarget.click()}
                         onClickCapture={(e) => {
-                            if (window.getSelection()?.toString()) {
+                            if (window.getSelection()?.toString().trim()) {
                                 e.preventDefault()
                             }
                             if ((e.target as HTMLElement).tagName === 'A') {

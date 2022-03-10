@@ -146,6 +146,7 @@ export function InputForm({ type, placeholder, defaultValue, onSubmit }: InputFo
 const Icon = styled('div', arrowCss, {
     overflowWrap: 'normal',
     flexShrink: 0,
+    marginLeft: 12,
 })
 
 const buttonClassname = css(containerCss, {
@@ -160,11 +161,11 @@ const buttonClassname = css(containerCss, {
 
     '&:not([disabled])': {
         cursor: 'pointer',
-    },
 
-    '&:active': {
-        [`& ${Icon}`]: {
-            transform: 'translateX(2px)',
+        '&:active': {
+            [`& ${Icon}`]: {
+                transform: 'translateX(2px)',
+            },
         },
     },
 })()

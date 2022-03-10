@@ -2,10 +2,7 @@ import { StrictMode } from 'react'
 import { render } from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 
-import { ConnectProvider } from './containers/ConnectProvider'
-import { PushProvider } from './containers/PushProvider'
-import { QueryProvider } from './containers/QueryProvider'
-import { StyleProvider } from './design-system'
+import { ContextProvider } from './containers/ContextProvider'
 import { Landing } from './pages/Landing'
 import { lazy as lazyComponent } from './utils/lazy'
 
@@ -28,17 +25,11 @@ const App = apps[process.env.REACT_APP_TARGET as keyof typeof apps] || apps.defa
 
 render(
     <StrictMode>
-        <StyleProvider>
-            <BrowserRouter>
-                <ConnectProvider>
-                    <QueryProvider>
-                        <PushProvider>
-                            <App />
-                        </PushProvider>
-                    </QueryProvider>
-                </ConnectProvider>
-            </BrowserRouter>
-        </StyleProvider>
+        <BrowserRouter>
+            <ContextProvider>
+                <App />
+            </ContextProvider>
+        </BrowserRouter>
     </StrictMode>,
     document.getElementById('root'),
 )

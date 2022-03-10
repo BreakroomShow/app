@@ -8,6 +8,7 @@ import { Link } from './Link'
 type DivProps = ComponentProps<typeof Box> & { to?: never }
 
 type LinkButtonProps = (LinkProps | DivProps) & {
+    as?: keyof JSX.IntrinsicElements
     children: ReactNode
     icon?: ReactNode
 }
@@ -20,9 +21,9 @@ const Container = styled(Box, {
     outline: 'revert',
 })
 
-export function LinkButton({ children, icon, ...props }: LinkButtonProps) {
+export function LinkButton({ as, children, icon, ...props }: LinkButtonProps) {
     const content = (
-        <Container as={props.to ? 'div' : 'button'} {...(props.to ? {} : { ...(props as DivProps), tabIndex: 0 })}>
+        <Container as={as || (props.to ? 'div' : 'button')} {...(props.to ? {} : { ...(props as DivProps) })}>
             <Inline space="xs" wrap="nowrap">
                 {icon ? <Box css={{ display: 'flex', padding: 2 }}>{icon}</Box> : null}
                 <Inset top={{ custom: 2 }}>

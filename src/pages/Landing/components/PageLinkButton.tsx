@@ -16,7 +16,7 @@ export function PageLinkButton({ children, ...props }: ComponentProps<typeof Lin
                     '@down-md': { minHeight: 125 },
                 }}
             >
-                <LinkButton>{children}</LinkButton>
+                <LinkButton as="div">{children}</LinkButton>
             </SegmentComponent>
         </Link>
     )

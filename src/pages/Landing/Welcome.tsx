@@ -88,7 +88,7 @@ export function Welcome() {
 
                 <Container>
                     <Content>
-                        <Box>
+                        <Box css={{ flex: 1 }}>
                             <Stack space="xs">
                                 <Text font="heading" size={{ '@initial': 'xl', '@lg': 'xxl' }} weight="bold">
                                     Turn on notifications
@@ -128,7 +128,7 @@ export function Welcome() {
                             </Stack>
                         </Box>
                         <Spacer size="lg" />
-                        <Box css={{ flexBasis: '50%', paddingTop: 12 }}>
+                        <Box css={{ flexBasis: '45%', paddingTop: 12 }}>
                             <Text font="body" size="md" color="blackA" preserveLinebreaks>
                                 The game starts at the same time for everyone. Before the start, we wait 1 minute for
                                 all participants. After that, you will not be able to enter the trivia as a player.
@@ -141,7 +141,7 @@ export function Welcome() {
 
                 <Container>
                     <Content>
-                        <Box>
+                        <Box css={{ flex: 1 }}>
                             <Stack space="xs">
                                 <Text font="heading" size={{ '@initial': 'xl', '@lg': 'xxl' }} weight="bold">
                                     Invite friends
@@ -160,7 +160,7 @@ export function Welcome() {
                             </Stack>
                         </Box>
                         <Spacer size="lg" />
-                        <Box css={{ flexBasis: '50%', paddingTop: 12 }}>
+                        <Box css={{ flexBasis: '45%', paddingTop: 12 }}>
                             <Text font="body" size="md" color="blackA" preserveLinebreaks>
                                 If you invite a friend and they end up joining, you get an extra life to use in the
                                 game. One extra life allows you to keep playing even if you missed a question: answered
