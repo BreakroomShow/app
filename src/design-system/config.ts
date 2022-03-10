@@ -72,7 +72,8 @@ export const cssFactory = stitches.createStitches({
         transitions: {},
         radii: {
             md: '72px',
-            lg: '150px',
+            lg: '104px',
+            xl: '150px',
             round: '50%',
             pill: '9999px',
         },

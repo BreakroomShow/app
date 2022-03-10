@@ -2,13 +2,13 @@ import { useLayoutEffect, useRef } from 'react'
 
 import { Avatar } from '../../components/Avatar'
 import { CountUp } from '../../components/CountUp'
+import { InputForm } from '../../components/InputForm'
 import { ScrollArea } from '../../components/ScrollArea'
 import { SEGMENT_HEIGHT, SEGMENT_WIDTH, SegmentComponent } from '../../components/Segment'
 import { Wallet } from '../../components/Wallet'
 import { Box, Inline, Inset, Stack, Typography, styled } from '../../design-system'
 import { ReactComponent as EyeIcon } from '../../images/eye.svg'
 import { ChatMessage } from '../../types'
-import { ChatInput } from './ChatInput'
 
 const ChatContainer = styled(Box, {
     width: '100%',
@@ -82,6 +82,11 @@ const Message = styled(Box, {
     },
 })
 
+const InputContainer = styled(Box, {
+    paddingX: 28,
+    paddingBottom: 24,
+})
+
 interface ChatProps {
     viewers: number | null
     messages: ChatMessage[]
@@ -143,7 +148,15 @@ function Chat({ viewers, messages, scrollToBottom }: ChatProps) {
                     </Messages>
                 </MessagesScroll>
             </MessagesContainer>
-            <ChatInput />
+            <InputContainer>
+                <InputForm
+                    placeholder="Message..."
+                    onSubmit={(message, reset) => {
+                        // TODO send message
+                        reset()
+                    }}
+                />
+            </InputContainer>
         </ChatContainer>
     )
 }

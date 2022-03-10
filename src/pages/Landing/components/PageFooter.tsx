@@ -1,6 +1,6 @@
 import { ConnectButton } from '../../../components/ConnectButton'
 import { Link } from '../../../components/Link'
-import { breakroomEmail, breakroomEmailUrl, githubUrl, sponsorUrl } from '../../../config'
+import { urls } from '../../../config'
 import { Box, Typography, styled } from '../../../design-system'
 import { htmlAnchor } from '../../../utils/htmlAnchor'
 import { FaqSection } from './FaqSection'
@@ -41,18 +41,18 @@ export function PageFooter() {
     return (
         <Container>
             <Box>
-                <Link to={breakroomEmailUrl}>
-                    <Typography>{breakroomEmail}</Typography>
+                <Link to={urls.emails.breakroom.toUrl()}>
+                    <Typography>{urls.emails.breakroom}</Typography>
                 </Link>
             </Box>
             <Box>
-                <Link to={sponsorUrl}>
+                <Link to={urls.forms.sponsors}>
                     <Typography>Join as a sponsor</Typography>
                 </Link>
                 <Link {...htmlAnchor(FaqSection.id)}>
                     <Typography>F.A.Q.</Typography>
                 </Link>
-                <Link to={githubUrl}>
+                <Link to={urls.external.github}>
                     <Typography>GitHub</Typography>
                 </Link>
             </Box>

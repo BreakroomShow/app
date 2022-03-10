@@ -1,6 +1,6 @@
 import { ConnectButton } from '../../../components/ConnectButton'
 import { Link } from '../../../components/Link'
-import { sponsorUrl } from '../../../config'
+import { urls } from '../../../config'
 import { Box, Typography, styled } from '../../../design-system'
 import { ReactComponent as Logo } from '../../../images/logo.svg'
 import { htmlAnchor } from '../../../utils/htmlAnchor'
@@ -35,12 +35,14 @@ export function PageHeader() {
                 <Link {...htmlAnchor(FaqSection.id)}>
                     <Typography>F.A.Q.</Typography>
                 </Link>
-                <Link to={sponsorUrl}>
+                <Link to={urls.forms.sponsors}>
                     <Typography>Join as a sponsor</Typography>
                 </Link>
             </Box>
             <Box>
-                <Logo />
+                <Link to="/">
+                    <Logo style={{ maxWidth: '40vw' }} />
+                </Link>
             </Box>
             <Box>
                 <ConnectButton mobileText="Play" />

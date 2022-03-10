@@ -64,7 +64,10 @@ module.exports = {
 
         'jsx-a11y/click-events-have-key-events': 'off',
         'jsx-a11y/no-static-element-interactions': 'off',
-        'jsx-a11y/label-has-associated-control': ['error', { required: { some: ['nesting', 'id'] } }],
+        'jsx-a11y/label-has-associated-control': [
+            'error',
+            { required: { some: ['nesting', 'id'] }, controlComponents: ['Textarea'] },
+        ],
 
         '@typescript-eslint/no-shadow': 'error',
         '@typescript-eslint/no-redeclare': 'error',

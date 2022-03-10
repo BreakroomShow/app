@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import { Link } from '../../../components/Link'
 import { LinkButton } from '../../../components/LinkButton'
 import { SegmentComponent } from '../../../components/Segment'
-import { guides, octaneUrl, phantomWalletUrl } from '../../../config'
+import { urls } from '../../../config'
 import { Box, Column, Columns, Spacer, Stack, Text, styled } from '../../../design-system'
 import { ReactComponent as Illustration1 } from '../../../images/illustration-1.svg'
 import { ReactComponent as Illustration2 } from '../../../images/illustration-2.svg'
@@ -44,13 +44,13 @@ export function HowToStartSection({ children }: { children: ReactNode }) {
         {
             color: 'green',
             illustration: <Illustration1 />,
-            guideUrl: guides.installWallet,
+            guideUrl: urls.guides.installWallet,
             title: 'Get a crypto wallet\non the Solana',
             description: (
                 <span>
                     It’s very simple. Download
                     <br />
-                    <Link to={phantomWalletUrl} target="_blank" rel="noreferrer" underline>
+                    <Link to={urls.external.phantom} target="_blank" rel="noreferrer" underline>
                         Phantom Wallet
                     </Link>
                 </span>
@@ -59,7 +59,7 @@ export function HowToStartSection({ children }: { children: ReactNode }) {
         {
             color: 'orange',
             illustration: <Illustration2 />,
-            guideUrl: guides.connectWallet,
+            guideUrl: urls.guides.connectWallet,
             title: 'Sign-in to our website\nusing your wallet',
             description: 'On-chain apps are accessed through\nwallets, not emails and passwords.',
         },
@@ -78,9 +78,9 @@ export function HowToStartSection({ children }: { children: ReactNode }) {
                 <Stack align="center" space="md">
                     <SectionTitle color="white">Real Transactions, but Free to Play</SectionTitle>
                     <Text font="body" size="md" color="whiteA" align="center" preserveLinebreaks>
-                        Usually, projects that are built on blockchain require you to spend "gas fees" to play.{'\n'}But
-                        not with us. We pay gas fees for you.{' '}
-                        <Link to={octaneUrl} underline wrap="nowrap">
+                        Usually, projects that are built on blockchain require you to spend &quot;gas fees&quot; to
+                        play.{'\n'}But not with us. We pay gas fees for you.{' '}
+                        <Link to={urls.external.octane} underline wrap="nowrap">
                             How it&apos;s possible?
                         </Link>
                     </Text>

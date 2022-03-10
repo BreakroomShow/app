@@ -63,7 +63,10 @@ const AccordionItemContainer = styled(AccordionPrimitive.Item, {
         boxShadow: `0 0 0 1px $colors$greyA`,
     },
 })
-const AccordionHeader = styled(AccordionPrimitive.Header, {})
+const AccordionHeader = styled(AccordionPrimitive.Header, {
+    all: 'unset',
+    display: 'block',
+})
 const AccordionTrigger = styled(AccordionPrimitive.Trigger, {
     all: 'unset',
     width: '100%',
@@ -117,7 +120,19 @@ function AccordionItem({ details, summary }: { details: ReactNode; summary: stri
         <AccordionItemContainer value={summary}>
             <AccordionHeader>
                 <AccordionTrigger asChild>
-                    <div role="button" tabIndex={0} onKeyDown={(e) => e.code === 'Enter' && e.currentTarget.click()}>
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.code === 'Enter' && e.currentTarget.click()}
+                        onClickCapture={(e) => {
+                            if (window.getSelection()?.toString()) {
+                                e.preventDefault()
+                            }
+                            if ((e.target as HTMLElement).tagName === 'A') {
+                                e.stopPropagation()
+                            }
+                        }}
+                    >
                         <Box css={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Box css={{ minHeight: 56, display: 'flex', alignItems: 'center' }}>
                                 <Text font="heading" size={{ '@initial': 'lg', '@lg': 'xxl' }} weight="bold">

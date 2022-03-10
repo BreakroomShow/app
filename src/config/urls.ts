@@ -1,15 +1,29 @@
-export const breakroomEmail = 'hello@breakroom.show'
+class Email extends String {
+    toUrl = () => `mailto:${this}`
+}
 
-export const connectUrl = '/connect'
-export const sponsorUrl = 'https://breakroomshow.typeform.com/sponsors'
-export const githubUrl = 'https://github.com/breakroomshow'
-export const octaneUrl = 'https://github.com/solana-labs/octane'
-
-export const phantomWalletUrl = 'https://phantom.app/'
-export const breakroomEmailUrl = `mailto:${breakroomEmail}`
-
-export const guides = {
-    installWallet: '/',
-    connectWallet: '/',
-    depositWallet: '/',
+export const urls = {
+    pages: {
+        connect: '/connect',
+        welcome: '/welcome',
+    },
+    external: {
+        github: 'https://github.com/BreakroomShow',
+        octane: 'https://github.com/solana-labs/octane',
+        phantom: 'https://phantom.app/',
+    },
+    emails: {
+        breakroom: new Email('hello@breakroom.show'),
+        partnerships: new Email('partnerships@breakroom.show'),
+    },
+    forms: {
+        questions: 'https://breakroomshow.typeform.com/questions',
+        sponsors: 'https://breakroomshow.typeform.com/sponsors',
+        privateGame: 'https://breakroomshow.typeform.com/privategames',
+    },
+    guides: {
+        installWallet: '/',
+        connectWallet: '/',
+        depositWallet: '/',
+    },
 }

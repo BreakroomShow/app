@@ -1,35 +1,41 @@
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 import { LinkProps } from 'react-router-dom'
 
-import { Box, Inline, Inset, Typography } from '../design-system'
+import { Box, Inline, Inset, Typography, styled } from '../design-system'
 import { ReactComponent as ArrowIcon } from '../images/arrow.svg'
 import { Link } from './Link'
 
-type LinkButtonProps = Partial<LinkProps> & {
+type DivProps = ComponentProps<typeof Box> & { to?: never }
+
+type LinkButtonProps = (LinkProps | DivProps) & {
     children: ReactNode
     icon?: ReactNode
 }
 
-export function LinkButton({ children, icon, to, ...props }: LinkButtonProps) {
+const Container = styled(Box, {
+    all: 'unset',
+    overflow: 'hidden',
+    display: 'flex',
+    cursor: 'pointer',
+    outline: 'revert',
+})
+
+export function LinkButton({ children, icon, ...props }: LinkButtonProps) {
     const content = (
-        <Box css={{ overflow: 'hidden', display: 'flex' }}>
+        <Container as={props.to ? 'div' : 'button'} {...(props.to ? {} : { ...(props as DivProps), tabIndex: 0 })}>
             <Inline space="xs" wrap="nowrap">
                 {icon ? <Box css={{ display: 'flex', padding: 2 }}>{icon}</Box> : null}
                 <Inset top={{ custom: 2 }}>
                     <Typography as="body2">{children}</Typography>
                 </Inset>
-                <Box css={{ display: 'flex' }}>
-                    <ArrowIcon />
-                </Box>
+                {props.to ? (
+                    <Box css={{ display: 'flex' }}>
+                        <ArrowIcon />
+                    </Box>
+                ) : null}
             </Inline>
-        </Box>
+        </Container>
     )
 
-    return to ? (
-        <Link to={to} {...props}>
-            {content}
-        </Link>
-    ) : (
-        content
-    )
+    return props.to ? <Link {...props}>{content}</Link> : content
 }

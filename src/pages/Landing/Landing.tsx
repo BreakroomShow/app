@@ -2,8 +2,9 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-
 
 import { useReplayQuery } from '../../api/query'
 import { Dialog } from '../../components/Dialog'
-import { connectUrl } from '../../config'
-import { Stack, globalCss } from '../../design-system'
+import { Link } from '../../components/Link'
+import { urls } from '../../config'
+import { Stack } from '../../design-system'
 import { useBackgroundLocation } from '../../hooks/useBackgroundLocation'
 import { htmlAnchor } from '../../utils/htmlAnchor'
 import { lazy } from '../../utils/lazy'
@@ -14,26 +15,21 @@ import { HeadlineSection } from './components/HeadlineSection'
 import { HowItWorksSection } from './components/HowItWorksSection'
 import { HowToStartSection } from './components/HowToStartSection'
 import { NextGameSection } from './components/NextGameSection'
+import { Page } from './components/Page'
 import { PageContent } from './components/PageContent'
 import { PageFooter } from './components/PageFooter'
 import { PageHeader } from './components/PageHeader'
 import { PageLinkButton } from './components/PageLinkButton'
 import { PageSpacer } from './components/PageSpacer'
 import { TransparencySection } from './components/TransparencySection'
+import { Welcome } from './Welcome'
 
 const Replay = lazy(() => import(/* webpackChunkName: "Replay" */ './Replay').then((m) => m.Replay), null)
 useReplayQuery.preload()
 
-const styles = globalCss({
-    html: { background: '$background' },
-    body: { background: '$background', color: '$black' },
-})
-
 function Index() {
-    styles()
-
     return (
-        <>
+        <Page>
             <PageContent css={{ paddingTop: 70, '@down-lg': { paddingTop: 25 } }}>
                 <Stack dividers={<PageSpacer />}>
                     <PageHeader />
@@ -57,7 +53,7 @@ function Index() {
                     <PageFooter />
                 </Stack>
             </PageContent>
-        </>
+        </Page>
     )
 }
 
@@ -91,7 +87,13 @@ function ConnectModal() {
     const navigate = useNavigate()
     const bgLocation = useBackgroundLocation()
 
-    return <Dialog close={() => navigate(bgLocation?.pathname || '/')}>Connect</Dialog>
+    return (
+        <Dialog close={() => navigate(bgLocation?.pathname || '/')}>
+            <Link to={urls.external.phantom} underline>
+                {urls.external.phantom}
+            </Link>
+        </Dialog>
+    )
 }
 
 export function Landing() {
@@ -103,16 +105,17 @@ export function Landing() {
             <Routes location={bgLocation || location}>
                 <Route path="_replay" element={<Replay />} />
                 <Route path="/" element={<Index />} />
+                <Route path={urls.pages.welcome} element={<Welcome />} />
                 <Route
-                    path={connectUrl}
-                    element={<Navigate to={connectUrl} state={{ bgLocation: { pathname: '/' } }} />}
+                    path={urls.pages.connect}
+                    element={<Navigate to={urls.pages.connect} state={{ bgLocation: { pathname: '/' } }} />}
                 />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 
             {bgLocation ? (
                 <Routes>
-                    <Route path={connectUrl} element={<ConnectModal />} />
+                    <Route path={urls.pages.connect} element={<ConnectModal />} />
                 </Routes>
             ) : null}
         </>

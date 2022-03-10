@@ -1,3 +1,6 @@
+import { Link } from '../components/Link'
+import { urls } from './urls'
+
 export const faq = {
     General: [
         [
@@ -8,7 +11,7 @@ export const faq = {
             'What kind of questions are there?',
             'About general encyclopedic topics. Something you might expect in a bar quiz. We don’t ask hardcore questions about blockchains!',
         ],
-        ['Do you have a host?', 'Nope, for now it’s just the questions and the chat. '],
+        ['Do you have a host?', 'Nope, for now it’s just the questions and the chat.'],
         [
             'Can I play with friends?',
             'Absolutely! It’s actually more fun with friends. You can meet in-person or get in a Discord channel to help each other answer the questions. If no one knows the answer, split between the options, so at least one person goes forward.\n\nIf you invite a friend and they end up joining, you get an extra life to use in the game. It could be a great cause to help your friend set up a crypto wallet.',
@@ -27,7 +30,7 @@ export const faq = {
         ],
         [
             'Does it work on my phone?',
-            'Yes, it works on iOS. Create a Phantom wallet and visit our site using the browser within the app. ',
+            'Yes, it works on iOS. Create a Phantom wallet and visit our site using the browser within the app.',
         ],
     ],
     Crypto: [
@@ -51,7 +54,23 @@ export const faq = {
     Partners: [
         [
             'Can my organization sponsor a game? What would we get for sponsoring a game?',
-            'Yes! The sponsor provides the prize fund with a 10% service fee that is going to Breakroom. We prefer sponsorships in crypto, however, we are willing to work with more traditional approaches (we are a C-Corp in Delaware).\n\nAs a sponsor, you get a native shoutout in game announcements, notifications and a few times throughout the game. If you want to become a sponsor, fill sponsor form (https://breakroomshow.typeform.com/sponsors) or reach out to partnerships@breakroom.show.\n\nBreakroom is a great way to spend your marketing budget: you give most of the money to the community; the players are new to crypto, but educated on the basics and already set up their wallets. You can combine sponsoring Breakroom with more traditional forms of marketing by launching targeted/influencer ads on a sponsored game announcement.',
+            <span>
+                Yes! The sponsor provides the prize fund with a 10% service fee that is going to Breakroom. We prefer
+                sponsorships in crypto, however, we are willing to work with more traditional approaches (we are a
+                C-Corp in Delaware). As a sponsor, you get a native shoutout in game announcements, notifications and a
+                few times throughout the game. If you want to become a sponsor, fill sponsor form (
+                <Link to={urls.forms.sponsors} underline>
+                    {urls.forms.sponsors}
+                </Link>
+                ) or reach out to{' '}
+                <Link to={urls.emails.partnerships.toUrl()} underline>
+                    {urls.emails.partnerships}
+                </Link>
+                . Breakroom is a great way to spend your marketing budget: you give most of the money to the community;
+                the players are new to crypto, but educated on the basics and already set up their wallets. You can
+                combine sponsoring Breakroom with more traditional forms of marketing by launching targeted/influencer
+                ads on a sponsored game announcement.
+            </span>,
         ],
         [
             'What kind of organization can sponsor games?',
@@ -59,26 +78,52 @@ export const faq = {
         ],
         [
             'Can you host a private game for my organization?',
-            'Yes. We can host private games to entertain your community (for example, NFT holders) or onboard your employees to crypto. Fill out private game form (https://breakroomshow.typeform.com/privategames) or reach out to partnerships@breakroom.show.',
+            <span>
+                Yes. We can host private games to entertain your community (for example, NFT holders) or onboard your
+                employees to crypto. Fill out private game form (
+                <Link to={urls.forms.privateGame} underline>
+                    {urls.forms.privateGame}
+                </Link>
+                ) or reach out to{' '}
+                <Link to={urls.emails.partnerships.toUrl()} underline>
+                    {urls.emails.partnerships}
+                </Link>
+                .
+            </span>,
         ],
     ],
     Community: [
         [
             'Are you planning to launch NFTs or start a DAO?',
-            'We might in the future, but we don’t have immediate plans to do so. Our general goal is to build a sustainable organization that brings more people to web3 through games and social apps. ',
+            'We might in the future, but we don’t have immediate plans to do so. Our general goal is to build a sustainable organization that brings more people to web3 through games and social apps.',
         ],
         [
             'Why aren’t there transaction confirmations windows throughout the game?',
             'We use “session accounts” to optimize UX. When starting a game, Breakroom creates a new wallet within the browser and stores its keys in the local storage. User sends a transfer of SOL to the browser wallet and records the browser wallet belongs to main wallet to the contract. During the game all transactions are initiated from the browser wallet. When the payouts are distributed, the contract pays out to the main wallet according to the created mapping and browser wallet activity.\n\nSession accounts allow us to create timers on questions without sacrificing user experience.',
         ],
-        ['How can view the source code?', 'Check out our GitHub organization: https://github.com/BreakroomShow. '],
+        [
+            'How can view the source code?',
+            <span>
+                Check out our GitHub organization:{' '}
+                <Link to={urls.external.github} underline>
+                    {urls.external.github}
+                </Link>
+                .
+            </span>,
+        ],
         [
             'How do you make money?',
             'We charge 10% of the prize fund from sponsors. Amounts of prize funds in announcements are already.\n\nCharging money for our services allows to build a sustainable organization focused on bringing more people to web3.',
         ],
         [
             'Can I contribute questions?',
-            'Yes, thank you! Please fill out this form: https://breakroomshow.typeform.com/questions.',
+            <span>
+                Yes, thank you! Please fill out this form:{' '}
+                <Link to={urls.forms.questions} underline>
+                    {urls.forms.questions}
+                </Link>
+                .
+            </span>,
         ],
     ],
 } as const
