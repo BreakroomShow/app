@@ -1,4 +1,4 @@
-import { ComponentProps, ReactNode, useRef } from 'react'
+import { ComponentProps, HTMLInputTypeAttribute, ReactNode, useRef } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import { Box, css, styled } from '../design-system'
@@ -62,7 +62,7 @@ const TextareaContainer = styled(Box, {
     overflowY: 'auto',
 })
 
-const Textarea = styled(TextareaAutosize, {
+const inputClassname = css({
     all: 'unset',
 
     width: '100%',
@@ -72,7 +72,7 @@ const Textarea = styled(TextareaAutosize, {
     color: '$black',
     fontSize: '$sm',
     lineHeight: '$xs',
-})
+})()
 
 const InputSubmitButton = styled('button', arrowCss, {
     position: 'absolute',
@@ -85,12 +85,14 @@ const InputSubmitButton = styled('button', arrowCss, {
 })
 
 interface InputFormProps {
+    type?: HTMLInputTypeAttribute
     placeholder: string
+    defaultValue?: string
     onSubmit(message: string, reset: () => void): void
 }
 
-export function InputForm({ placeholder, onSubmit }: InputFormProps) {
-    const inputRef = useRef<HTMLTextAreaElement>(null)
+export function InputForm({ type, placeholder, defaultValue, onSubmit }: InputFormProps) {
+    const inputRef = useRef<HTMLTextAreaElement | HTMLInputElement | null>(null)
     const forceUpdate = useForceUpdate()
 
     const submit = (reset: () => void) => {
@@ -106,6 +108,8 @@ export function InputForm({ placeholder, onSubmit }: InputFormProps) {
         })
     }
 
+    const Textarea = type ? 'input' : TextareaAutosize
+
     return (
         <Form
             onSubmit={(e) => {
@@ -115,13 +119,21 @@ export function InputForm({ placeholder, onSubmit }: InputFormProps) {
             onKeyPress={(e) => {
                 if (e.key === 'Enter' && !(e.metaKey || e.shiftKey || e.ctrlKey || e.altKey)) {
                     e.preventDefault()
-                    submit(() => e.currentTarget.reset())
+                    e.currentTarget.requestSubmit()
                 }
             }}
         >
             <Label>
                 <TextareaContainer>
-                    <Textarea ref={inputRef} placeholder={placeholder} />
+                    <Textarea
+                        className={inputClassname}
+                        ref={(el: typeof inputRef.current) => {
+                            inputRef.current = el
+                        }}
+                        placeholder={placeholder}
+                        type={type}
+                        defaultValue={defaultValue}
+                    />
                 </TextareaContainer>
                 <InputSubmitButton>
                     <ArrowIcon />
@@ -136,7 +148,7 @@ const Icon = styled('div', arrowCss, {
     flexShrink: 0,
 })
 
-const Button = styled('button', containerCss, {
+const buttonClassname = css(containerCss, {
     fontFamily: '$body',
     color: '$black',
     fontSize: '$md',
@@ -145,14 +157,17 @@ const Button = styled('button', containerCss, {
     width: '100%',
     justifyContent: 'space-between',
     paddingRight: 12,
-    overflowWrap: 'anywhere',
+
+    '&:not([disabled])': {
+        cursor: 'pointer',
+    },
 
     '&:active': {
         [`& ${Icon}`]: {
             transform: 'translateX(2px)',
         },
     },
-})
+})()
 
 const ButtonContent = styled(Box, {
     overflow: 'hidden',
@@ -160,15 +175,18 @@ const ButtonContent = styled(Box, {
     textOverflow: 'ellipsis',
 })
 
-type InputLikeButtonProps = ComponentProps<typeof Button> & {
+type InputLikeButtonProps = {
     arrow?: ReactNode
-}
+    children?: ReactNode
+} & (ComponentProps<'a'> | ComponentProps<'button'>)
 
 export function InputLikeButton({ children, arrow, ...props }: InputLikeButtonProps) {
+    const Component = 'href' in props ? 'a' : 'button'
+
     return (
-        <Button {...props}>
+        <Component className={buttonClassname} {...(props as {})}>
             <ButtonContent>{children}</ButtonContent>
             <Icon flexible={!!arrow}>{arrow || <ArrowIcon />}</Icon>
-        </Button>
+        </Component>
     )
 }

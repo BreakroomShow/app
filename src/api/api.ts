@@ -7,6 +7,13 @@ import { createToken, getMessageToSign } from './methods'
 
 export const api = axios.create({
     baseURL: 'https://backend.breakroom.show',
+    transformRequest: [
+        (_, headers) => {
+            if (headers && headers.Authorization && !headers.Authorization.startsWith('Bearer')) {
+                headers.Authorization = `Bearer ${headers.Authorization}`
+            }
+        },
+    ],
 }) as typeof axios
 
 export async function authorize({

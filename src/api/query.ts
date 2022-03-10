@@ -7,7 +7,7 @@ import { config } from '../config'
 import { useWallet } from '../containers/ConnectProvider'
 import { Game, Question, UnrevealedQuestion } from '../types'
 import { ProgramError } from '../utils/error'
-import { getReplay } from './methods'
+import { getEmailNotification, getReplay } from './methods'
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -293,3 +293,12 @@ export function useReplayQuery() {
     return useQuery(['replay'], getReplay)
 }
 useReplayQuery.preload = () => queryClient.prefetchQuery(['replay'], getReplay)
+
+export function useEmailNotificationQuery() {
+    const wallet = useWallet()
+
+    return useQuery(['notifications/email', wallet.token], () => {
+        if (!wallet.token) return ''
+        return getEmailNotification(wallet.token)
+    }).data
+}

@@ -11,6 +11,7 @@ export const urls = {
         github: 'https://github.com/BreakroomShow',
         octane: 'https://github.com/solana-labs/octane',
         phantom: 'https://phantom.app/',
+        bot: 'https://t.me/BreakroomShowBot',
     },
     emails: {
         breakroom: new Email('hello@breakroom.show'),

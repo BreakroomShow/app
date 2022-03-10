@@ -44,3 +44,22 @@ export function getReplay() {
         .then((res) => res.data)
         .catch(() => null)
 }
+
+export function updateEmailNotification(email: string, token: string) {
+    return api.post<void>(
+        'notifications/email',
+        { email },
+        {
+            headers: { Authorization: token },
+        },
+    )
+}
+
+export function getEmailNotification(token: string) {
+    return api
+        .get<string>('notifications/email', {
+            headers: { Authorization: token },
+        })
+        .then((res) => res.data)
+        .catch(() => '')
+}

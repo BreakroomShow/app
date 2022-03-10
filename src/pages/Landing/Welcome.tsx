@@ -1,7 +1,10 @@
-import { Navigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
+import { useUpdateEmailNotification } from '../../api/mutations'
+import { useEmailNotificationQuery } from '../../api/query'
 import { InputForm, InputLikeButton } from '../../components/InputForm'
-import { useWallet } from '../../containers/ConnectProvider'
+import { urls } from '../../config'
+import { usePush } from '../../containers/PushProvider'
 import { Box, Spacer, Stack, Text, styled } from '../../design-system'
 import { nbsp } from '../../utils/nbsp'
 import { Page } from './components/Page'
@@ -36,14 +39,39 @@ const Content = styled(Box, {
     },
 })
 
-const inviteLink = 'breakroom.show/?ref=[ту...'
+const inviteLink = 'breakroom.show/?ref=asdasd'
 
 export function Welcome() {
-    const wallet = useWallet()
+    const push = usePush()
 
-    if (wallet.status === 'idle') {
-        return <Navigate to="/" />
+    const emailNotification = useEmailNotificationQuery()
+    const updateEmailNotification = useUpdateEmailNotification()
+
+    const [copied, setCopied] = useState(false)
+
+    useEffect(() => {
+        if (!copied) return
+
+        const timer = setTimeout(() => {
+            setCopied(false)
+        }, 3000)
+
+        return () => clearTimeout(timer)
+    }, [copied])
+
+    const shareInvite = async () => {
+        try {
+            await window.navigator.share({ title: 'Breakroom.show invite', url: inviteLink })
+        } catch {
+            await navigator.clipboard?.writeText(inviteLink)
+            setCopied(true)
+        }
     }
+
+    // TODO uncomment after testing
+    // if (wallet.status === 'idle') {
+    //     return <Navigate to="/" />
+    // }
 
     return (
         <Page>
@@ -74,13 +102,29 @@ export function Welcome() {
 
                             <Stack space="md">
                                 <InputForm
+                                    type="email"
                                     placeholder="Email"
-                                    onSubmit={(text, reset) => {
-                                        reset()
+                                    defaultValue={emailNotification}
+                                    onSubmit={(text) => {
+                                        updateEmailNotification.mutateAsync(text).then(() => {
+                                            // TODO fancy notification
+                                            // eslint-disable-next-line no-alert
+                                            alert('Updated!')
+                                        })
                                     }}
                                 />
-                                <InputLikeButton>Browser notifications</InputLikeButton>
-                                <InputLikeButton>Telegram notifications</InputLikeButton>
+                                {push.isSupported ? (
+                                    <InputLikeButton
+                                        onClick={push.enable}
+                                        arrow={push.enabled ? 'Enabled' : null}
+                                        disabled={push.enabled}
+                                    >
+                                        Browser notifications
+                                    </InputLikeButton>
+                                ) : null}
+                                <InputLikeButton href={urls.external.bot} target="_blank">
+                                    Telegram notifications
+                                </InputLikeButton>
                             </Stack>
                         </Box>
                         <Spacer size="lg" />
@@ -110,7 +154,9 @@ export function Welcome() {
                             <Spacer size="lg" />
 
                             <Stack space="md">
-                                <InputLikeButton arrow="Copy link">{inviteLink}</InputLikeButton>
+                                <InputLikeButton arrow={copied ? 'Copied!' : 'Copy link'} onClick={shareInvite}>
+                                    {inviteLink}
+                                </InputLikeButton>
                             </Stack>
                         </Box>
                         <Spacer size="lg" />

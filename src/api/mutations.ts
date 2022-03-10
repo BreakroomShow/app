@@ -5,10 +5,12 @@ import { useMutation } from 'react-query'
 import axios from 'redaxios'
 
 import { config } from '../config'
+import { useWallet } from '../containers/ConnectProvider'
 import { GameOptions, StoredQuestionData } from '../types'
 import { msToBn, secToBn } from '../utils/date'
 import { ProgramError } from '../utils/error'
 import { sha256 } from '../utils/sha256'
+import { updateEmailNotification } from './methods'
 import { cacheKeys, queryClient, useGamePdaFor, useProgram, useTriviaPda, useWalletPublicKey } from './query'
 
 export function useCreateGame(gameIndex: number) {
@@ -349,4 +351,13 @@ export function useUpdateNextGame() {
             },
         },
     )
+}
+
+export function useUpdateEmailNotification() {
+    const wallet = useWallet()
+
+    return useMutation(async (email: string) => {
+        if (!wallet.token) return
+        return updateEmailNotification(email, wallet.token)
+    })
 }

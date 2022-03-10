@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ConnectProvider } from './containers/ConnectProvider'
+import { PushProvider } from './containers/PushProvider'
 import { QueryProvider } from './containers/QueryProvider'
 import { StyleProvider } from './design-system'
 import { Landing } from './pages/Landing'
@@ -31,7 +32,9 @@ render(
             <BrowserRouter>
                 <ConnectProvider>
                     <QueryProvider>
-                        <App />
+                        <PushProvider>
+                            <App />
+                        </PushProvider>
                     </QueryProvider>
                 </ConnectProvider>
             </BrowserRouter>
