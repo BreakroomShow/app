@@ -10,15 +10,6 @@ export const GameInfoSplash = ({ event }: { event: GameEvent }) => {
             texts={[
                 { text: 'players today', size: 0.32 },
                 { text: event.players.toLocaleString('en'), size: 1 },
-                { text: 'Prize Fund', size: 0.32 },
-                {
-                    text: event.prize_fund_usd.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 0,
-                    }),
-                    size: 1,
-                },
             ]}
             textProps={{ matcap }}
         />
