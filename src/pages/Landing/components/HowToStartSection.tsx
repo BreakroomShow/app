@@ -14,7 +14,10 @@ import { SectionTitle } from './SectionTitle'
 
 const Segment = styled(SegmentComponent, {
     background: '$green',
-    '@xl': { height: 570 },
+    '@xl': {
+        height: 520,
+        // height: 570, // TODO uncomment when guide links are added
+    },
     paddingY: 60,
     paddingX: 10,
     flexDirection: 'column',
@@ -46,7 +49,7 @@ export function HowToStartSection() {
         {
             color: 'green',
             illustration: <Illustration1 />,
-            guideUrl: urls.guides.installWallet,
+            guideUrl: null,
             title: 'Get a crypto wallet\non the Solana',
             description: (
                 <span>
@@ -61,7 +64,7 @@ export function HowToStartSection() {
         {
             color: 'orange',
             illustration: <Illustration2 />,
-            guideUrl: urls.guides.connectWallet,
+            guideUrl: null,
             title: 'Sign-in to our website\nusing your wallet',
             description: 'On-chain apps are accessed through\nwallets, not emails and passwords.',
         },

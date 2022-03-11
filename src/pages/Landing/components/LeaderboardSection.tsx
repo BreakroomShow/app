@@ -8,19 +8,19 @@ import { SectionTitle } from './SectionTitle'
 
 /* prettier-ignore */
 const users = [
-    { sol: 120.56, usd: 2590.23, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/nerd-glasses.png' },
-    { sol: 420.56, usd: 90.23, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/black-lipstick.png' },
-    { sol: 0.56, usd: 590.23, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/regular-shades.png' },
-    { sol: 220.56, usd: 14590.23, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/shadow-beard.png' },
-    { sol: 120.56, usd: 2590.23, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/nerd-glasses.png' },
-    { sol: 420.56, usd: 90.23, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/black-lipstick.png' },
-    { sol: 0.56, usd: 590.23, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/regular-shades.png' },
-    { sol: 220.56, usd: 14590.23, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/shadow-beard.png' },
-    { sol: 120.56, usd: 2590.23, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/nerd-glasses.png' },
-    { sol: 420.56, usd: 90.23, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/black-lipstick.png' },
-    { sol: 0.56, usd: 590.23, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/regular-shades.png' },
-    { sol: 220.56, usd: 14590.23, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/shadow-beard.png' },
-].map((u, i) => ({...u, id: i}))
+    { sol: 20.43, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/black-lipstick.png' },
+    { sol: 4.56, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/regular-shades.png' },
+    { sol: 120.35, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/nerd-glasses.png' },
+    { sol: 54.96, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/shadow-beard.png' },
+    { sol: 19.54, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/nerd-glasses.png' },
+    { sol: 43.5, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/black-lipstick.png' },
+    { sol: 7.56, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/regular-shades.png' },
+    { sol: 22.63, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/shadow-beard.png' },
+    { sol: 12.16, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/nerd-glasses.png' },
+    { sol: 33.99, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/black-lipstick.png' },
+    { sol: 0.97, wallet: '3QHyePJUy48Ac38MbNegx8mkDZBMZzHw6gJbPCFRhBRA', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/regular-shades.png' },
+    { sol: 14.83, wallet: '3gr79GtS9FrmvT1FaK2UZEjL7zvNchorJFRzhZh9LxSD', avatarUrl: 'https://solpunks.com/wp-content/uploads/2021/05/shadow-beard.png' },
+].map((u, i) => ({...u, usd: u.sol * 81.5, id: i}))
 
 export function LeaderboardTable({ collapseBelow }: { collapseBelow?: Extract<Media, `@down-${string}`> }) {
     const mobile = collapseBelow
