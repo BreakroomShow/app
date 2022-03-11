@@ -20,7 +20,11 @@ try {
 const isSupported = !!beamsClient
 
 function isGranted() {
-    return window.Notification.permission === 'granted'
+    try {
+        return window.Notification.permission === 'granted'
+    } catch {
+        return false
+    }
 }
 
 async function start() {
