@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Navigate } from 'react-router-dom'
 
 import { useUpdateEmailNotification } from '../../api/mutations'
 import { useEmailNotificationQuery } from '../../api/query'
@@ -43,6 +44,8 @@ const Content = styled(Box, {
 const ContentLeft = styled(Box, {
     flex: 1,
     overflow: 'hidden',
+    padding: 2,
+    margin: -2,
 })
 
 const ContentRight = styled(Box, {
@@ -175,10 +178,11 @@ function InviteSection() {
 }
 
 export function Welcome() {
-    // TODO uncomment after testing
-    // if (wallet.status === 'idle') {
-    //     return <Navigate to="/" />
-    // }
+    const wallet = useWallet()
+
+    if (wallet.status === 'idle') {
+        return <Navigate to="/" />
+    }
 
     return (
         <Page>
@@ -194,7 +198,7 @@ export function Welcome() {
                 <Spacer size="lg" />
                 <NotificationSection />
                 <InviteSection />
-                <PageLinkButton to="/TODO">Done!</PageLinkButton>
+                <PageLinkButton>Done!</PageLinkButton>
                 <PageFooter />
             </PageContent>
         </Page>

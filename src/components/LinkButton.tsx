@@ -1,35 +1,40 @@
 import { ComponentProps, ReactNode } from 'react'
-import { LinkProps } from 'react-router-dom'
+import { LinkProps as LinkPropsBase } from 'react-router-dom'
 
 import { Box, Inline, Inset, Typography, styled } from '../design-system'
 import { ReactComponent as ArrowIcon } from '../images/arrow.svg'
 import { Link } from './Link'
 
-type DivProps = ComponentProps<typeof Box> & { to?: never }
+type LinkProps = LinkPropsBase & { as?: undefined }
+type DivProps = ComponentProps<typeof Box> & { to?: undefined; as: 'div' }
+type ButtonProps = ComponentProps<'button'> & { to?: undefined; as: 'button' }
 
-type LinkButtonProps = (LinkProps | DivProps) & {
-    as?: keyof JSX.IntrinsicElements
+type LinkButtonProps = (LinkProps | DivProps | ButtonProps) & {
     children: ReactNode
     icon?: ReactNode
+    arrow?: boolean
 }
 
 const Container = styled(Box, {
     all: 'unset',
     overflow: 'hidden',
     display: 'flex',
-    cursor: 'pointer',
     outline: 'revert',
 })
 
-export function LinkButton({ as, children, icon, ...props }: LinkButtonProps) {
+export function LinkButton({ as, children, icon, arrow = true, ...props }: LinkButtonProps) {
     const content = (
-        <Container as={as || (props.to ? 'div' : 'button')} {...(props.to ? {} : { ...(props as DivProps) })}>
+        <Container
+            as={as}
+            css={{ cursor: as === 'div' ? undefined : 'pointer' }}
+            {...(props.to ? {} : { ...(props as DivProps) })}
+        >
             <Inline space="xs" wrap="nowrap">
                 {icon ? <Box css={{ display: 'flex', padding: 2 }}>{icon}</Box> : null}
                 <Inset top={{ custom: 2 }}>
                     <Typography as="body2">{children}</Typography>
                 </Inset>
-                {props.to ? (
+                {arrow ? (
                     <Box css={{ display: 'flex' }}>
                         <ArrowIcon />
                     </Box>

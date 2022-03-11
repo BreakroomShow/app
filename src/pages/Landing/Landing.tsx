@@ -4,8 +4,10 @@ import { useReplayQuery } from '../../api/query'
 import { Dialog } from '../../components/Dialog'
 import { Link } from '../../components/Link'
 import { urls } from '../../config'
+import { useWallet } from '../../containers/ConnectProvider'
 import { Stack } from '../../design-system'
 import { useBackgroundLocation } from '../../hooks/useBackgroundLocation'
+import { useScrollRestore } from '../../hooks/useScrollRestore'
 import { htmlAnchor } from '../../utils/htmlAnchor'
 import { lazy } from '../../utils/lazy'
 import { FaqSection } from './components/FaqSection'
@@ -41,9 +43,7 @@ function Index() {
                 </Stack>
             </PageContent>
             <HowItWorksSection />
-            <HowToStartSection>
-                <PageLinkButton {...htmlAnchor('TODO')}>Sign up for the game</PageLinkButton>
-            </HowToStartSection>
+            <HowToStartSection />
             <TransparencySection />
             <PageSpacer />
             <PageContent>
@@ -84,21 +84,32 @@ type ConnectStatus =
 */
 
 function ConnectModal() {
+    const wallet = useWallet()
     const navigate = useNavigate()
     const bgLocation = useBackgroundLocation()
 
-    return (
-        <Dialog close={() => navigate(bgLocation?.pathname || '/')}>
-            <Link to={urls.external.phantom} underline>
-                {urls.external.phantom}
-            </Link>
-        </Dialog>
-    )
+    if (wallet.status === 'idle' && !wallet.ready) {
+        return (
+            <Dialog close={() => navigate(bgLocation?.pathname || '/')}>
+                <Link to={urls.external.phantom} underline>
+                    {urls.external.phantom}
+                </Link>
+            </Dialog>
+        )
+    }
+
+    if (wallet.ready) {
+        return <Navigate to="/" />
+    }
+
+    return null
 }
 
 export function Landing() {
     const location = useLocation()
     const bgLocation = useBackgroundLocation()
+
+    useScrollRestore()
 
     return (
         <>

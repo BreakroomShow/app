@@ -62,12 +62,10 @@ export function PushProvider({ children }: { children: ReactNode }) {
     }, [granted])
 
     const wallet = useWallet()
-    const [supported, setSupported] = useState(Boolean(isSupported && wallet.token))
-    useEffect(() => setSupported(Boolean(isSupported && wallet.token)), [wallet.token])
 
     const ctx: PushContextValue = useMemo(
         () => ({
-            isSupported: supported,
+            isSupported: Boolean(isSupported && wallet.token),
             enabled: granted,
             enable: () => {
                 start()
@@ -79,7 +77,7 @@ export function PushProvider({ children }: { children: ReactNode }) {
                     })
             },
         }),
-        [granted, supported],
+        [granted, wallet.token],
     )
 
     return <PushContext.Provider value={ctx}>{children}</PushContext.Provider>

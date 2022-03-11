@@ -1,5 +1,4 @@
-import { ReactNode } from 'react'
-
+import { useConnectLink } from '../../../components/ConnectButton'
 import { Link } from '../../../components/Link'
 import { LinkButton } from '../../../components/LinkButton'
 import { SegmentComponent } from '../../../components/Segment'
@@ -10,6 +9,7 @@ import { ReactComponent as Illustration2 } from '../../../images/illustration-2.
 import { ReactComponent as Illustration3 } from '../../../images/illustration-3.svg'
 import { PageBlock } from './PageBlock'
 import { PageContent } from './PageContent'
+import { PageLinkButton } from './PageLinkButton'
 import { SectionTitle } from './SectionTitle'
 
 const Segment = styled(SegmentComponent, {
@@ -39,7 +39,9 @@ const Illustration = styled(Box, {
     pointerEvents: 'none',
 })
 
-export function HowToStartSection({ children }: { children: ReactNode }) {
+export function HowToStartSection() {
+    const connectLinkProps = useConnectLink()
+
     const steps = [
         {
             color: 'green',
@@ -106,7 +108,7 @@ export function HowToStartSection({ children }: { children: ReactNode }) {
                         </Column>
                     ))}
                 </Columns>
-                {children}
+                <PageLinkButton {...connectLinkProps}>Sign up for the game</PageLinkButton>
             </PageContent>
         </PageBlock>
     )

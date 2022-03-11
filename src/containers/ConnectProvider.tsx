@@ -208,11 +208,16 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
             if (isUnloading.current) return
             if (!autoConnect) return
             if (!adapter) return
-            if (!ready) return
+
+            if (!ready) {
+                setStatus({ status: 'idle', token: null, publicKey: null })
+                return
+            }
 
             if (status !== 'idle' && status !== 'auto-connecting') return
 
             setStatus({ status: 'connecting', token: null, publicKey: null })
+
             try {
                 await adapter.connect()
                 const token = await signup(adapter.publicKey)

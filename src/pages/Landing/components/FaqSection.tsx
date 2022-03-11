@@ -49,28 +49,16 @@ const Accordion = styled(AccordionPrimitive.Root, {
         $$inset: '60px',
     },
 })
-const AccordionItemContainer = styled(AccordionPrimitive.Item, {
+const AccordionItemContainer = styled(Box, {
     overflow: 'hidden',
     background: '$white',
 
-    borderRadius: 121,
+    borderRadius: 120,
     '@down-lg': {
-        borderRadius: 121,
+        borderRadius: 80,
     },
 
-    '&:focus-within': {
-        position: 'relative',
-        boxShadow: `0 0 0 1px $colors$greyA`,
-    },
-})
-const AccordionHeader = styled(AccordionPrimitive.Header, {
-    all: 'unset',
-    display: 'block',
-})
-const AccordionTrigger = styled(AccordionPrimitive.Trigger, {
-    all: 'unset',
     width: '100%',
-
     padding: '$$inset',
     display: 'flex',
     flexDirection: 'column',
@@ -117,10 +105,10 @@ const AccordionButton = styled('div', {
 
 function AccordionItem({ details, summary }: { details: ReactNode; summary: string }) {
     return (
-        <AccordionItemContainer value={summary}>
-            <AccordionHeader>
-                <AccordionTrigger asChild>
-                    <div
+        <AccordionPrimitive.Item value={summary} asChild>
+            <AccordionPrimitive.Header asChild>
+                <AccordionPrimitive.Trigger asChild>
+                    <AccordionItemContainer
                         role="button"
                         tabIndex={0}
                         onKeyDown={(e) => e.code === 'Enter' && e.currentTarget.click()}
@@ -151,10 +139,10 @@ function AccordionItem({ details, summary }: { details: ReactNode; summary: stri
                                 </Text>
                             </Box>
                         </AccordionContent>
-                    </div>
-                </AccordionTrigger>
-            </AccordionHeader>
-        </AccordionItemContainer>
+                    </AccordionItemContainer>
+                </AccordionPrimitive.Trigger>
+            </AccordionPrimitive.Header>
+        </AccordionPrimitive.Item>
     )
 }
 
