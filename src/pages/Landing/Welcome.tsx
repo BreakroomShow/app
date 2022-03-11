@@ -4,6 +4,7 @@ import { useUpdateEmailNotification } from '../../api/mutations'
 import { useEmailNotificationQuery } from '../../api/query'
 import { InputForm, InputLikeButton } from '../../components/InputForm'
 import { urls } from '../../config'
+import { useWallet } from '../../containers/ConnectProvider'
 import { usePush } from '../../containers/PushProvider'
 import { Box, Spacer, Stack, Text, styled } from '../../design-system'
 import { nbsp } from '../../utils/nbsp'
@@ -39,13 +40,80 @@ const Content = styled(Box, {
     },
 })
 
-const inviteLink = 'breakroom.show/?ref=asdasd'
+const ContentLeft = styled(Box, {
+    flex: 1,
+    overflow: 'hidden',
+})
 
-export function Welcome() {
+const ContentRight = styled(Box, {
+    flexBasis: '45%',
+    paddingTop: 12,
+})
+
+function NotificationSection() {
     const push = usePush()
 
     const emailNotification = useEmailNotificationQuery()
     const updateEmailNotification = useUpdateEmailNotification()
+
+    return (
+        <Container>
+            <Content>
+                <ContentLeft>
+                    <Stack space="xs">
+                        <Text font="heading" size={{ '@initial': 'xl', '@lg': 'xxl' }} weight="bold">
+                            Turn on notifications
+                        </Text>
+                        <Text font="body" size="md" color="black">
+                            And don&apos;t miss the start of the trivia
+                        </Text>
+                    </Stack>
+
+                    <Spacer size="lg" />
+
+                    <Stack space="md">
+                        <InputForm
+                            type="email"
+                            placeholder="Email"
+                            defaultValue={emailNotification}
+                            onSubmit={(text) => {
+                                updateEmailNotification.mutateAsync(text).then(() => {
+                                    // TODO fancy notification
+                                    // eslint-disable-next-line no-alert
+                                    alert('Updated!')
+                                })
+                            }}
+                        />
+                        {push.isSupported ? (
+                            <InputLikeButton
+                                onClick={push.enable}
+                                arrow={push.enabled ? 'Enabled' : null}
+                                disabled={push.enabled}
+                            >
+                                Browser notifications
+                            </InputLikeButton>
+                        ) : null}
+                        <InputLikeButton href={urls.external.bot} target="_blank">
+                            Telegram notifications
+                        </InputLikeButton>
+                    </Stack>
+                </ContentLeft>
+                <Spacer size="lg" />
+                <ContentRight>
+                    <Text font="body" size="md" color="blackA" preserveLinebreaks>
+                        The game starts at the same time for everyone. Before the start, we wait 1 minute for all
+                        participants. After that, you will not be able to enter the trivia as a player.
+                        {'\n\n'}
+                        You can get notifications by email, in the browser or in telegram.
+                    </Text>
+                </ContentRight>
+            </Content>
+        </Container>
+    )
+}
+
+function InviteSection() {
+    const wallet = useWallet()
 
     const [copied, setCopied] = useState(false)
 
@@ -59,15 +127,54 @@ export function Welcome() {
         return () => clearTimeout(timer)
     }, [copied])
 
+    if (!wallet.publicKey) return null
+
+    const link = `breakroom.show/?ref=${wallet.publicKey.toString()}`
+
     const shareInvite = async () => {
         try {
-            await window.navigator.share({ title: 'Breakroom.show invite', url: inviteLink })
+            await window.navigator.share({ title: 'Breakroom.show invite', url: link })
         } catch {
-            await navigator.clipboard?.writeText(inviteLink)
+            await navigator.clipboard?.writeText(link)
             setCopied(true)
         }
     }
 
+    return (
+        <Container>
+            <Content>
+                <ContentLeft>
+                    <Stack space="xs">
+                        <Text font="heading" size={{ '@initial': 'xl', '@lg': 'xxl' }} weight="bold">
+                            Invite friends
+                        </Text>
+                        <Text font="body" size="md" color="black">
+                            To get extra lives for the trivia
+                        </Text>
+                    </Stack>
+
+                    <Spacer size="lg" />
+
+                    <InputLikeButton arrow={copied ? 'Copied!' : 'Copy link'} onClick={shareInvite}>
+                        {link}
+                    </InputLikeButton>
+                </ContentLeft>
+                <Spacer size="lg" />
+                <ContentRight>
+                    <Text font="body" size="md" color="blackA" preserveLinebreaks>
+                        If you invite a friend and they end up joining, you get an extra life to use in the game. One
+                        extra life allows you to keep playing even if you missed a question: answered incorrectly or
+                        never answered at all.
+                        {'\n\n'}
+                        You can only use one life per game. You can’t use extra lives on the 12th question.
+                    </Text>
+                </ContentRight>
+            </Content>
+        </Container>
+    )
+}
+
+export function Welcome() {
     // TODO uncomment after testing
     // if (wallet.status === 'idle') {
     //     return <Navigate to="/" />
@@ -85,95 +192,9 @@ export function Welcome() {
                     </Text>
                 </Stack>
                 <Spacer size="lg" />
-
-                <Container>
-                    <Content>
-                        <Box css={{ flex: 1 }}>
-                            <Stack space="xs">
-                                <Text font="heading" size={{ '@initial': 'xl', '@lg': 'xxl' }} weight="bold">
-                                    Turn on notifications
-                                </Text>
-                                <Text font="body" size="md" color="black">
-                                    And don&apos;t miss the start of the trivia
-                                </Text>
-                            </Stack>
-
-                            <Spacer size="lg" />
-
-                            <Stack space="md">
-                                <InputForm
-                                    type="email"
-                                    placeholder="Email"
-                                    defaultValue={emailNotification}
-                                    onSubmit={(text) => {
-                                        updateEmailNotification.mutateAsync(text).then(() => {
-                                            // TODO fancy notification
-                                            // eslint-disable-next-line no-alert
-                                            alert('Updated!')
-                                        })
-                                    }}
-                                />
-                                {push.isSupported ? (
-                                    <InputLikeButton
-                                        onClick={push.enable}
-                                        arrow={push.enabled ? 'Enabled' : null}
-                                        disabled={push.enabled}
-                                    >
-                                        Browser notifications
-                                    </InputLikeButton>
-                                ) : null}
-                                <InputLikeButton href={urls.external.bot} target="_blank">
-                                    Telegram notifications
-                                </InputLikeButton>
-                            </Stack>
-                        </Box>
-                        <Spacer size="lg" />
-                        <Box css={{ flexBasis: '45%', paddingTop: 12 }}>
-                            <Text font="body" size="md" color="blackA" preserveLinebreaks>
-                                The game starts at the same time for everyone. Before the start, we wait 1 minute for
-                                all participants. After that, you will not be able to enter the trivia as a player.
-                                {'\n\n'}
-                                You can get notifications by email, in the browser or in telegram.
-                            </Text>
-                        </Box>
-                    </Content>
-                </Container>
-
-                <Container>
-                    <Content>
-                        <Box css={{ flex: 1 }}>
-                            <Stack space="xs">
-                                <Text font="heading" size={{ '@initial': 'xl', '@lg': 'xxl' }} weight="bold">
-                                    Invite friends
-                                </Text>
-                                <Text font="body" size="md" color="black">
-                                    To get extra lives for the trivia
-                                </Text>
-                            </Stack>
-
-                            <Spacer size="lg" />
-
-                            <Stack space="md">
-                                <InputLikeButton arrow={copied ? 'Copied!' : 'Copy link'} onClick={shareInvite}>
-                                    {inviteLink}
-                                </InputLikeButton>
-                            </Stack>
-                        </Box>
-                        <Spacer size="lg" />
-                        <Box css={{ flexBasis: '45%', paddingTop: 12 }}>
-                            <Text font="body" size="md" color="blackA" preserveLinebreaks>
-                                If you invite a friend and they end up joining, you get an extra life to use in the
-                                game. One extra life allows you to keep playing even if you missed a question: answered
-                                incorrectly or never answered at all.
-                                {'\n\n'}
-                                You can only use one life per game. You can’t use extra lives on the 12th question.
-                            </Text>
-                        </Box>
-                    </Content>
-                </Container>
-
+                <NotificationSection />
+                <InviteSection />
                 <PageLinkButton to="/TODO">Done!</PageLinkButton>
-
                 <PageFooter />
             </PageContent>
         </Page>
