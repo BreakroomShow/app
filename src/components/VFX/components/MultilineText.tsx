@@ -1,4 +1,3 @@
-import { Center } from '@react-three/drei'
 import { Box, Flex } from '@react-three/flex'
 
 import { VerticalCenter } from '../helpers/VerticalCenter'
