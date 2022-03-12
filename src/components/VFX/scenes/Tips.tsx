@@ -1,10 +1,11 @@
+import { CryptoFactEvent } from '../../../types'
 import { Diamonds } from '../components/Diamonds'
 import { FlatText } from '../components/FlatText'
 
-export const Tips = () => {
+export const Tips = ({ event }: { event: CryptoFactEvent }) => {
     return (
         <>
-            <FlatText text="don’t enter your seed phrase anywhere, but trusted wallets" widthCoeff={0.33} />
+            <FlatText text={event.text} widthCoeff={0.33} />
             <Diamonds />
         </>
     )

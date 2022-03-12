@@ -35,11 +35,11 @@ export const Diamonds = () => {
     )
 
     useEffect(() => {
-        if (model.current) {
+        if (model.current)
             diamonds.map((_, i) =>
                 model.current!.setColorAt(i, new Color(selectRandom(colors.trivia)).convertSRGBToLinear()),
             )
-        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useFrame(() => {
