@@ -1,6 +1,6 @@
 import { useGLTF } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Color, DoubleSide, InstancedMesh, Object3D } from 'three'
 
 import { selectRandom } from '../../../utils/selectRandom'
@@ -13,12 +13,13 @@ export const Diamonds = () => {
     const dummy = useMemo(() => new Object3D(), [])
 
     const { clock, viewport } = useThree()
+    const [viewportWidth] = useState(() => viewport.width)
 
     const diamonds = useMemo(
         () =>
             new Array(80).fill({}).map((_, i) => ({
                 position: [
-                    i < 5 ? 0 : viewport.width / 2 - Math.random() * viewport.width,
+                    i < 5 ? 0 : viewportWidth / 2 - Math.random() * viewportWidth,
                     40 - Math.random() * 40,
                     i < 5 ? 26 : 10 - Math.random() * 20,
                 ] as [number, number, number],
@@ -30,17 +31,16 @@ export const Diamonds = () => {
                     Math.cos(Math.random()) * Math.PI,
                 ] as const,
             })),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [],
+        [viewportWidth],
     )
 
     useEffect(() => {
-        if (model.current)
+        if (model.current) {
             diamonds.map((_, i) =>
                 model.current!.setColorAt(i, new Color(selectRandom(colors.trivia)).convertSRGBToLinear()),
             )
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+        }
+    }, [diamonds])
 
     useFrame(() => {
         diamonds.forEach((data, i) => {

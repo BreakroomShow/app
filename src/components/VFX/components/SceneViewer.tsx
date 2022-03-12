@@ -1,6 +1,6 @@
 import { ReactNode, Suspense, useEffect, useState } from 'react'
 
-import { CryptoFactEvent, GameEvent } from '../../../types'
+import { GameEvent } from '../../../types'
 import { GameInfoSplash } from '../scenes/GameInfoSplash'
 import { QuestionFact } from '../scenes/QuestionFact'
 import { Splash } from '../scenes/Splash'
@@ -13,7 +13,7 @@ const scenes: Record<GameEvent['type'], (e: GameEvent) => ReactNode> = {
     question: () => null,
     answer_reveal: () => null,
     question_fact: (event) => <QuestionFact event={event} />,
-    crypto_fact: (event) => <Tips event={event as CryptoFactEvent} />,
+    crypto_fact: (event) => <Tips event={event} />,
     viewer_count_update: () => null,
 }
 
@@ -22,13 +22,10 @@ export const SceneViewer = ({ event: nextEvent, offset = 0 }: { offset?: number;
     const [[scene, event], setScene] = useState([nextScene, nextEvent])
 
     useEffect(() => {
-        if (event && nextEvent)
-            if (event.type === 'crypto_fact' && event.type === nextEvent.type)
-                if (event.text !== nextEvent.text) setScene([scene, nextEvent])
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        if (!event && nextEvent) setScene([nextScene, nextEvent])
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nextEvent])
+        if (nextEvent?.type === event?.type) {
+            setScene([nextScene, nextEvent])
+        }
+    }, [event?.type, nextEvent, nextScene])
 
     if (!scene || !event) return null
 

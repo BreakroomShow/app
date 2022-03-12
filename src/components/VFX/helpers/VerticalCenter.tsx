@@ -6,9 +6,11 @@ type Props = JSX.IntrinsicElements['group'] & {
 }
 
 export const VerticalCenter = React.forwardRef<Group, Props>(function Center({ children, alignTop, ...props }, ref) {
-    const outer = React.useRef<Group>(null!)
-    const inner = React.useRef<Group>(null!)
+    const outer = React.useRef<Group>(null)
+    const inner = React.useRef<Group>(null)
     React.useLayoutEffect(() => {
+        if (!outer.current || !inner.current) return
+
         outer.current.position.set(0, 0, 0)
         outer.current.updateWorldMatrix(true, true)
         const box3 = new Box3().setFromObject(inner.current)
@@ -18,8 +20,8 @@ export const VerticalCenter = React.forwardRef<Group, Props>(function Center({ c
         box3.getCenter(center)
         box3.getBoundingSphere(sphere)
         outer.current.position.set(0, -center.y + (alignTop ? height / 2 : 0), 0)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [children])
+    }, [alignTop, children])
+
     return (
         <group ref={ref} {...props}>
             <group ref={outer}>
