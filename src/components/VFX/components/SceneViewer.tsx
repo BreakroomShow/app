@@ -4,6 +4,7 @@ import { GameEvent } from '../../../types'
 import { GameInfoSplash } from '../scenes/GameInfoSplash'
 import { QuestionFact } from '../scenes/QuestionFact'
 import { Splash } from '../scenes/Splash'
+import { Tips } from '../scenes/Tips'
 import { AnimatePresence } from './AnimatePresence'
 
 const scenes: Record<GameEvent['type'], (e: GameEvent) => ReactNode> = {
@@ -12,7 +13,7 @@ const scenes: Record<GameEvent['type'], (e: GameEvent) => ReactNode> = {
     question: () => null,
     answer_reveal: () => null,
     question_fact: (event) => <QuestionFact event={event} />,
-    crypto_fact: () => null,
+    crypto_fact: () => <Tips />,
     viewer_count_update: () => null,
 }
 

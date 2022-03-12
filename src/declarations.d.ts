@@ -3,3 +3,5 @@ declare module 'canvas-sketch-util/random' {
     export function insideSphere(radius = 1): [number, number, number]
     export function onCircle(radius = 1): [number, number]
 }
+
+declare module '*.gltf'

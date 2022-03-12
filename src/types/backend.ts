@@ -50,7 +50,6 @@ export interface QuestionFactEvent extends BaseEvent {
 export interface CryptoFactEvent extends BaseEvent {
     type: 'crypto_fact'
     text: string
-    image_url: null | string
 }
 
 export interface ViewerCountUpdateEvent extends BaseEvent {

@@ -6,6 +6,13 @@ import { ReplayContext } from '../pages/Landing/useReplay'
 import { GameEvent } from '../types'
 
 const types: { [event in GameEvent['type']]?: GameEvent } = {
+    crypto_fact: {
+        type: 'crypto_fact',
+        distribution_type: 'socket',
+        duration: 1,
+        game_start_offset: 30,
+        text: 'use new wallets for untrusted apps',
+    },
     intro_splash: {
         type: 'intro_splash',
         distribution_type: 'socket',

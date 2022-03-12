@@ -47,6 +47,7 @@ function UserAnswerProvider({
 }
 
 export function ReplayManager({ event, currentQuestionId, totalQuestions, userAnswerId }: ReplayManagerProps) {
+    console.log(event)
     const { isPlaying, speed } = useReplay()
 
     const deadline = useMemo(
