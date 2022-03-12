@@ -26,6 +26,8 @@ export const SceneViewer = ({ event: nextEvent, offset = 0 }: { offset?: number;
             if (event.type === 'crypto_fact' && event.type === nextEvent.type)
                 if (event.text !== nextEvent.text) setScene([scene, nextEvent])
         // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (!event && nextEvent) setScene([nextScene, nextEvent])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nextEvent])
 
     if (!scene || !event) return null
