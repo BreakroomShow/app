@@ -41,7 +41,7 @@ export function UserApp() {
 
     return (
         <main style={{ padding: 20 }}>
-            <ConnectionStatus />
+            <ConnectionStatus app="user" />
             <p>
                 {(() => {
                     if (isNextGameIdIdle || isNextGameIdLoading) return <span>Game info loading...</span>

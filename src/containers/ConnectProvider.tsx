@@ -10,11 +10,13 @@ import { Wallet, getPhantomWallet } from '@solana/wallet-adapter-wallets'
 import * as solana from '@solana/web3.js'
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
+import { analytics } from '../analytics'
 import { authorize } from '../api'
 import { config } from '../config'
 import { useGetLatest } from '../hooks/useGetLatest'
 import { useIsUnloading } from '../hooks/useIsUnloading'
 import { useLocalStorage } from '../hooks/useLocalStorage'
+import { extractErrorMessage } from '../utils/error'
 import { isIframe } from '../utils/isIframe'
 
 type Token = string & {}
@@ -154,6 +156,9 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
 
         try {
             await adapter.disconnect()
+
+            analytics.logEvent('disconnect_successful', { publicKey: adapter.publicKey?.toString() })
+
             setStatus({ status: 'idle', token: null, publicKey: null })
         } catch (DisconnectError) {
             console.error({ DisconnectError })
@@ -161,6 +166,8 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
             const token = getCachedToken(adapter.publicKey)
             if (token) onConnected(token)
             else onConnectFailed()
+
+            analytics.logEvent('disconnect_failed', { reason: extractErrorMessage(DisconnectError) })
 
             throw DisconnectError
         }
@@ -176,10 +183,16 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
         return authorize({ sign: signMessage, publicKey: pKey })
             .then((result) => {
                 setTokenCache(pKey, result)
+
+                analytics.logEvent('signup_successful', { token: result })
+
                 return result
             })
             .catch((error) => {
                 disconnect()
+
+                analytics.logEvent('connect_failed', { reason: extractErrorMessage(error) })
+
                 throw error
             })
     })
@@ -195,10 +208,16 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
         try {
             await adapter.connect()
             const token = await signup(adapter.publicKey)
+
             onConnected(token)
+
+            analytics.logEvent('connect_successful', { publicKey: adapter.publicKey?.toString() })
         } catch (ConnectError) {
             console.error({ ConnectError })
             onConnectFailed()
+
+            analytics.logEvent('connect_failed', { reason: extractErrorMessage(ConnectError) })
+
             throw ConnectError
         }
     }, [adapter, onConnectFailed, onConnected, ready, signup, status])
@@ -222,9 +241,13 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
                 await adapter.connect()
                 const token = await signup(adapter.publicKey)
                 onConnected(token)
+
+                analytics.logEvent('autoconnect_successful')
             } catch (AutoConnectError) {
                 onConnectFailed()
                 console.error({ AutoConnectError })
+
+                analytics.logEvent('autoconnect_failed', { reason: extractErrorMessage(AutoConnectError) })
             }
         }
 

@@ -2,6 +2,7 @@ import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 import { ReactNode } from 'react'
 
+import { analytics } from '../../../analytics'
 import { faq } from '../../../config/faq'
 import { Box, Stack, Text, Typography, keyframes, styled } from '../../../design-system'
 import { ReactComponent as MinusIcon } from '../../../images/minus.svg'
@@ -157,14 +158,20 @@ export function FaqSection() {
             <Tabs defaultValue={tabs[0]} activationMode="manual">
                 <TabList>
                     {tabs.map((tab) => (
-                        <Tab key={tab} value={tab}>
+                        <Tab key={tab} value={tab} onClick={() => analytics.logEvent('faq_tab_click', { tab })}>
                             <Typography>{tab}</Typography>
                         </Tab>
                     ))}
                 </TabList>
                 {tabs.map((tab) => (
                     <TabContent key={tab} value={tab} tabIndex={undefined}>
-                        <Accordion type="single" collapsible>
+                        <Accordion
+                            type="single"
+                            collapsible
+                            onValueChange={(question) => {
+                                if (question) analytics.logEvent('faq_opened', { question })
+                            }}
+                        >
                             {faq[tab].map(([question, answer]) => (
                                 <AccordionItem key={question} summary={question} details={answer} />
                             ))}

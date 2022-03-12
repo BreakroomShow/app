@@ -1,14 +1,42 @@
+import { MouseEvent } from 'react'
 import { Link as LinkBase, LinkProps } from 'react-router-dom'
 
+import { analytics } from '../analytics'
 import { styled } from '../design-system'
 
-function LinkComponent({ to, ...props }: LinkProps) {
-    if (typeof to !== 'string' || to.startsWith('/')) {
-        return <LinkBase to={to} {...props} />
+function LinkComponent({
+    to,
+    state,
+    onClick: onClickProp,
+    children,
+    eventPrefix,
+    ...props
+}: LinkProps & { eventPrefix?: string }) {
+    const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
+        if (onClickProp) onClickProp(e)
+
+        analytics.logEvent('link_click', { link: to, from: eventPrefix })
     }
 
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
-    return <a href={to} target={to.startsWith('mailto') ? '_self' : '_blank'} rel="noreferrer" {...props} />
+    if (typeof to !== 'string' || to.startsWith('/')) {
+        return (
+            <LinkBase to={to} state={{ ...state, fromApp: true }} {...props} onClick={onClick}>
+                {children}
+            </LinkBase>
+        )
+    }
+
+    return (
+        <a
+            href={to}
+            target={to.startsWith('mailto') ? '_self' : '_blank'}
+            rel="noreferrer"
+            {...props}
+            onClick={onClick}
+        >
+            {children}
+        </a>
+    )
 }
 
 export const Link = styled(LinkComponent, {

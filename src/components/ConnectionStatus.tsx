@@ -3,7 +3,7 @@ import { useWallet } from '../containers/ConnectProvider'
 import { ConnectButton } from './ConnectButton'
 import { Wallet } from './Wallet'
 
-export function ConnectionStatus() {
+export function ConnectionStatus({ app }: { app: 'admin' | 'user' }) {
     const { status, publicKey, cluster, setCluster } = useWallet()
 
     return (
@@ -17,7 +17,7 @@ export function ConnectionStatus() {
                     ))}
                 </select>
             </div>
-            {status === 'connected' ? <Wallet>{publicKey}</Wallet> : null} <ConnectButton />
+            {status === 'connected' ? <Wallet>{publicKey}</Wallet> : null} <ConnectButton eventPrefix={`${app}_app`} />
         </div>
     )
 }

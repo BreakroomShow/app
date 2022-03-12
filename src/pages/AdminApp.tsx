@@ -35,7 +35,7 @@ export function AdminApp() {
         <main style={{ margin: 15 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography as="h1">Clic Trivia</Typography>
-                <ConnectionStatus />
+                <ConnectionStatus app="admin" />
             </div>
 
             {wallet.status === 'connected' ? (

@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
+import { analytics } from '../../analytics'
 import { useReplayQuery } from '../../api/query'
 import { Dialog } from '../../components/Dialog'
 import { Link } from '../../components/Link'
@@ -7,7 +9,7 @@ import { urls } from '../../config'
 import { useWallet } from '../../containers/ConnectProvider'
 import { Stack } from '../../design-system'
 import { useBackgroundLocation } from '../../hooks/useBackgroundLocation'
-import { useScrollRestore } from '../../hooks/useScrollRestore'
+import { useLocationState } from '../../hooks/useLocationState'
 import { htmlAnchor } from '../../utils/htmlAnchor'
 import { lazy } from '../../utils/lazy'
 import { FaqSection } from './components/FaqSection'
@@ -30,11 +32,17 @@ const Replay = lazy(() => import(/* webpackChunkName: "Replay" */ './Replay').th
 useReplayQuery.preload()
 
 function Index() {
+    const eventPrefix = 'main'
+
+    useEffect(() => {
+        analytics.logEvent('main_page_open')
+    }, [])
+
     return (
         <Page>
             <PageContent css={{ paddingTop: 70, '@down-lg': { paddingTop: 25 } }}>
                 <Stack dividers={<PageSpacer />}>
-                    <PageHeader />
+                    <PageHeader eventPrefix={eventPrefix} />
                     <HeadlineSection />
                     <NextGameSection>
                         <PageLinkButton {...htmlAnchor(HowItWorksSection.id)}>How it works</PageLinkButton>
@@ -50,47 +58,26 @@ function Index() {
                 <Stack dividers={<PageSpacer />}>
                     <FaqSection />
                     <GoalSection />
-                    <PageFooter />
+                    <PageFooter eventPrefix={eventPrefix} />
                 </Stack>
             </PageContent>
         </Page>
     )
 }
 
-/**
- Check happy path first. If it's connected, it's connected. No need to check the environment/setup.
-
- If mobile:
-    android - sorry message "connect using PC"
-    iOS - phantom app link
-
- PC Browser:
-    browser is supported: phantom site link
-    otherwise: enumerate supported browsers
-
-type ConnectStatus =
-    | 'idle' // checking for connection/browser support
-    // happy path
-    | 'disconnected' // valid setup but not connected
-    | 'connecting' // connecting wallet and checking balance
-    | 'connected' // complete state
-    // `connected` but requirements aren't met
-    | 'no-sol' // 0,01 sol
-    // setup error
-    | 'browser-not-supported' // pc not chrome/brave/mozilla/edge
-    | 'android-not-supported' // just android
-    | 'pc-not-phantom' // valid browser but no phantom/solana interface
-    | 'mobile-not-phantom' // ios but no phantom/solana interface
-*/
-
 function ConnectModal() {
     const wallet = useWallet()
     const navigate = useNavigate()
     const bgLocation = useBackgroundLocation()
 
+    const { fromApp } = useLocationState()
+    useEffect(() => {
+        analytics.logEvent('connect_modal_open', { fromApp })
+    }, [fromApp])
+
     if (wallet.status === 'idle' && !wallet.ready) {
         return (
-            <Dialog close={() => navigate(bgLocation?.pathname || '/')}>
+            <Dialog close={() => navigate(bgLocation?.pathname || '/', { state: { fromApp: true } })}>
                 <Link to={urls.external.phantom} underline>
                     {urls.external.phantom}
                 </Link>
@@ -109,7 +96,21 @@ export function Landing() {
     const location = useLocation()
     const bgLocation = useBackgroundLocation()
 
-    useScrollRestore()
+    const wallet = useWallet()
+    const userId = wallet.publicKey?.toString()
+    useEffect(() => {
+        if (userId) analytics.setUserId(userId)
+    }, [userId])
+
+    useEffect(() => {
+        function onUnload() {
+            analytics.logEvent('document_unload', { path: location.pathname })
+        }
+
+        window.addEventListener('beforeunload', onUnload)
+
+        return () => window.removeEventListener('beforeunload', onUnload)
+    }, [location.pathname])
 
     return (
         <>

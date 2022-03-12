@@ -1,7 +1,9 @@
 import * as PusherPushNotifications from '@pusher/push-notifications-web'
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
 
+import { analytics } from '../analytics'
 import { config } from '../config'
+import { extractErrorMessage } from '../utils/error'
 import { isIframe } from '../utils/isIframe'
 import { useWallet } from './ConnectProvider'
 
@@ -69,11 +71,16 @@ export function PushProvider({ children }: { children: ReactNode }) {
             enabled: granted,
             enable: () => {
                 start()
-                    .then(() => setGranted(isGranted()))
-                    .catch(() => {
+                    .then(() => {
+                        setGranted(isGranted())
+                        analytics.logEvent('push_notification_successful')
+                    })
+                    .catch((err) => {
                         // TODO fancy notifications
                         // eslint-disable-next-line no-alert
                         alert('Enable notifications in browser settings')
+
+                        analytics.logEvent('push_notification_failed', { reason: extractErrorMessage(err) })
                     })
             },
         }),

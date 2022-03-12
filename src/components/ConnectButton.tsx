@@ -1,23 +1,36 @@
 import { MouseEventHandler, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { analytics } from '../analytics'
 import { urls } from '../config'
 import { useWallet } from '../containers/ConnectProvider'
 import { Box } from '../design-system'
 import { ReactComponent as PhantomIcon } from '../images/phantom.svg'
+import { extractErrorMessage } from '../utils/error'
 import { LinkButton } from './LinkButton'
 import { Wallet } from './Wallet'
 
-export function useConnectLink() {
+export function useConnectLink(eventPrefix: string) {
     const wallet = useWallet()
     const location = useLocation()
     const navigate = useNavigate()
 
     const onConnect: MouseEventHandler<HTMLAnchorElement> = (e) => {
+        analytics.logEvent('connect_click', { from: eventPrefix })
+
         if (!wallet.ready) return
         if (wallet.status === 'connected') return
 
-        wallet.connect().then(() => navigate(urls.pages.welcome))
+        wallet
+            .connect()
+            .then(() => {
+                navigate(urls.pages.welcome, { state: { fromApp: true } })
+                analytics.logEvent('connect_successful', { from: eventPrefix })
+            })
+            .catch((err) => {
+                analytics.logEvent('connect_failed', { from: eventPrefix, reason: extractErrorMessage(err) })
+            })
+
         e.preventDefault()
     }
 
@@ -28,11 +41,11 @@ export function useConnectLink() {
     }
 }
 
-export function ConnectButton({ mobileText }: { mobileText?: string }) {
+export function ConnectButton({ mobileText, eventPrefix }: { mobileText?: string; eventPrefix: string }) {
     const text = 'Sign in to play'
 
     const wallet = useWallet()
-    const connectLinkProps = useConnectLink()
+    const connectLinkProps = useConnectLink(eventPrefix)
 
     const [hoveredOrFocus, setHoveredOrFocused] = useState(false)
     const onFocus = () => setHoveredOrFocused(true)
@@ -45,13 +58,18 @@ export function ConnectButton({ mobileText }: { mobileText?: string }) {
         }
     }, [wallet.status])
 
+    const onDisconnect = () => {
+        wallet.disconnect()
+        analytics.logEvent('disconnect_click', { from: eventPrefix })
+    }
+
     if (wallet.status === 'connected') {
         return (
             <LinkButton
                 as="button"
                 icon={<PhantomIcon />}
                 arrow={false}
-                {...{ onFocus, onMouseEnter, onBlur, onMouseLeave, onClick: () => wallet.disconnect() }}
+                {...{ onFocus, onMouseEnter, onBlur, onMouseLeave, onClick: onDisconnect }}
             >
                 <span style={{ width: 100, display: 'block' }}>
                     {hoveredOrFocus ? 'Disconnect' : <Wallet>{wallet.publicKey.toString()}</Wallet>}

@@ -37,27 +37,29 @@ const Container = styled('footer', {
     },
 })
 
-export function PageFooter() {
+export function PageFooter({ eventPrefix }: { eventPrefix: string }) {
+    const event = `${eventPrefix}_footer`
+
     return (
         <Container>
             <Box>
-                <Link to={urls.emails.breakroom.toUrl()}>
+                <Link to={urls.emails.breakroom.toUrl()} eventPrefix={event}>
                     <Typography>{urls.emails.breakroom}</Typography>
                 </Link>
             </Box>
             <Box>
-                <Link to={urls.forms.sponsors}>
+                <Link to={urls.forms.sponsors} eventPrefix={event}>
                     <Typography>Join as a sponsor</Typography>
                 </Link>
-                <Link {...htmlAnchor(FaqSection.id)}>
+                <Link {...htmlAnchor(FaqSection.id)} eventPrefix={event}>
                     <Typography>F.A.Q.</Typography>
                 </Link>
-                <Link to={urls.external.github}>
+                <Link to={urls.external.github} eventPrefix={event}>
                     <Typography>GitHub</Typography>
                 </Link>
             </Box>
             <Box>
-                <ConnectButton />
+                <ConnectButton eventPrefix={event} />
             </Box>
         </Container>
     )

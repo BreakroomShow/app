@@ -1,6 +1,7 @@
 import { AspectRatio } from '@radix-ui/react-aspect-ratio'
 import { useEffect, useReducer, useRef } from 'react'
 
+import { analytics } from '../../../analytics'
 import { Box, Text, styled } from '../../../design-system'
 import { ReactComponent as PlayIcon } from '../../../images/play.svg'
 import { useReplayBridge } from '../useReplayBridge'
@@ -140,6 +141,16 @@ export function GameReplaySection() {
 
     const [play, togglePlay] = useReducer((prev) => !prev, false)
     const [bridge, onLoad] = useReplayBridge()
+    const played = useRef(false)
+
+    useEffect(() => {
+        if (play) {
+            played.current = true
+            analytics.logEvent('replay_play')
+        } else if (played.current) {
+            analytics.logEvent('replay_pause')
+        }
+    }, [play])
 
     useEffect(() => {
         if (!bridge) return

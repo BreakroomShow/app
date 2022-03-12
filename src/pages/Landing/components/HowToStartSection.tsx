@@ -43,7 +43,7 @@ const Illustration = styled(Box, {
 })
 
 export function HowToStartSection() {
-    const connectLinkProps = useConnectLink()
+    const connectLinkProps = useConnectLink('how_to_start')
 
     const steps = [
         {

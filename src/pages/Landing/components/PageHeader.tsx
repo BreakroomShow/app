@@ -28,24 +28,26 @@ const Container = styled('header', {
     },
 })
 
-export function PageHeader() {
+export function PageHeader({ eventPrefix }: { eventPrefix: string }) {
+    const event = `${eventPrefix}_header`
+
     return (
         <Container>
             <Box>
-                <Link {...htmlAnchor(FaqSection.id)}>
+                <Link {...htmlAnchor(FaqSection.id)} eventPrefix={event}>
                     <Typography>F.A.Q.</Typography>
                 </Link>
-                <Link to={urls.forms.sponsors}>
+                <Link to={urls.forms.sponsors} eventPrefix={event}>
                     <Typography>Join as a sponsor</Typography>
                 </Link>
             </Box>
             <Box>
-                <Link to="/">
+                <Link to="/" eventPrefix={event}>
                     <Logo style={{ maxWidth: '40vw' }} />
                 </Link>
             </Box>
             <Box>
-                <ConnectButton mobileText="Play" />
+                <ConnectButton mobileText="Play" eventPrefix={event} />
             </Box>
         </Container>
     )

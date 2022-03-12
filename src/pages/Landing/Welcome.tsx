@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 
+import { analytics } from '../../analytics'
 import { useUpdateEmailNotification } from '../../api/mutations'
 import { useEmailNotificationQuery } from '../../api/query'
 import { InputForm, InputLikeButton } from '../../components/InputForm'
@@ -8,6 +9,8 @@ import { urls } from '../../config'
 import { useWallet } from '../../containers/ConnectProvider'
 import { usePush } from '../../containers/PushProvider'
 import { Box, Spacer, Stack, Text, styled } from '../../design-system'
+import { useLocationState } from '../../hooks/useLocationState'
+import { extractErrorMessage } from '../../utils/error'
 import { nbsp } from '../../utils/nbsp'
 import { Page } from './components/Page'
 import { PageContent } from './components/PageContent'
@@ -56,8 +59,22 @@ const ContentRight = styled(Box, {
 function NotificationSection() {
     const push = usePush()
 
+    useEffect(() => {
+        if (!push.isSupported) {
+            analytics.logEvent('push_not_supported')
+        }
+    }, [push.isSupported])
+
     const emailNotification = useEmailNotificationQuery()
     const updateEmailNotification = useUpdateEmailNotification()
+
+    const emailSubscribed = !!emailNotification
+
+    useEffect(() => {
+        if (emailSubscribed) {
+            analytics.logEvent('email_has_subscribed')
+        }
+    }, [emailSubscribed])
 
     return (
         <Container>
@@ -80,11 +97,20 @@ function NotificationSection() {
                             placeholder="Email"
                             defaultValue={emailNotification}
                             onSubmit={(text) => {
-                                updateEmailNotification.mutateAsync(text).then(() => {
-                                    // TODO fancy notification
-                                    // eslint-disable-next-line no-alert
-                                    alert('Updated!')
-                                })
+                                updateEmailNotification
+                                    .mutateAsync(text)
+                                    .then(() => {
+                                        // TODO fancy notification
+                                        // eslint-disable-next-line no-alert
+                                        alert('Updated!')
+
+                                        analytics.logEvent('email_notification_successful', { email: text })
+                                    })
+                                    .catch((err) => {
+                                        analytics.logEvent('email_notification_failed', {
+                                            reason: extractErrorMessage(err),
+                                        })
+                                    })
                             }}
                         />
                         {push.isSupported ? (
@@ -96,7 +122,11 @@ function NotificationSection() {
                                 Browser notifications
                             </InputLikeButton>
                         ) : null}
-                        <InputLikeButton href={urls.external.bot} target="_blank">
+                        <InputLikeButton
+                            href={urls.external.bot}
+                            target="_blank"
+                            onClick={() => analytics.logEvent('telegram_notification_click')}
+                        >
                             Telegram notifications
                         </InputLikeButton>
                     </Stack>
@@ -137,9 +167,12 @@ function InviteSection() {
     const shareInvite = async () => {
         try {
             await window.navigator.share({ title: 'Breakroom.show invite', url: link })
+            analytics.logEvent('invite_share_menu_opened')
         } catch {
             await navigator.clipboard?.writeText(link)
             setCopied(true)
+
+            analytics.logEvent('invite_copied')
         }
     }
 
@@ -180,6 +213,11 @@ function InviteSection() {
 export function Welcome() {
     const wallet = useWallet()
 
+    const { fromApp } = useLocationState()
+    useEffect(() => {
+        analytics.logEvent('welcome_page_open', { fromApp })
+    }, [fromApp])
+
     if (wallet.status === 'idle') {
         return <Navigate to="/" />
     }
@@ -187,7 +225,7 @@ export function Welcome() {
     return (
         <Page>
             <PageContent css={{ paddingTop: 70, '@down-lg': { paddingTop: 25 } }}>
-                <PageHeader />
+                <PageHeader eventPrefix="welcome" />
                 <Spacer size="lg" />
                 <Stack align="center" space="sm">
                     <SectionTitle>Great! Wallet connected!</SectionTitle>
@@ -199,7 +237,7 @@ export function Welcome() {
                 <NotificationSection />
                 <InviteSection />
                 <PageLinkButton>Done!</PageLinkButton>
-                <PageFooter />
+                <PageFooter eventPrefix="welcome" />
             </PageContent>
         </Page>
     )
