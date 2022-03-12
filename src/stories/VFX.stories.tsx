@@ -82,7 +82,6 @@ const Template: Story<{
     <ReplayContext.Provider value={args}>
         <VFX {...args}>
             <OrbitControls />
-            {/* <Perf /> */}
         </VFX>
     </ReplayContext.Provider>
 )
@@ -92,5 +91,5 @@ export const Default = Template.bind({})
 Default.args = {
     speed: 2.4,
     isPlaying: true,
-    event: types.intro_splash,
+    event: types.crypto_fact,
 }

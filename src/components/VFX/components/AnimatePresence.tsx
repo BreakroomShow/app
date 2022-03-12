@@ -1,8 +1,8 @@
-import { AnimatePresence as AnimatePresenceOG } from 'framer-motion'
+import { AnimatePresence as AnimatePresenceOG, Variants } from 'framer-motion'
 import { motion } from 'framer-motion-3d'
 import { ReactNode } from 'react'
 
-const variants = {
+const variantsOG = {
     enter: { x: -20 },
     visible: { x: 0 },
     exit: { x: 20 },
@@ -13,9 +13,10 @@ interface AnimatePresenceProps {
     isVisible: boolean
     children: ReactNode
     onExit(): void
+    variants?: Variants
 }
 
-export const AnimatePresence = ({ onExit, isVisible, children, id }: AnimatePresenceProps) => {
+export const AnimatePresence = ({ onExit, isVisible, children, id, variants = variantsOG }: AnimatePresenceProps) => {
     return (
         <AnimatePresenceOG>
             <motion.group
