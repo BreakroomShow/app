@@ -2,8 +2,8 @@ import { ConnectButton } from '../../../components/ConnectButton'
 import { Link } from '../../../components/Link'
 import { urls } from '../../../config'
 import { Box, Typography, styled } from '../../../design-system'
+import { useHtmlAnchor } from '../../../hooks/useHtmlAnchor'
 import { ReactComponent as Logo } from '../../../images/logo.svg'
-import { htmlAnchor } from '../../../utils/htmlAnchor'
 import { FaqSection } from './FaqSection'
 
 const Container = styled('header', {
@@ -34,7 +34,7 @@ export function PageHeader({ eventPrefix }: { eventPrefix: string }) {
     return (
         <Container>
             <Box>
-                <Link {...htmlAnchor(FaqSection.id)} eventPrefix={event}>
+                <Link {...useHtmlAnchor(FaqSection.id, '/')} eventPrefix={event}>
                     <Typography>F.A.Q.</Typography>
                 </Link>
                 <Link to={urls.forms.sponsors} eventPrefix={event}>

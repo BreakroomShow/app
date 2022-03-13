@@ -2,7 +2,7 @@ import { ConnectButton } from '../../../components/ConnectButton'
 import { Link } from '../../../components/Link'
 import { urls } from '../../../config'
 import { Box, Typography, styled } from '../../../design-system'
-import { htmlAnchor } from '../../../utils/htmlAnchor'
+import { useHtmlAnchor } from '../../../hooks/useHtmlAnchor'
 import { FaqSection } from './FaqSection'
 
 const Container = styled('footer', {
@@ -51,7 +51,7 @@ export function PageFooter({ eventPrefix }: { eventPrefix: string }) {
                 <Link to={urls.forms.sponsors} eventPrefix={event}>
                     <Typography>Join as a sponsor</Typography>
                 </Link>
-                <Link {...htmlAnchor(FaqSection.id)} eventPrefix={event}>
+                <Link {...useHtmlAnchor(FaqSection.id, '/')} eventPrefix={event}>
                     <Typography>F.A.Q.</Typography>
                 </Link>
                 <Link to={urls.external.github} eventPrefix={event}>

@@ -1,5 +1,10 @@
-import { Link } from '../components/Link'
+import { Link as LinkBase } from '../components/Link'
+import { styled } from '../design-system'
 import { urls } from './urls'
+
+const Link = styled(LinkBase, {
+    wordBreak: 'break-word',
+})
 
 export const faq = {
     General: [

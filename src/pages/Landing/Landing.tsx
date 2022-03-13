@@ -9,8 +9,8 @@ import { urls } from '../../config'
 import { useWallet } from '../../containers/ConnectProvider'
 import { Stack } from '../../design-system'
 import { useBackgroundLocation } from '../../hooks/useBackgroundLocation'
+import { useHtmlAnchor } from '../../hooks/useHtmlAnchor'
 import { useLocationState } from '../../hooks/useLocationState'
-import { htmlAnchor } from '../../utils/htmlAnchor'
 import { lazy } from '../../utils/lazy'
 import { FaqSection } from './components/FaqSection'
 import { GameReplaySection } from './components/GameReplaySection'
@@ -45,7 +45,7 @@ function Index() {
                     <PageHeader eventPrefix={eventPrefix} />
                     <HeadlineSection />
                     <NextGameSection>
-                        <PageLinkButton {...htmlAnchor(HowItWorksSection.id)}>How it works</PageLinkButton>
+                        <PageLinkButton {...useHtmlAnchor(HowItWorksSection.id)}>How it works</PageLinkButton>
                     </NextGameSection>
                     <GameReplaySection />
                 </Stack>
