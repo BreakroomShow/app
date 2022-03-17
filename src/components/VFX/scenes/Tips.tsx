@@ -23,6 +23,7 @@ export const Tips = ({ event: nextEvent }: { event: GameEvent }) => {
                 onExit={() => setEvent(nextEvent)}
                 isVisible={nextEvent.text === event.text}
                 variants={variants}
+                transition={{ type: 'spring', bounce: 0.3 }}
             >
                 <FlatText text={event.text} widthCoeff={0.33} />
             </AnimatePresence>
