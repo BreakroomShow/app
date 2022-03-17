@@ -1,13 +1,15 @@
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useTexture } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Color, DoubleSide, InstancedMesh, Object3D } from 'three'
 
 import { selectRandom } from '../../../utils/selectRandom'
+import matcap from '../assets/matcap_texture_white.png'
 import { colors } from '../helpers/constants'
 
 export const Diamonds = () => {
     const model = useRef<InstancedMesh>(null)
+    const matcapTex = useTexture(matcap)
     const { nodes } = useGLTF('/assets/ruby.gltf')
 
     const dummy = useMemo(() => new Object3D(), [])
@@ -70,7 +72,7 @@ export const Diamonds = () => {
     return (
         /* @ts-ignore */
         <instancedMesh ref={model} args={[nodes?.Ruby?.geometry, null, diamonds.length]}>
-            <meshBasicMaterial side={DoubleSide} />
+            <meshMatcapMaterial side={DoubleSide} matcap={matcapTex} />
         </instancedMesh>
     )
 }

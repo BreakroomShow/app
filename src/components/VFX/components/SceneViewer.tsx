@@ -22,10 +22,10 @@ export const SceneViewer = ({ event: nextEvent, offset = 0 }: { offset?: number;
     const [[scene, event], setScene] = useState([nextScene, nextEvent])
 
     useEffect(() => {
-        if (nextEvent?.type === event?.type) {
+        if (nextEvent?.type === event?.type || (!event && nextEvent)) {
             setScene([nextScene, nextEvent])
         }
-    }, [event?.type, nextEvent, nextScene])
+    }, [event, event?.type, nextEvent, nextScene])
 
     if (!scene || !event) return null
 

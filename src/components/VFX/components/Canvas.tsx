@@ -15,7 +15,7 @@ export const Canvas = ({ children }: { children: ReactNode }) => {
 
     return (
         <OGCanvas
-            dpr={capable ? window.devicePixelRatio : 1}
+            dpr={capable ? Math.min(2, window.devicePixelRatio) : 1}
             gl={{
                 stencil: false,
                 alpha: false,
