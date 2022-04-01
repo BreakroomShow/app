@@ -4,12 +4,7 @@ import { GameEvent } from '../../../types'
 import { AnimatePresence } from '../components/AnimatePresence'
 import { Diamonds } from '../components/Diamonds'
 import { FlatText } from '../components/FlatText'
-
-const variants = {
-    enter: { scale: 0.001 },
-    visible: { scale: 1 },
-    exit: { scale: 0.001 },
-}
+import { scaleVariants } from '../helpers/constants'
 
 export const Tips = ({ event: nextEvent }: { event: GameEvent }) => {
     if (nextEvent.type !== 'crypto_fact') throw new Error('Tips work with "crypto_fact" event only')
@@ -22,7 +17,7 @@ export const Tips = ({ event: nextEvent }: { event: GameEvent }) => {
                 id={event.text}
                 onExit={() => setEvent(nextEvent)}
                 isVisible={nextEvent.text === event.text}
-                variants={variants}
+                variants={scaleVariants}
                 transition={{ type: 'spring', bounce: 0.3 }}
             >
                 <FlatText text={event.text} widthCoeff={0.33} />

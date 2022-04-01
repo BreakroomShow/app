@@ -10,6 +10,7 @@ import { colors } from '../helpers/constants'
 export const Diamonds = () => {
     const model = useRef<InstancedMesh>(null)
     const matcapTex = useTexture(matcap)
+    // @ts-ignore
     const { nodes } = useGLTF('/assets/ruby.gltf')
 
     const dummy = useMemo(() => new Object3D(), [])

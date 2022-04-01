@@ -1,5 +1,6 @@
 import { BufferGeometryNode, ReactThreeFiber, extend } from '@react-three/fiber'
-import { MeshBasicMaterial, ShaderMaterial } from 'three'
+import { BoxGeometry, MeshBasicMaterial, ShaderMaterial } from 'three'
+import { RoundedBoxGeometry } from 'three-stdlib'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 
 import { MeshLine, MeshLineMaterial, MeshLineRaycast } from './MeshLine'
@@ -26,13 +27,19 @@ declare global {
             meshLine: ReactThreeFiber.MaterialNode<MeshLineRef, []>
             meshLineMaterial: ReactThreeFiber.MaterialNode<MeshLineMaterialRef, []>
             textGeometry: BufferGeometryNode<TextGeometry, typeof TextGeometry>
+            roundedBoxGeometry: ReactThreeFiber.BufferGeometryNode<RoundedBoxRef, []>
         }
     }
+}
+
+export type RoundedBoxRef = BoxGeometry & {
+    radius?: number
 }
 
 extend({
     AnimatedGalaxyMaterial,
     MeshLine,
+    RoundedBoxGeometry,
     MeshLineMaterial,
     MeshLineRaycast,
     TextGeometry,

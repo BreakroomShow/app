@@ -25,7 +25,7 @@ const types: { [event in GameEvent['type']]?: GameEvent } = {
         prize_fund_usd: 100,
         sponsor_title: 'Dnevnichok',
         distribution_type: 'chain',
-        duration: 2.0833333333333335,
+        duration: 10.0833333333333,
         game_start_offset: 25,
     },
     question: {
@@ -91,5 +91,5 @@ export const Default = Template.bind({})
 Default.args = {
     speed: 2.4,
     isPlaying: true,
-    event: types.crypto_fact,
+    event: types.intro_splash,
 }

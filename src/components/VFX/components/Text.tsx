@@ -7,9 +7,9 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import initialMatcap from '../assets/matcap_texture.png'
 
 const defaultConfig = {
-    size: 0.5,
+    size: 1,
     height: 0.125,
-    curveSegments: 32,
+    curveSegments: 7,
     bevelThickness: 0.03,
     bevelSize: 0.005,
     bevelEnabled: true,
@@ -18,7 +18,7 @@ const defaultConfig = {
 }
 
 export const Text = ({
-    children = `Breakroom`,
+    children = `BreakRoom`,
     vAlign = 'center',
     hAlign = 'center',
     size = 1,
@@ -26,6 +26,7 @@ export const Text = ({
     color = '',
     dontAlign = false,
     matcap = initialMatcap,
+    matcapEnabled = false,
     ...props
 }) => {
     const font = useLoader(FontLoader, './fonts/Blacker.json')
@@ -49,27 +50,33 @@ export const Text = ({
         if (mesh.current !== null) {
             const textSize = new Vector3()
             mesh.current.geometry.computeBoundingBox()
+
             if (mesh.current.geometry.boundingBox) {
-                mesh.current.geometry.boundingBox.getSize(textSize)
-                let [xPos, yPos] = [0, 0]
+                if (hAlign === 'center' && vAlign === 'center') {
+                    mesh.current.geometry.center()
+                } else {
+                    mesh.current.geometry.boundingBox.getSize(textSize)
+                    let [xPos, yPos] = [0, 0]
 
-                if (hAlign === 'center') {
-                    xPos = -textSize.x / 2
-                } else if (hAlign !== 'right') {
-                    xPos = -textSize.x
+                    if (hAlign === 'center') {
+                        xPos = -textSize.x / 2
+                    } else if (hAlign !== 'right') {
+                        xPos = -textSize.x
+                    }
+
+                    if (vAlign === 'center') {
+                        yPos = -textSize.y / 2
+                    } else if (vAlign !== 'top') {
+                        yPos = -textSize.y
+                    }
+                    if (mesh.current) {
+                        mesh.current.position.x = xPos
+                        mesh.current.position.y = yPos
+                    }
                 }
-
-                if (vAlign === 'center') {
-                    yPos = -textSize.y / 2
-                } else if (vAlign !== 'top') {
-                    yPos = -textSize.y
-                }
-
-                mesh.current.position.x = xPos
-                mesh.current.position.y = yPos
             }
         }
-    }, [children, dontAlign, hAlign, vAlign])
+    }, [children, hAlign, vAlign, size])
 
     const matcapTex = useTexture(matcap)
 
@@ -77,7 +84,11 @@ export const Text = ({
         <group {...props}>
             <mesh ref={mesh}>
                 <textGeometry args={[children, fontConfig]} />
-                {color ? <meshBasicMaterial color={color} /> : <meshMatcapMaterial matcap={matcapTex} />}
+                {color && !matcapEnabled ? (
+                    <meshBasicMaterial color={color} />
+                ) : (
+                    <meshMatcapMaterial matcap={matcapTex} color={color} />
+                )}
             </mesh>
         </group>
     )

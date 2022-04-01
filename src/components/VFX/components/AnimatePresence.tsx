@@ -1,4 +1,4 @@
-import { AnimatePresence as AnimatePresenceOG, Transition, Variants } from 'framer-motion'
+import { Transition, Variants } from 'framer-motion'
 import { motion } from 'framer-motion-3d'
 import { ReactNode } from 'react'
 
@@ -9,10 +9,11 @@ const variantsOG = {
 }
 
 interface AnimatePresenceProps {
-    id: string
+    id: string | number
     isVisible: boolean
     children: ReactNode
-    onExit(): void
+    onExit?(): void
+    onVisible?(): void
     variants?: Variants
     transition?: Transition
 }
@@ -23,24 +24,23 @@ export const AnimatePresence = ({
     children,
     id,
     variants = variantsOG,
-    transition,
+    onVisible,
+    transition = { type: 'spring', duration: children ? 1 : 0, bounce: 0.1 },
 }: AnimatePresenceProps) => {
     return (
-        <AnimatePresenceOG>
-            <motion.group
-                key={id}
-                variants={variants}
-                // @ts-ignore
-                initial="enter"
-                animate={isVisible ? 'visible' : 'exit'}
-                exit="exit"
-                transition={transition || { type: 'spring', duration: children ? 1 : 0, bounce: 0.1 }}
-                onAnimationComplete={(definition) => {
-                    if (definition === 'exit') onExit()
-                }}
-            >
-                {children}
-            </motion.group>
-        </AnimatePresenceOG>
+        <motion.group
+            key={id}
+            variants={variants}
+            // @ts-ignore
+            initial="enter"
+            animate={isVisible ? 'visible' : 'exit'}
+            transition={transition}
+            onAnimationComplete={(definition) => {
+                if (definition === 'exit' && onExit) onExit()
+                if (definition === 'visible' && onVisible) onVisible()
+            }}
+        >
+            {children}
+        </motion.group>
     )
 }

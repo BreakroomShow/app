@@ -14,7 +14,7 @@ export const MultilineText = ({ texts = ['Breakroom', 'Show'], size = 1 }) => {
                                 {el}
                             </Text>
                         </Box>
-                        {i < texts.length - 1 ? <Box padding={0.15 * size}>null</Box> : null}
+                        {i < texts.length - 1 ? <Box padding={0.35 * size}>null</Box> : null}
                     </group>
                 ))}
             </Flex>
@@ -24,24 +24,22 @@ export const MultilineText = ({ texts = ['Breakroom', 'Show'], size = 1 }) => {
 
 export const MultilineTextPro = ({
     texts = [
-        { text: 'players today', size: 0.32 },
-        { text: '15,230', size: 1 },
+        { text: '15,230', size: 0.5 },
+        { text: 'players today', size: 0.15 },
     ],
+    sizeScale = 1,
     textProps = {},
+    ...props
 }) => {
     return (
-        <VerticalCenter>
-            <Flex justifyContent="center">
-                {texts.map(({ size, text }, i) => (
-                    <group key={i}>
-                        <Box marginTop={0.1}>
-                            <Text size={size} vAlign="bottom" {...textProps}>
-                                {text}
-                            </Text>
-                        </Box>
-                    </group>
-                ))}
-            </Flex>
-        </VerticalCenter>
+        <Flex align="center" justify="center" {...props}>
+            {texts.map(({ size, text }, i) => (
+                <Box centerAnchor width={1} key={i} height={size * sizeScale} marginTop={i > 0 ? 0.15 * sizeScale : 0}>
+                    <Text size={size * sizeScale} {...textProps}>
+                        {text}
+                    </Text>
+                </Box>
+            ))}
+        </Flex>
     )
 }
