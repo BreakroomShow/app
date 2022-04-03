@@ -3,7 +3,7 @@ import { Box, Flex } from '@react-three/flex'
 import { VerticalCenter } from '../helpers/VerticalCenter'
 import { Text } from './Text'
 
-export const MultilineText = ({ texts = ['Breakroom', 'Show'], size = 1 }) => {
+export const MultilineText = ({ texts = ['Breakroom', 'Show'], size = 0.5 }) => {
     return (
         <VerticalCenter>
             <Flex justifyContent="center">
