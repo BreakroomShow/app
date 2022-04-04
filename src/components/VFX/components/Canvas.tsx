@@ -20,7 +20,6 @@ export const Canvas = ({ children }: { children: ReactNode }) => {
                 stencil: false,
                 alpha: false,
                 antialias: true,
-                preserveDrawingBuffer: true,
             }}
             flat
             onCreated={({ gl }) => gl.setClearColor('#020207')}

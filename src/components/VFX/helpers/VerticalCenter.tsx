@@ -9,13 +9,8 @@ export const VerticalCenter = React.forwardRef<Group, Props>(function Center({ c
     const outer = React.useRef<Group>(null)
     const inner = React.useRef<Group>(null)
 
-    React.useEffect(() => {
-        console.log('init')
-    }, [])
-
     React.useLayoutEffect(() => {
         // @ts-ignore
-        console.log('children change')
         if (!outer.current || !inner.current) return
 
         outer.current.position.set(0, 0, 0)

@@ -1,9 +1,9 @@
 import { theme } from '../../../design-system'
 
 export const scaleVariants = {
-    enter: {},
-    visible: {},
-    exit: {},
+    enter: { scale: 0.001 },
+    visible: { scale: 1 },
+    exit: { scale: 0.001 },
 }
 
 export const colors = {
