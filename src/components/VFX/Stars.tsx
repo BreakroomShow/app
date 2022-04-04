@@ -27,7 +27,7 @@ export function Stars({ count = 40, depth = 10, size = 800, color }: StarsProps)
     const pointsArray = useMemo(
         () =>
             Array.from({ length: count }, () => {
-                const radius = (Math.random() - 0.5) * depth
+                const radius = ((Math.random() + 0.1) * depth) / 2
                 const [x, z] = Random.onCircle(radius)
                 const y = Math.abs(radius) * Math.tan((37.5 * Math.PI) / 180)
                 return {

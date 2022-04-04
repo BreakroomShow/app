@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 
 import { Canvas } from '../components/VFX/components/Canvas'
 import { SceneViewer } from '../components/VFX/components/SceneViewer'
-// import { Stars } from '../components/VFX/Stars'
+import { Stars } from '../components/VFX/Stars'
 import { Box } from '../design-system'
 import { GameEvent } from '../types'
 
@@ -20,7 +20,7 @@ export const VFX = ({ event, offset, children }: VFXProps) => {
             <Canvas>
                 {children}
                 <SceneViewer event={event} offset={offset} />
-                {/* <Stars /> */}
+                <Stars depth={400} size={500} count={2520} />
             </Canvas>
         </Box>
     )
