@@ -106,4 +106,4 @@ export const cssFactory = stitches.createStitches({
     },
 })
 
-export const { styled, css, theme, config, keyframes, globalCss, getCssText } = cssFactory
+export const { styled, css, theme, config, keyframes, globalCss, reset, getCssText, createTheme } = cssFactory

@@ -4,7 +4,7 @@ import { useEffect, useReducer, useRef } from 'react'
 import { analytics } from '../../../analytics'
 import { Box, Text, styled } from '../../../design-system'
 import { ReactComponent as PlayIcon } from '../../../images/play.svg'
-import { useReplayBridge } from '../useReplayBridge'
+import { useReplayBridge } from '../../Replay'
 
 const PlayButton = styled(Box, {
     position: 'absolute',

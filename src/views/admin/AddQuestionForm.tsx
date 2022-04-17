@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { useAddQuestion } from '../api/mutations'
-import { Typography } from '../design-system'
+import { useAddQuestion } from '../../api/mutations'
+import { Typography } from '../../design-system'
 
 interface Props {
     gameId: number

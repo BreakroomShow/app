@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { GameOptions } from '../types'
-import { addMinutes, dateStringToMs, msToDateString } from '../utils/date'
+import { GameOptions } from '../../types'
+import { addMinutes, dateStringToMs, msToDateString } from '../../utils/date'
 
 interface GameFormProps {
     name?: string

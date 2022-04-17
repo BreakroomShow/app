@@ -1,7 +1,6 @@
 import amplitude from 'amplitude-js'
 
-import { config } from '../config'
-import { isIframe } from '../utils/isIframe'
+import { config, isIframe } from '../config'
 
 const amplitudeClient = isIframe
     ? new Proxy({} as amplitude.AmplitudeClient, { get: () => () => null })

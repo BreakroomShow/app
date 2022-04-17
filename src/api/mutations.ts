@@ -1,5 +1,5 @@
+import * as trivia from '@breakroom/programs'
 import * as anchor from '@project-serum/anchor'
-import * as trivia from 'clic-trivia'
 import { useRef } from 'react'
 import { useMutation } from 'react-query'
 import axios from 'redaxios'
@@ -235,7 +235,7 @@ export function useRevealQuestion(gameIndex: number) {
 }
 
 interface RevealAnswerOptions {
-    questionKey: anchor.web3.PublicKey
+    questionKey: anchor.web3.PublicKey | string
     variantId: number
 }
 
@@ -249,6 +249,10 @@ export function useRevealAnswer(gameIndex: number) {
             if (!gamePda) return
             if (!program) return
             if (!walletPublicKey) throw new ProgramError('Unauthorized')
+
+            if (typeof questionKey === 'string') {
+                questionKey = new anchor.web3.PublicKey(questionKey)
+            }
 
             return program.rpc.revealAnswer(variantId, {
                 accounts: {
@@ -282,11 +286,12 @@ export function useSubmitAnswer(gameIndex: number) {
             if (!program) return
             if (!walletPublicKey) throw new ProgramError('Unauthorized')
 
-            const [userPda] = await trivia.UserPDA(config.programID, triviaPda, walletPublicKey)
+            const [userPda, userBump] = await trivia.UserPDA(config.programID, triviaPda, walletPublicKey)
             const [playerPda, playerBump] = await trivia.PlayerPDA(config.programID, gamePda, userPda)
 
-            return program.rpc.submitAnswer(variantId, playerBump, {
+            return program.rpc.submitAnswer(variantId, playerBump, userBump, {
                 accounts: {
+                    feePayer: walletPublicKey, // TODO change if using octane
                     trivia: triviaPda,
                     game: gamePda,
                     user: userPda,

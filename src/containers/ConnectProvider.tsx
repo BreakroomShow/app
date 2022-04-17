@@ -6,18 +6,18 @@ import {
     WalletNotConnectedError,
     WalletNotReadyError,
 } from '@solana/wallet-adapter-base'
-import { Wallet, getPhantomWallet } from '@solana/wallet-adapter-wallets'
+import { Wallet } from '@solana/wallet-adapter-wallets'
+import { getPhantomWallet } from '@solana/wallet-adapter-wallets/lib/phantom'
 import * as solana from '@solana/web3.js'
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 import { analytics } from '../analytics'
 import { authorize } from '../api'
-import { config } from '../config'
+import { config, isIframe } from '../config'
 import { useGetLatest } from '../hooks/useGetLatest'
 import { useIsUnloading } from '../hooks/useIsUnloading'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { extractErrorMessage } from '../utils/error'
-import { isIframe } from '../utils/isIframe'
 
 type Token = string & {}
 
@@ -81,10 +81,14 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
     })
 
     const [cluster, setCluster] = useState<WalletContextState['cluster']>('devnet')
-    const endpoint = useMemo(() => config.clusterUrl(cluster), [cluster])
+    const { endpoint, wsEndpoint } = config.clusterApi(cluster)
     const connection = useMemo(
-        () => new solana.Connection(endpoint, { commitment: config.preflightCommitment }),
-        [endpoint],
+        () =>
+            new solana.Connection(endpoint, {
+                wsEndpoint,
+                commitment: config.preflightCommitment,
+            }),
+        [endpoint, wsEndpoint],
     )
 
     const isUnloading = useIsUnloading()
@@ -198,6 +202,7 @@ export function ConnectProvider({ children }: { children: ReactNode }) {
     })
 
     const connect = useCallback(async () => {
+        if (isIframe) return
         if (status === 'connecting' || status === 'connected' || status === 'disconnecting') return
 
         if (!adapter) throw new WalletNotSelectedError()

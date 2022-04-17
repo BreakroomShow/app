@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Color, DoubleSide, InstancedMesh, Object3D } from 'three'
 
-import { useReplay } from '../../../pages/Landing/useReplay'
+import { useReplay } from '../../../pages/Replay'
 import { selectRandom } from '../../../utils/selectRandom'
 import matcap from '../assets/matcap_texture_white.png'
 import { colors } from '../helpers/constants'

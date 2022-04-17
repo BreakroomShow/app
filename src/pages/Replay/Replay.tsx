@@ -164,7 +164,7 @@ export function Replay() {
 
                 const nextEvent = events[index + 1]
 
-                const duration = ((nextEvent?.event.game_start_offset ?? 0) - event.game_start_offset) * 1000
+                const duration = ((nextEvent?.event.game_start_offset || 0) - event.game_start_offset) * 1000
 
                 await sleep((duration /* to level the accuracy */ * 0.7) / SPEED)
 
@@ -222,7 +222,6 @@ export function Replay() {
                             <ReplayManager
                                 event={currentEvent}
                                 currentQuestionId={currentQuestionId}
-                                totalQuestions={totalQuestions}
                                 userAnswerId={userAnswerId}
                             />
                         </SegmentContainer>

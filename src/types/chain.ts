@@ -1,5 +1,5 @@
+import * as trivia from '@breakroom/programs'
 import * as anchor from '@project-serum/anchor'
-import * as trivia from 'clic-trivia'
 
 export interface UnrevealedQuestion {
     publicKey: string

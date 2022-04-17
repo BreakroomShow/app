@@ -12,7 +12,7 @@ const TimeContainer = styled(Box, {
     justifyContent: 'center',
 })
 
-export function Timer({ deadline, active, speed = 1 }: { deadline: number; active?: boolean; speed?: number }) {
+export function Timer({ deadline, active = true, speed = 1 }: { deadline: number; active?: boolean; speed?: number }) {
     const { nonce, stop } = useNonce({ delay: 333, active })
 
     const [startTime] = useState(() => Date.now())

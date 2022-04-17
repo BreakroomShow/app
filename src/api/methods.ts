@@ -45,6 +45,19 @@ export function getReplay() {
         .catch(() => null)
 }
 
+export function getCurrentGame() {
+    return api
+        .get<{
+            current_game: null | {
+                socket_key: string
+                chain_start_time: string
+                game_index: number
+            }
+        }>('games/current')
+        .then((res) => res.data.current_game)
+        .catch(() => null)
+}
+
 export function updateEmailNotification(email: string, token: string) {
     return api.post<void>(
         'notifications/email',

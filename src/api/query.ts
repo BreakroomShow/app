@@ -1,5 +1,5 @@
+import * as trivia from '@breakroom/programs'
 import * as anchor from '@project-serum/anchor'
-import * as trivia from 'clic-trivia'
 import { QueryClient, useQuery } from 'react-query'
 import axios from 'redaxios'
 
@@ -7,7 +7,7 @@ import { config } from '../config'
 import { useWallet } from '../containers/ConnectProvider'
 import { Game, Question, UnrevealedQuestion } from '../types'
 import { ProgramError } from '../utils/error'
-import { getEmailNotification, getReplay } from './methods'
+import { getCurrentGame, getEmailNotification, getReplay } from './methods'
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -43,6 +43,9 @@ export const cacheKeys = {
     questions: 'questions',
     unrevealedQuestions: 'unrevealedQuestions',
     nextGame: 'nextGame',
+    emailNotification: 'emailNotification',
+    replay: 'replay',
+    currentGame: 'currentGame',
 } as const
 
 const noopPda = [null, null] as const
@@ -290,15 +293,20 @@ export function useNextGameQuery() {
 }
 
 export function useReplayQuery() {
-    return useQuery(['replay'], getReplay)
+    return useQuery([cacheKeys.replay], getReplay)
 }
-useReplayQuery.preload = () => queryClient.prefetchQuery(['replay'], getReplay)
+useReplayQuery.preload = () => queryClient.prefetchQuery([cacheKeys.replay], getReplay)
 
 export function useEmailNotificationQuery() {
     const wallet = useWallet()
 
-    return useQuery(['notifications/email', wallet.token], () => {
+    return useQuery([cacheKeys.emailNotification, wallet.token], () => {
         if (!wallet.token) return ''
         return getEmailNotification(wallet.token)
     }).data
 }
+
+export function useCurrentGameQuery() {
+    return useQuery([cacheKeys.currentGame], getCurrentGame)
+}
+useCurrentGameQuery.preload = () => queryClient.prefetchQuery([cacheKeys.currentGame], getCurrentGame)

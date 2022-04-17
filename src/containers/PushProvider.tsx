@@ -2,9 +2,8 @@ import * as PusherPushNotifications from '@pusher/push-notifications-web'
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { analytics } from '../analytics'
-import { config } from '../config'
+import { config, isIframe } from '../config'
 import { extractErrorMessage } from '../utils/error'
-import { isIframe } from '../utils/isIframe'
 import { useWallet } from './ConnectProvider'
 
 let beamsClient: null | PusherPushNotifications.Client = null

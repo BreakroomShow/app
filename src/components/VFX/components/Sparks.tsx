@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import { CatmullRomCurve3, Vector3 } from 'three'
 
-import { useReplay } from '../../../pages/Landing/useReplay'
+import { useReplay } from '../../../pages/Replay'
 import { randomFloat, selectRandom } from '../../../utils/selectRandom'
 import { MeshLineRef } from '../extend'
 import { colors as colorsOG } from '../helpers/constants'

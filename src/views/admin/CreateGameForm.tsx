@@ -1,4 +1,4 @@
-import { useCreateGame } from '../api/mutations'
+import { useCreateGame } from '../../api/mutations'
 import { GameForm } from './GameForm'
 
 interface CreateGameFormProps {

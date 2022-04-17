@@ -2,7 +2,7 @@ import { OrbitControls } from '@react-three/drei'
 import { ComponentMeta, Story } from '@storybook/react'
 
 import { VFX } from '../containers/VFX'
-import { ReplayContext } from '../pages/Landing/useReplay'
+import { ReplayContext } from '../pages/Replay'
 import { GameEvent } from '../types'
 
 const types: { [event in GameEvent['type']]?: GameEvent } = {
@@ -35,6 +35,8 @@ const types: { [event in GameEvent['type']]?: GameEvent } = {
         game_start_offset: 10,
         question: 'Cristiano Ronaldo plays which sport?',
         answers: ['Soccer', 'Basketball', 'Baseball'],
+        question_public_key: '',
+        question_index: 0,
     },
     answer_reveal: {
         type: 'answer_reveal',
@@ -48,6 +50,7 @@ const types: { [event in GameEvent['type']]?: GameEvent } = {
             game_start_offset: 10,
             question: 'Cristiano Ronaldo plays which sport?',
             answers: ['Soccer', 'Basketball', 'Baseball'],
+            question_index: 0,
         },
         correct_answer_ind: 0,
         answer_count: {

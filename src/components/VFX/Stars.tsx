@@ -4,7 +4,7 @@ import Random from 'canvas-sketch-util/random'
 import { ComponentRef, Suspense, useMemo, useRef } from 'react'
 import { AdditiveBlending, Color, Vector3 } from 'three'
 
-import { useReplay } from '../../pages/Landing/useReplay'
+import { useReplay } from '../../pages/Replay'
 import { selectRandom } from '../../utils/selectRandom'
 import { AnimatedGalaxyMaterialRef } from './extend'
 import { colors } from './helpers/constants'

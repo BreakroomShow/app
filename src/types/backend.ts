@@ -31,12 +31,14 @@ export interface GameInfoSplashEvent extends BaseEvent {
 export interface QuestionEvent extends BaseEvent {
     type: 'question'
     question: string
+    question_index: number
+    question_public_key: string
     answers: [string, string, string]
 }
 
 export interface AnswerRevealEvent extends BaseEvent {
     type: 'answer_reveal'
-    question: QuestionEvent
+    question: Omit<QuestionEvent, 'question_public_key'>
     correct_answer_ind: number
     answer_count: Record<'0' | '1' | '2', number>
 }

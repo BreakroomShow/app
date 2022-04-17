@@ -1,4 +1,4 @@
-import * as trivia from 'clic-trivia'
+import * as trivia from '@breakroom/programs'
 import { useEffect } from 'react'
 
 import { useGetLatest } from '../hooks/useGetLatest'
@@ -10,7 +10,7 @@ type EventMap = {
     RevealAnswerEvent: trivia.RevealAnswerEvent
 }
 
-export function useEventListener<Event extends keyof EventMap>(
+export function useChainEvent<Event extends keyof EventMap>(
     event: Event,
     listener: (message: EventMap[Event]) => void,
 ) {

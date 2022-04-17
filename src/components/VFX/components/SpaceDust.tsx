@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
-import { useReplay } from '../../../pages/Landing/useReplay'
+import { useReplay } from '../../../pages/Replay'
 
 export const SpaceDust = ({ count }: { count: number }) => {
     const { isPlaying } = useReplay()

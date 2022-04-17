@@ -1,18 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import { Confetti } from '../components/Confetti'
 import { ResultIcon } from '../components/ResultIcon'
 import { Segment } from '../components/Segment'
 import { Timer } from '../components/Timer'
-import { useReplay } from '../pages/Landing/useReplay'
+import { useReplay } from '../pages/Replay'
 import { GameFlowEvent } from '../types'
 import { exhaustiveCheck } from '../utils/exhaustiveCheck'
 import { selectRandom } from '../utils/selectRandom'
-import { RevealedQuestionScreen } from '../views/RevealedQuestionScreen'
+import { RevealedQuestionView } from '../views/RevealedQuestionView'
 
 interface ReplayManagerProps {
     event: GameFlowEvent
     currentQuestionId: number
-    totalQuestions: number
     userAnswerId: number
 }
 
@@ -46,7 +46,7 @@ function UserAnswerProvider({
     return children(userAnswerId)
 }
 
-export function ReplayManager({ event, currentQuestionId, totalQuestions, userAnswerId }: ReplayManagerProps) {
+export function ReplayManager({ event, currentQuestionId, userAnswerId }: ReplayManagerProps) {
     const { isPlaying, speed } = useReplay()
 
     const deadline = useMemo(
@@ -73,9 +73,8 @@ export function ReplayManager({ event, currentQuestionId, totalQuestions, userAn
             <Segment color="black" w={4} h={3} inset="lg">
                 <UserAnswerProvider userAnswer={isPlaying ? userAnswerId : null}>
                     {(userAnswer) => (
-                        <RevealedQuestionScreen
+                        <RevealedQuestionView
                             questionId={currentQuestionId}
-                            totalQuestions={totalQuestions}
                             questionText={event.question}
                             answers={event.answers}
                             userAnswer={userAnswer}
@@ -97,9 +96,9 @@ export function ReplayManager({ event, currentQuestionId, totalQuestions, userAn
     if (event.type === 'answer_reveal') {
         return (
             <Segment color="black" w={4} h={3} inset="lg">
-                <RevealedQuestionScreen
+                <Confetti />
+                <RevealedQuestionView
                     questionId={currentQuestionId}
-                    totalQuestions={totalQuestions}
                     questionText={event.question.question}
                     answers={event.question.answers}
                     userAnswer={event.correct_answer_ind}

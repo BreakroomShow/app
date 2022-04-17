@@ -2,33 +2,20 @@ import { StrictMode } from 'react'
 import { render } from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 
+import { App } from './App'
+import { isAdmin } from './config'
 import { ContextProvider } from './containers/ContextProvider'
-import { Landing } from './pages/Landing'
-import { lazy as lazyComponent } from './utils/lazy'
+import { ErrorBoundary } from './containers/ErrorBoundary'
+import { lazy } from './utils/lazy'
 
-const lazy: typeof lazyComponent = (fn, fallback = null, preloadable = false) =>
-    lazyComponent(fn, fallback, preloadable)
-
-const AdminApp = lazy(() => import(/* webpackChunkName: "AdminApp" */ './pages/AdminApp').then((m) => m.AdminApp))
-const UserApp = lazy(() => import(/* webpackChunkName: "UserApp" */ './pages/UserApp').then((m) => m.UserApp))
-// const Landing = lazy(() => import(/* webpackChunkName: "Landing" */ './pages/Landing').then((m) => m.Landing))
-
-const apps = {
-    admin: AdminApp,
-    user: UserApp,
-    landing: Landing,
-
-    default: () => <p>Wrong app target</p>,
-}
-
-const App = apps[process.env.REACT_APP_TARGET as keyof typeof apps] || apps.default
+const AdminApp = lazy(() => import(/* webpackChunkName: "AdminApp" */ './AdminApp').then((m) => m.AdminApp), null)
 
 render(
     <StrictMode>
         <BrowserRouter>
-            <ContextProvider>
-                <App />
-            </ContextProvider>
+            <ErrorBoundary>
+                <ContextProvider>{isAdmin ? <AdminApp /> : <App />}</ContextProvider>
+            </ErrorBoundary>
         </BrowserRouter>
     </StrictMode>,
     document.getElementById('root'),

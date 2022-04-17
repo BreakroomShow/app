@@ -3,7 +3,7 @@ import { Canvas as OGCanvas } from '@react-three/fiber'
 import { getGPUTier } from 'detect-gpu'
 import { ReactNode, useEffect, useState } from 'react'
 
-import { ReplayContext } from '../../../pages/Landing/useReplay'
+import { ReplayContext } from '../../../pages/Replay'
 
 export const Canvas = ({ children }: { children: ReactNode }) => {
     const ContextBridge = useContextBridge(ReplayContext)

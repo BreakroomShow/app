@@ -6,6 +6,7 @@ export const urls = {
     pages: {
         connect: '/connect',
         welcome: '/welcome',
+        game: '/game',
     },
     external: {
         github: 'https://github.com/BreakroomShow',

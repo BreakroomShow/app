@@ -1,7 +1,7 @@
 import { VariantProps } from '@stitches/react'
 import { ReactNode } from 'react'
 
-import { Box, Color, styled } from '../design-system'
+import { Box, Color, keyframes, styled } from '../design-system'
 
 type Size = 1 | 2 | 3 | 4
 
@@ -22,6 +22,15 @@ export const SegmentComponent = styled(Box, {
             lg: { padding: 60 },
             center: { alignItems: 'center', justifyContent: 'center' },
         },
+        animation: {
+            enter: {
+                animation: `${keyframes({ from: { transform: 'scale(0)' } })} 0.3s`,
+            },
+            exit: {
+                transform: 'scale(0)',
+                animation: `${keyframes({ from: { transform: 'scale(1)' } })} 0.3s`,
+            },
+        },
     },
 })
 
@@ -35,9 +44,18 @@ interface SegmentProps extends VariantProps<typeof SegmentComponent> {
     h?: Size
     color?: Color
     children: ReactNode
+    animation?: 'enter' | 'exit'
 }
 
-export function Segment({ w = 1, h = 1, variant = 'round', inset, color = 'black', children }: SegmentProps) {
+export function Segment({
+    w = 1,
+    h = 1,
+    variant = 'round',
+    inset,
+    color = 'black',
+    animation,
+    children,
+}: SegmentProps) {
     return (
         <SegmentComponent
             inset={inset}
@@ -48,6 +66,7 @@ export function Segment({ w = 1, h = 1, variant = 'round', inset, color = 'black
                 gridColumn: `span ${w}`,
                 gridRow: `span ${h}`,
             }}
+            animation={animation}
         >
             {children}
         </SegmentComponent>
